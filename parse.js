@@ -215,10 +215,10 @@ function parse(instruction){
 // opcode["ADI"] = "C6";
 // numBytes["ADI"] = 2;
 
-opcode["STA"] = "32";
-numBytes["STA"] = 3;
+// opcode["STA"] = "32";
+// numBytes["STA"] = 3;
 
-label["LOC"] = "4010";
+// label["LOC"] = "4010";
 
 // //
 
@@ -246,4 +246,4 @@ label["LOC"] = "4010";
 // console.log(parse("STA 4500"));
 // console.log(parse("STA 45002"));
 // console.log(parse("STA XYZ"));
-console.log(parse("STA LOC"));
+// console.log(parse("STA LOC"));
