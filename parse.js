@@ -155,6 +155,7 @@ function parse(instruction){
 
         }
 
+        // for all 2 & 3 byte instructions
         else{
             let mnemonic = instruction.split(' ')[0];
 
@@ -182,8 +183,8 @@ function parse(instruction){
 
             // for 3 byte instructions
             else if (instructionSize == 3){
-                if (instruction.split()[1] in label){
-                    let operand = str(label[instruction.split(' ')[1]]);
+                if (instruction.split(' ')[1] in label){
+                    let operand = label[instruction.split(' ')[1]]; 
                     code = [opcode[mnemonic], operand.slice(2), operand.slice(0,2)];
 
                 }
@@ -214,10 +215,10 @@ function parse(instruction){
 // opcode["ADI"] = "C6";
 // numBytes["ADI"] = 2;
 
-// opcode["STA"] = "32";
-// numBytes["STA"] = 3;
+opcode["STA"] = "32";
+numBytes["STA"] = 3;
 
-// label["LOC"] = "4010";
+label["LOC"] = "4010";
 
 // //
 
@@ -245,4 +246,4 @@ function parse(instruction){
 // console.log(parse("STA 4500"));
 // console.log(parse("STA 45002"));
 // console.log(parse("STA XYZ"));
-// console.log(parse("STA LOC"));
+console.log(parse("STA LOC"));
