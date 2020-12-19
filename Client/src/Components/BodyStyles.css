@@ -1,0 +1,81 @@
+.body {
+    flex: 1 1 auto;
+    font-family: "Varela Round", sans-serif;
+    padding: 75px 30px 0px 30px;
+    color: #fff;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+/* Registers Start*/
+
+.registers-container {
+    flex: 1;
+    width: 100%;
+}
+
+.registers-container table {
+    table-layout: fixed;
+}
+
+.registers-container td {
+    width: 50%;
+}
+
+.registers-container .register-value {
+    text-align: center;
+}
+
+.primary-registers {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.flag-registers {
+    margin-top: 40px;
+    width: 80%;
+}
+
+.number-converter {
+    margin-top: 40px;
+    width: 70%;
+}
+
+.number-converter input {
+    border: none;
+    border-bottom: 2px solid #888;
+    display: inline;
+    font-family: inherit;
+    font-size: inherit;
+    text-align: center;
+    color: #fff;
+    padding: 3px;
+    width: 90%;
+}
+
+/* Registers End */
+
+/* Editor Start */
+
+.editor-container {
+    flex: 2;
+    width: 100%;
+}
+
+/* Editor End */
+
+/* Memory Start */
+
+.memory-container {
+    flex: 1;
+    width: 100%;
+}
+
+.memory-container table {
+    height: 40vh;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+/* Memory End */
