@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./BodyStyles.css";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 export class Memory extends Component {
     constructor(props) {
