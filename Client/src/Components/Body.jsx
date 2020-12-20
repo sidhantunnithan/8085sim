@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./BodyStyles.scss";
+import "./Styles/BodyStyles.scss";
 import Registers from "./Registers";
 import Editor from "./Editor";
 import Memory from "./Memory";
