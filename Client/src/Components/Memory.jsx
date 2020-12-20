@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./BodyStyles.css";
+import "./BodyStyles.scss";
 
 export class Memory extends Component {
     constructor(props) {
@@ -8,6 +8,10 @@ export class Memory extends Component {
         this.memoryArray = new Array(65535).fill(0).map((i) => {
             return new Array(15).fill(0);
         });
+
+        this.state = {
+            memory: this.memoryArray.slice(0, 150),
+        };
     }
 
     render() {
@@ -17,8 +21,6 @@ export class Memory extends Component {
             </div>
         );
     }
-
-    fullMemoryView = () => {};
 }
 
 const LoadedMemoryView = (props) => {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./BodyStyles.css";
+import "./BodyStyles.scss";
 
 export class Editor extends Component {
     render() {
