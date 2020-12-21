@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./BodyStyles.css";
+import "./Styles/BodyStyles.scss";
 
 export class Registers extends Component {
     constructor(props) {
