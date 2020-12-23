@@ -46,7 +46,7 @@ function checkInstructionError(instruction){
         else{
             let mnemonic = (instruction.split(' '))[0];
 
-            // for 2 byte instructions like ADI and all 3 byte instructions
+            // for 2 byte instructions like ADI and 3 byte instructions like STA
             if (mnemonic in opcode){
                 let operand = (instruction.split(' '))[1];
                 let instructionSize = numBytes[mnemonic];
@@ -85,19 +85,26 @@ function checkInstructionError(instruction){
                 return isError;
             }
 
-            // for 2 byte instructions like MVI A
+            // for 2 byte instructions like MVI A and 3 byte instructions like LXI H
             else{
                 mnemonic = mnemonic + " " + instruction.split(' ')[1];
 
                 if (mnemonic in opcode){
                     operand = instruction.split(' ')[2];
+                    
+                    if(numBytes[mnemonic] == 2){
+                        if (operand.length != 2 || !isHex(operand)){
+                            isError = true;
+                        }
 
-                    if (operand.length != 2){
-                        isError = true;
                     }
-
-                    isError = !isHex(operand);
-
+                    
+                    if(numBytes[mnemonic] == 3){
+                        if ((operand.length != 4 || !isHex(operand)) && !(operand in label)){
+                            isError = true;
+                        }
+    
+                    }
                 }
                 else{
                     isError = true;
@@ -139,38 +146,38 @@ function parse(instruction){
         else{
             let mnemonic = instruction.split(' ')[0];
 
-            // for 2 byte instructions like ADI and all 3 byte instructions
-            if (mnemonic in numBytes){
+            // for 2 byte instructions like ADI and 3 byte instructions like STA
+            if(mnemonic in numBytes){
                 instructionSize = numBytes[mnemonic];
-            }
 
-            // for 2 byte instructions like MVI A
+                // for 2 byte instructions like ADI
+                if(instructionSize == 2){
+                    code = [opcode[mnemonic], instruction.split(' ')[1]];
+                }
+                // for 3 byte instructions like STA
+                else if(instructionSize == 3){
+                    operand = instruction.split(' ')[1];
+                    if(operand in label)
+                        operand = String(label[operand]);
+                    
+                    code = [opcode[mnemonic], operand.slice(2), operand.slice(0,2)];
+                }
+            }
+            // for 2 byte instructions like MVI A and 3 byte instructions like LXI H
             else{
                 mnemonic = mnemonic + " " + instruction.split(' ')[1];
                 instructionSize = numBytes[mnemonic];
-            }
 
-            // for 2 byte instructions 
-            if (instructionSize == 2) {
-                if (instruction.split(' ')[0] in opcode){
-                    code = [opcode[mnemonic], instruction.split(' ')[1]];
-
-                }
-                else{
+                // for 2 byte instructions like MVI A
+                if(instructionSize == 2){
                     code = [opcode[mnemonic], instruction.split(' ')[2]];
                 }
-            }
-
-            // for 3 byte instructions
-            else if (instructionSize == 3){
-                if (instruction.split(' ')[1] in label){
-                    let operand = label[instruction.split(' ')[1]]; 
-                    code = [opcode[mnemonic], operand.slice(2), operand.slice(0,2)];
-
-                }
-
+                // for 3 byte instructions like LXI H
                 else{
-                    let operand = instruction.split(' ')[1];
+                    operand = instruction.split(' ')[2];
+                    if(operand in label)
+                        operand = String(label[operand]);
+
                     code = [opcode[mnemonic], operand.slice(2), operand.slice(0,2)];
                 }
             }
@@ -212,6 +219,11 @@ module.exports = {checkInstructionError, parse};
 // console.log(parse("STA 45002"));
 // console.log(parse("STA XYZ"));
 // console.log(parse("STA LOC"));
+
+// label["LOC"] = 5000;
+// console.log(checkInstructionError("LXI H LOC"));
+// console.log(parse("LXI H LOC"));
+// console.log(parse("LXI H 5000"));
 
 // console.log(getInstructions(["MOV","A","B"]));
 // instruction = getInstructions(["MOV","A","B"]);
