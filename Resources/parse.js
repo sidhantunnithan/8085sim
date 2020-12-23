@@ -1,29 +1,7 @@
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 
-// contains register values in hex
-var  registers = {
-    'A' : '00',
-    'B' : '00',
-    'C' : '00',
-    'D' : '00',
-    'E' : '00',
-    'H' : '00',
-    'L' : '00'
-};
-
-// contains mnemonics->number of bytes
-var numBytes = {};
-
-// contains mnemonics->opcodes
-var opcode = {};
-
-// contains memory_location->data(byte) it contains
-var memLoc = {};
-
-// contains label->memory_location
-var label = {};
-
+const { registers, numBytes, opcode, memLoc, label } = require(__dirname + '/dataStructures.js');
 
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
@@ -51,8 +29,10 @@ function isHex(operand){
 }
 
 
-// to check whether a given instruction is valid or not
-
+/* 
+    Checks whether a given instruction is valid or not.
+    Returns false if the instruction is valid, else returns true
+*/
 function checkInstructionError(instruction){
     let isError = false;
 
@@ -203,24 +183,9 @@ function parse(instruction){
     }
 }
 
+module.exports = {checkInstructionError, parse};
 
-// // data for testing
 
-// opcode["MOV A B"] = "78";
-// numBytes["MOV A B"] = 1;
-
-// opcode["MVI A"] = "3E";
-// numBytes["MVI A"] = 2;
-
-// opcode["ADI"] = "C6";
-// numBytes["ADI"] = 2;
-
-// opcode["STA"] = "32";
-// numBytes["STA"] = 3;
-
-// label["LOC"] = "4010";
-
-// //
 
 // // console.log(checkInstructionError("MOV A B"));
 // // console.log(checkInstructionError("MOV A C"));
@@ -230,7 +195,7 @@ function parse(instruction){
 // // console.log(checkInstructionError("ADI A 36"));
 // // console.log(checkInstructionError("ADI 45"));
 // // console.log(checkInstructionError("ADI 4"));
-// // console.log(checkInstructionError("STA 4500"));
+// console.log(checkInstructionError("STA 4500"));
 // // console.log(checkInstructionError("STA 45002"));
 // // console.log(checkInstructionError("STA XYZ"));
 // // console.log(checkInstructionError("STA LOC"));
@@ -247,3 +212,7 @@ function parse(instruction){
 // console.log(parse("STA 45002"));
 // console.log(parse("STA XYZ"));
 // console.log(parse("STA LOC"));
+
+// console.log(getInstructions(["MOV","A","B"]));
+// instruction = getInstructions(["MOV","A","B"]);
+// console.log(parse(instruction));

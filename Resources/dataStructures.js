@@ -11,10 +11,20 @@ var  registers = {
     'L' : '00'
 };  
 
+// contains memory_location -> data(byte) it contains
+var memLoc = {};
+
+// contains label -> memory location
+var label = {};
+
+// contains mnemonic -> number of bytes
 var numBytes = {};
+
+// contains mnemonic -> opcode
 var opcode = {};
 
-const data = fs.readFileSync('./instructions.json', 
+
+const data = fs.readFileSync(__dirname + '/instructions.json', 
               {encoding:'utf8', flag:'r'}); 
 
 const instructions = JSON.parse(data);
@@ -24,4 +34,4 @@ Object.entries(instructions).forEach(([key, value]) => {
     opcode[key] = value.opcode;
 })
 
-module.exports = {registers, numBytes, opcode};
+module.exports = {registers, numBytes, opcode, memLoc, label};
