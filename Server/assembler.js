@@ -49,9 +49,8 @@ function getOpcodes(instructions){
                 throw("Invalid Instruction: " + instructions[i]);
 
             let code = parse(instructions[i]);
-            for(let j; j<code.length; j++){
-                opcodeList.push(code[j]);
-            }
+            // console.log(code);
+            opcodeList.push(code);
         }
 
         return opcodeList;
@@ -61,10 +60,17 @@ function getOpcodes(instructions){
     }
 }
 
-// instructionList = ["MOV","A","B","MOV","C","D","ADD","B","ADI","05", "STA","5020"];
+// pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
+// instructionList = pgm.split(' ');
+// console.log(pgm);
+// console.log(instructionList);
+
+// // instructionList = ["MOV","A","B","MOV","C","D","ADD","B","ADI","05", "STA","5020"];
 
 // instructions = getInstructions(instructionList);
 
-// for(let i=0;i<instructions.length;i++){
-//     console.log(parse(instructions[i]));
-// }
+// console.log(instructions);
+// // for(let i=0;i<instructions.length;i++){
+// //     getOpcodes()
+// // }
+// console.log(getOpcodes(instructions));
