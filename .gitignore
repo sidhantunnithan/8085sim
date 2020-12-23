@@ -2,3 +2,4 @@ Client/node_modules
 .vscode
 8085Instructions.pdf
 getInstructions.py  
+Server/node_modules
