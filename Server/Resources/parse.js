@@ -3,6 +3,14 @@
 
 const { registers, numBytes, opcode, memLoc, label } = require(__dirname + '/dataStructures.js');
 
+const errorDict = {
+    0 : "No Error",
+    1 : "Invalid instruction",
+    2 : "Invalid operand",
+    3 : "Unknown label",
+    4 : "Unknown error"
+};
+
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 
@@ -35,12 +43,13 @@ function isHex(operand){
 */
 function checkInstructionError(instruction){
     let isError = false;
-
+    let errorCode = 0;
+    
     try{
 
         //for 1 byte instructions
         if (instruction in opcode){
-            return isError;
+            return [isError, errorCode];
         }
 
         else{
@@ -55,13 +64,12 @@ function checkInstructionError(instruction){
                 if (instructionSize == 2){
 
                     // to check if the operand is of 1 byte size
-                    if (operand.length != 2){
+                    if (operand.length != 2 || !isHex(operand)){
                         isError = true;
-                        return isError;
+                        errorCode = 2;
+                        return [isError, errorCode];
                     }
 
-                    // to check if the operand is a hex number
-                    isError = !isHex(operand);
                 }
 
                 // for all 3 byte instructions
@@ -69,20 +77,19 @@ function checkInstructionError(instruction){
                     
                     // to check if operand is a label
                     if (operand in label){
-                        return isError;
+                        operand = String(label[operand]);
                     }
 
                     // to check whether operand is 2 bytes
-                    if (operand.length != 4){
+                    if (operand.length != 4 || !isHex(operand)){
                         isError = true;
-                        return isError;
+                        errorCode = 2;
+                        return [isError, errorCode];
                     }
-
-                    isError = !isHex(operand);
 
                 }
 
-                return isError;
+                return [isError, errorCode];
             }
 
             // for 2 byte instructions like MVI A and 3 byte instructions like LXI H
@@ -95,6 +102,7 @@ function checkInstructionError(instruction){
                     if(numBytes[mnemonic] == 2){
                         if (operand.length != 2 || !isHex(operand)){
                             isError = true;
+                            errorCode = 2;
                         }
 
                     }
@@ -102,15 +110,17 @@ function checkInstructionError(instruction){
                     if(numBytes[mnemonic] == 3){
                         if ((operand.length != 4 || !isHex(operand)) && !(operand in label)){
                             isError = true;
+                            errorCode = 2;
                         }
     
                     }
                 }
                 else{
                     isError = true;
+                    errorCode = 1;
                 }
 
-                return isError;
+                return [isError, errorCode];
 
             }
         }
@@ -118,7 +128,8 @@ function checkInstructionError(instruction){
     catch(error){
         console.log(error);
         isError = true;
-        return isError;
+        errorCode = 4;
+        return [isError, errorCode];
     }
 }
 
@@ -127,10 +138,10 @@ function checkInstructionError(instruction){
 
 function parse(instruction){
     try{
-        let isError = checkInstructionError(instruction);
+        let err = checkInstructionError(instruction);
 
-        if (isError){
-            throw "Invalid instruction!";
+        if (err[0]){
+            throw err;
         }
 
         let code = [];
@@ -186,7 +197,7 @@ function parse(instruction){
         return code;
     }
     catch(error){
-        return error;
+        return errorDict[error[1]];
     }
 }
 
@@ -194,18 +205,18 @@ module.exports = {checkInstructionError, parse};
 
 
 
-// // console.log(checkInstructionError("MOV A B"));
-// // console.log(checkInstructionError("MOV A C"));
-// // console.log(checkInstructionError("MVI A 36"));
-// // console.log(checkInstructionError("MVI A AB"));
-// // console.log(checkInstructionError("MVI A 3Z"));
-// // console.log(checkInstructionError("ADI A 36"));
-// // console.log(checkInstructionError("ADI 45"));
-// // console.log(checkInstructionError("ADI 4"));
+// console.log(checkInstructionError("MOV A B"));
+// console.log(checkInstructionError("MOV A C"));
+// console.log(checkInstructionError("MVI A 36"));
+// console.log(checkInstructionError("MVI A AB"));
+// console.log(checkInstructionError("MVI A 3Z"));
+// console.log(checkInstructionError("ADI A 36"));
+// console.log(checkInstructionError("ADI 45"));
+// console.log(checkInstructionError("ADI 4"));
 // console.log(checkInstructionError("STA 4500"));
-// // console.log(checkInstructionError("STA 45002"));
-// // console.log(checkInstructionError("STA XYZ"));
-// // console.log(checkInstructionError("STA LOC"));
+// console.log(checkInstructionError("STA 45002"));
+// console.log(checkInstructionError("STA XYZ"));
+// console.log(checkInstructionError("STA LOC"));
 
 // console.log(parse("MOV A B"));
 // console.log(parse("MOV A C"));
@@ -219,6 +230,7 @@ module.exports = {checkInstructionError, parse};
 // console.log(parse("STA 45002"));
 // console.log(parse("STA XYZ"));
 // console.log(parse("STA LOC"));
+// console.log(parse("STAf LOC"));
 
 // label["LOC"] = 5000;
 // console.log(checkInstructionError("LXI H LOC"));
