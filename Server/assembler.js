@@ -16,6 +16,11 @@ var labelList = [];
 
 // adds the labels into the labelList from the given input instructionList
 function getLabels(instructionList){
+    /* 
+        All labels are of the format "[A-Z]*:". For example, "START:", "LOOP:".
+        So words found in this format are added to labelList.
+    */
+   
     let re = /[A-Z]*:/;
 
     for(var i=0; i<instructionList.length; i++){
@@ -29,7 +34,17 @@ function getLabels(instructionList){
 }
 
 
+// The program instructions are made from the input
 function getInstructions(instructionList){
+    /* 
+        Any instruction in 8085 assembly language can have a maximum of 3 words,
+        like "LXI H 5000". So iterating through every index, we set the 3 words.
+        Then we check whether the word 1 (one) alone makes up an instruction, if not
+        word 1 (one) + word 2 (two) make up an instruction and so on. The instruction 
+        is added to instructionList.
+        If an error is found, then the index is of that error is added to errorList.
+    */
+
     let instructions = [];
     let n = 0;
 
@@ -114,37 +129,46 @@ function getOpcodes(instructions){
 }
 
 // pgm = "LXI Y 5000 MOV MOV A M";
-<<<<<<< HEAD
-pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
-instructionList = pgm.split(' ');
-=======
-// pgm = "LXI Y 5000 MOV A M LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
 // instructionList = pgm.split(' ');
->>>>>>> test
 // console.log(pgm);
-console.log(instructionList);
-
-// instructionList = ["MOV","A","B","MOV","C","D","ADD","B","ADI","05", "STA","5020"];
-
-instructions = getInstructions(instructionList);
-
+// console.log(instructionList);
+// instructions = getInstructions(instructionList);
 // console.log(instructions);
-<<<<<<< HEAD
-// // for(let i=0;i<instructions.length;i++){
-// //     getOpcodes()
-// // }
-console.log(getOpcodes(instructions));
-=======
-// for(let i=0;i<instructions.length;i++){
-//     getOpcodes()
-// }
 // console.log(getOpcodes(instructions));
 // console.log(errorList);
->>>>>>> test
+// console.log(labelList);
 
+
+// pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
+// instructionList = pgm.split(' ');
+// console.log(pgm);
+// console.log(instructionList);
+// instructions = getInstructions(instructionList);
+// console.log(instructions);
+// console.log(getOpcodes(instructions));
+// console.log(errorList);
+// console.log(labelList);
 
 
 // pgm = "START: LOOP: END: LOL";
 // instructionList = pgm.split(' ');
 // getLabels(instructionList);
+// console.log(pgm);
+// console.log(instructionList);
+// instructions = getInstructions(instructionList);
+// console.log(instructions);
+// console.log(getOpcodes(instructions));
+// console.log(errorList);
 // console.log(labelList);
+
+
+pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
+instructionList = pgm.split(' ');
+getLabels(instructionList);
+console.log(pgm);
+console.log(instructionList);
+instructions = getInstructions(instructionList);
+console.log(instructions);
+console.log(getOpcodes(instructions));
+console.log(errorList);
+console.log(labelList);
