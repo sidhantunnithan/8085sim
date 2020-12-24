@@ -7,30 +7,76 @@ const { registers, numBytes, opcode, memLoc, label } = require(__dirname + '/Res
     These are to be joined correctly to form proper instructions.
     Returns the instructions in the preferred format, which is like 
     ["MOV A B", "ADD B", ...]
+    Labels are of the format "START:", "LOOP:" etc.
 */
+
+var errorList = [];
+var labelList = [];
+
+function getLabels(instructionList){
+    let re = /[A-Z]*:/;
+
+    for(var i=0; i<instructionList.length; i++){
+        let cur = instructionList[i];
+        
+        if(re.test(cur)){
+            labelList.push(cur);
+        }
+    }
+
+}
+
 
 function getInstructions(instructionList){
     let instructions = [];
-    let curInstruction = "";
-    
-    for(var i=0; i<instructionList.length; i++){
-        curInstruction += instructionList[i];
+    let n = 0;
 
-        if(curInstruction in opcode){
-            if(numBytes[curInstruction] == 1){
-                instructions.push(curInstruction);
+    for(var i=0; i<instructionList.length; i++){
+        let curInstruction = "";
+        let  one = instructionList[i];
+        let  two,  three;
+        if(i+1 < instructionList.length)
+             two = instructionList[i+1];
+        if(i+2 < instructionList.length)
+             three = instructionList[i+2];
+
+        if(one in opcode){
+            curInstruction = one;
+            instructions.push(curInstruction);
+
+            if(numBytes[curInstruction] == 2 || numBytes[curInstruction] == 3){
+                instructions.push(two);
+
+                i = i + 1;
             }
-            else{
-                curInstruction += ' ';
-                curInstruction += instructionList[i+1];
-                i++;
-                instructions.push(curInstruction);
+            continue;
+        }
+
+        if((one + " " + two) in opcode){
+            curInstruction =  one + " " +  two;
+            instructions.push(curInstruction);
+
+            i = i + 1;
+
+            if(numBytes[curInstruction] == 2 || numBytes[curInstruction] == 3){
+                instructions.push(three);
+                i = i + 1;
             }
-            curInstruction = "";
         }
-        else{
-            curInstruction += ' ';
+
+        if((one+ " " + two + " " + three) in opcode){
+            curInstruction = one + " " + two + " " + three;
+            instructions.push(curInstruction);
+            i = i + 2;
         }
+
+        // console.log(curInstruction);
+
+        if(curInstruction.length === 0){
+            curInstruction = 'ERROR';
+            instructions.push(curInstruction);
+        }
+        
     }
     return instructions;
 }
@@ -45,9 +91,12 @@ function getOpcodes(instructions){
     let opcodeList = [];
     try{
         for(let i=0; i<instructions.length; i++){
-            if(checkInstructionError(instructions[i])[0])
-                throw("Invalid Instruction: " + instructions[i]);
-
+            if(checkInstructionError(instructions[i])[0]){
+                // err = checkInstructionError(instructions[i]);
+                // throw(err);
+                // console.log("Error")
+            }
+                
             let code = parse(instructions[i]);
             // console.log(code);
             opcodeList.push(code);
@@ -56,21 +105,29 @@ function getOpcodes(instructions){
         return opcodeList;
     }
     catch(err){
-        console.log(err);
+        console.log(err[1]);
     }
 }
 
-pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
-instructionList = pgm.split(' ');
-console.log(pgm);
-console.log(instructionList);
+// pgm = "LXI Y 5000 MOV MOV A M";
+// // pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
+// instructionList = pgm.split(' ');
+// console.log(pgm);
+// console.log(instructionList);
 
-// instructionList = ["MOV","A","B","MOV","C","D","ADD","B","ADI","05", "STA","5020"];
+// // instructionList = ["MOV","A","B","MOV","C","D","ADD","B","ADI","05", "STA","5020"];
 
-instructions = getInstructions(instructionList);
+// instructions = getInstructions(instructionList);
 
-console.log(instructions);
-// for(let i=0;i<instructions.length;i++){
-//     getOpcodes()
-// }
-console.log(getOpcodes(instructions));
+// console.log(instructions);
+// // for(let i=0;i<instructions.length;i++){
+// //     getOpcodes()
+// // }
+// console.log(getOpcodes(instructions));
+
+
+
+// pgm = "START: LOOP: END: LOL";
+// instructionList = pgm.split(' ');
+// getLabels(instructionList);
+// console.log(labelList);
