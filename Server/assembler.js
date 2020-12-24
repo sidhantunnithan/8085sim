@@ -13,6 +13,8 @@ const { registers, numBytes, opcode, memLoc, label } = require(__dirname + '/Res
 var errorList = [];
 var labelList = [];
 
+
+// adds the labels into the labelList from the given input instructionList
 function getLabels(instructionList){
     let re = /[A-Z]*:/;
 
@@ -36,31 +38,33 @@ function getInstructions(instructionList){
         let  one = instructionList[i];
         let  two,  three;
         if(i+1 < instructionList.length)
-             two = instructionList[i+1];
+            two = instructionList[i+1];
         if(i+2 < instructionList.length)
-             three = instructionList[i+2];
+            three = instructionList[i+2];
 
         if(one in opcode){
             curInstruction = one;
-            instructions.push(curInstruction);
 
             if(numBytes[curInstruction] == 2 || numBytes[curInstruction] == 3){
-                instructions.push(two);
+                curInstruction += (" " + two);
+                instructions.push(curInstruction);
 
                 i = i + 1;
             }
-            continue;
         }
 
         if((one + " " + two) in opcode){
             curInstruction =  one + " " +  two;
-            instructions.push(curInstruction);
-
+            
             i = i + 1;
 
             if(numBytes[curInstruction] == 2 || numBytes[curInstruction] == 3){
-                instructions.push(three);
+                curInstruction = curInstruction + " " + three;
+                instructions.push(curInstruction);
                 i = i + 1;
+            }
+            else{
+                instructions.push(curInstruction);
             }
         }
 
@@ -73,8 +77,8 @@ function getInstructions(instructionList){
         // console.log(curInstruction);
 
         if(curInstruction.length === 0){
-            curInstruction = 'ERROR';
-            instructions.push(curInstruction);
+            curInstruction = i;
+            errorList.push(curInstruction);
         }
         
     }
@@ -110,20 +114,21 @@ function getOpcodes(instructions){
 }
 
 // pgm = "LXI Y 5000 MOV MOV A M";
-// // pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
+// pgm = "LXI Y 5000 MOV A M LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
 // instructionList = pgm.split(' ');
 // console.log(pgm);
 // console.log(instructionList);
 
-// // instructionList = ["MOV","A","B","MOV","C","D","ADD","B","ADI","05", "STA","5020"];
+// instructionList = ["MOV","A","B","MOV","C","D","ADD","B","ADI","05", "STA","5020"];
 
 // instructions = getInstructions(instructionList);
 
 // console.log(instructions);
-// // for(let i=0;i<instructions.length;i++){
-// //     getOpcodes()
-// // }
+// for(let i=0;i<instructions.length;i++){
+//     getOpcodes()
+// }
 // console.log(getOpcodes(instructions));
+// console.log(errorList);
 
 
 
