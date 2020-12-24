@@ -110,20 +110,20 @@ function getOpcodes(instructions){
 }
 
 // pgm = "LXI Y 5000 MOV MOV A M";
-// // pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
-// instructionList = pgm.split(' ');
+pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
+instructionList = pgm.split(' ');
 // console.log(pgm);
-// console.log(instructionList);
+console.log(instructionList);
 
 // // instructionList = ["MOV","A","B","MOV","C","D","ADD","B","ADI","05", "STA","5020"];
 
-// instructions = getInstructions(instructionList);
+instructions = getInstructions(instructionList);
 
 // console.log(instructions);
 // // for(let i=0;i<instructions.length;i++){
 // //     getOpcodes()
 // // }
-// console.log(getOpcodes(instructions));
+console.log(getOpcodes(instructions));
 
 
 
