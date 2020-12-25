@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 
-const { registers, numBytes, opcode, memLoc, label } = require(__dirname + '/dataStructures.js');
+const { registers, numBytes, opcode} = require(__dirname + '/dataStructures.js');
 
 const errorDict = {
     0 : "No Error",
@@ -41,13 +41,18 @@ function isHex(operand){
     Checks whether a given instruction is valid or not.
     Returns false if the instruction is valid, else returns true
 */
-function checkInstructionError(instruction){
+function checkInstructionError(instruction, label){
     let isError = false;
     let errorCode = 0;
-    
+
     try{
 
-        //for 1 byte instructions
+        // for labels
+        if(instruction in label){
+            return [isError, errorCode];
+        }
+
+        // for 1 byte instructions
         if (instruction in opcode){
             return [isError, errorCode];
         }
@@ -59,32 +64,21 @@ function checkInstructionError(instruction){
             if (mnemonic in opcode){
                 let operand = (instruction.split(' '))[1];
                 let instructionSize = numBytes[mnemonic];
-
                 // for 2 byte instructions like ADI
                 if (instructionSize == 2){
-
                     // to check if the operand is of 1 byte size
                     if (operand.length != 2 || !isHex(operand)){
                         isError = true;
                         errorCode = 2;
-                        return [isError, errorCode];
                     }
 
                 }
 
-                // for all 3 byte instructions
+                // for 3 byte instructions like STA
                 else if (instructionSize == 3){
-                    
-                    // to check if operand is a label
-                    if (operand in label){
-                        operand = String(label[operand]);
-                    }
-
-                    // to check whether operand is 2 bytes
-                    if (operand.length != 4 || !isHex(operand)){
+                    if ((operand.length != 4 || !isHex(operand)) && !((operand + ":") in label)){
                         isError = true;
                         errorCode = 2;
-                        return [isError, errorCode];
                     }
 
                 }
@@ -108,7 +102,7 @@ function checkInstructionError(instruction){
                     }
                     
                     if(numBytes[mnemonic] == 3){
-                        if ((operand.length != 4 || !isHex(operand)) && !(operand in label)){
+                        if ((operand.length != 4 || !isHex(operand)) && !((operand + ":") in label)){
                             isError = true;
                             errorCode = 2;
                         }
@@ -136,9 +130,9 @@ function checkInstructionError(instruction){
 
 // to parse the instruction to object code
 
-function parse(instruction){
+function parse(instruction, label){
     try{
-        let err = checkInstructionError(instruction);
+        let err = checkInstructionError(instruction, label);
 
         if (err[0]){
             throw err;
@@ -146,6 +140,9 @@ function parse(instruction){
 
         let code = [];
         let instructionSize = 0;
+        if(instruction in label){
+            return;
+        }
 
         // for 1 byte instructions
         if (instruction in opcode){
@@ -168,8 +165,8 @@ function parse(instruction){
                 // for 3 byte instructions like STA
                 else if(instructionSize == 3){
                     operand = instruction.split(' ')[1];
-                    if(operand in label)
-                        operand = String(label[operand]);
+                    if((operand + ":") in label)
+                        operand = String(label[operand + ":"]);
                     
                     code = [opcode[mnemonic], operand.slice(2), operand.slice(0,2)];
                 }
@@ -186,8 +183,8 @@ function parse(instruction){
                 // for 3 byte instructions like LXI H
                 else{
                     operand = instruction.split(' ')[2];
-                    if(operand in label)
-                        operand = String(label[operand]);
+                    if((operand + ":") in label)
+                        operand = String(label[(operand + ":")]);
 
                     code = [opcode[mnemonic], operand.slice(2), operand.slice(0,2)];
                 }

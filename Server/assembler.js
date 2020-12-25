@@ -1,6 +1,7 @@
 const {checkInstructionError, parse} = require(__dirname + "/Resources/parse.js")
-const { registers, numBytes, opcode, memLoc, label } = require(__dirname + '/Resources/dataStructures.js');
+const { registers, numBytes, opcode } = require(__dirname + '/Resources/dataStructures.js');
 
+const startAddress = "0000";
 /* 
     The list of instructions are given as input. The input is like 
     ["MOV", "A", "B", "ADD", "B", ...].
@@ -12,7 +13,7 @@ const { registers, numBytes, opcode, memLoc, label } = require(__dirname + '/Res
 
 var errorList = [];
 var labelList = [];
-
+var label = {};
 
 // adds the labels into the labelList from the given input instructionList
 function getLabels(instructionList){
@@ -57,6 +58,12 @@ function getInstructions(instructionList){
         if(i+2 < instructionList.length)
             three = instructionList[i+2];
 
+        if(labelList.includes(one)){
+            curInstruction = one;
+            instructions.push(curInstruction);
+            continue;
+        }
+
         if(one in opcode){
             curInstruction = one;
 
@@ -65,6 +72,9 @@ function getInstructions(instructionList){
                 instructions.push(curInstruction);
 
                 i = i + 1;
+            }
+            else{
+                instructions.push(curInstruction);
             }
         }
 
@@ -101,6 +111,37 @@ function getInstructions(instructionList){
 }
 
 
+function getLabelMemoryLocation(instructions){
+    let start = parseInt(startAddress);
+    let offset = 0;
+
+    for(let i=0; i<instructions.length; i++){
+        curAddress = start + offset;
+
+        if(labelList.includes(instructions[i])){
+            label[instructions[i]] = curAddress.toString(16).toUpperCase().padStart(4, '0');
+        }
+        else{
+            let curInstruction = instructions[i];
+            curInstruction = curInstruction.split(' ');
+
+            let mnemonic = "";
+            for(let j=0; j<curInstruction.length; j++){
+                mnemonic += (" " + curInstruction[j]);
+                mnemonic = mnemonic.trim();
+
+                if(mnemonic in opcode){
+                    offset += parseInt(numBytes[mnemonic]);
+                }
+            }
+            
+        }
+
+    }
+    
+}
+
+
 /* 
     The input will be an array of instructions.
     Returns the opcode of the instructions.
@@ -110,13 +151,13 @@ function getOpcodes(instructions){
     let opcodeList = [];
     try{
         for(let i=0; i<instructions.length; i++){
-            if(checkInstructionError(instructions[i])[0]){
+            if(checkInstructionError(instructions[i], label)[0]){
                 // err = checkInstructionError(instructions[i]);
                 // throw(err);
                 // console.log("Error")
             }
                 
-            let code = parse(instructions[i]);
+            let code = parse(instructions[i], label);
             // console.log(code);
             opcodeList.push(code);
         }
@@ -162,13 +203,17 @@ function getOpcodes(instructions){
 // console.log(labelList);
 
 
-pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
-instructionList = pgm.split(' ');
-getLabels(instructionList);
-console.log(pgm);
-console.log(instructionList);
-instructions = getInstructions(instructionList);
-console.log(instructions);
-console.log(getOpcodes(instructions));
-console.log(errorList);
-console.log(labelList);
+// pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
+// instructionList = pgm.split(' ');
+// getLabels(instructionList);
+// console.log(pgm);
+// console.log(instructionList);
+// instructions = getInstructions(instructionList);
+// getLabelMemoryLocation(instructions);
+// console.log(label);
+// console.log(instructions);
+// byteCodes = getOpcodes(instructions);
+// byteCodes = byteCodes.filter(Boolean);
+// console.log(byteCodes);
+// console.log(errorList);
+// console.log(labelList);
