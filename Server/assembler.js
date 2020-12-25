@@ -1,7 +1,7 @@
 const {checkInstructionError, parse} = require(__dirname + "/Resources/parse.js")
 const { registers, numBytes, opcode } = require(__dirname + '/Resources/dataStructures.js');
 
-const startAddress = "1000";
+const startAddress = "0000";
 /* 
     The list of instructions are given as input. The input is like 
     ["MOV", "A", "B", "ADD", "B", ...].
@@ -72,6 +72,9 @@ function getInstructions(instructionList){
                 instructions.push(curInstruction);
 
                 i = i + 1;
+            }
+            else{
+                instructions.push(curInstruction);
             }
         }
 
@@ -201,17 +204,17 @@ function getOpcodes(instructions){
 
 
 // pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
-// pgm = "   LDA 4000 SUI 30 CPI 0A JC SKIP SUI 07 SKIP: STA 5000 HLT";
-// instructionList = pgm.split(' ');
-// getLabels(instructionList);
-// // console.log(pgm);
-// // console.log(instructionList);
-// instructions = getInstructions(instructionList);
-// getLabelMemoryLocation(instructions);
-// console.log(label);
-// console.log(instructions);
-// byteCodes = getOpcodes(instructions);
-// byteCodes = byteCodes.filter(Boolean);
-// console.log(byteCodes);
-// // console.log(errorList);
+pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
+instructionList = pgm.split(' ');
+getLabels(instructionList);
+// console.log(pgm);
+// console.log(instructionList);
+instructions = getInstructions(instructionList);
+getLabelMemoryLocation(instructions);
+console.log(label);
+console.log(instructions);
+byteCodes = getOpcodes(instructions);
+byteCodes = byteCodes.filter(Boolean);
+console.log(byteCodes);
+// console.log(errorList);
 // console.log(labelList);
