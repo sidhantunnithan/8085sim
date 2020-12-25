@@ -35,3 +35,4 @@ Object.entries(instructions).forEach(([key, value]) => {
 })
 
 module.exports = {registers, numBytes, opcode, memLoc, label};
+module.exports = {registers, numBytes, opcode};
