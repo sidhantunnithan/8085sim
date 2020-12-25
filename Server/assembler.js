@@ -57,6 +57,12 @@ function getInstructions(instructionList){
         if(i+2 < instructionList.length)
             three = instructionList[i+2];
 
+        if(labelList.includes(one)){
+            curInstruction = one;
+            instructions.push(curInstruction);
+            continue;
+        }
+
         if(one in opcode){
             curInstruction = one;
 
