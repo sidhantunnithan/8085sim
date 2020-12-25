@@ -204,17 +204,16 @@ function getOpcodes(instructions){
 
 
 // pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
-pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
-instructionList = pgm.split(' ');
-getLabels(instructionList);
+// instructionList = pgm.split(' ');
+// getLabels(instructionList);
 // console.log(pgm);
 // console.log(instructionList);
-instructions = getInstructions(instructionList);
-getLabelMemoryLocation(instructions);
-console.log(label);
-console.log(instructions);
-byteCodes = getOpcodes(instructions);
-byteCodes = byteCodes.filter(Boolean);
-console.log(byteCodes);
+// instructions = getInstructions(instructionList);
+// getLabelMemoryLocation(instructions);
+// console.log(label);
+// console.log(instructions);
+// byteCodes = getOpcodes(instructions);
+// byteCodes = byteCodes.filter(Boolean);
+// console.log(byteCodes);
 // console.log(errorList);
 // console.log(labelList);
