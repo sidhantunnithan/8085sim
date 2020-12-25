@@ -116,7 +116,7 @@ function getLabelMemoryLocation(instructions){
         curAddress = start + offset;
 
         if(labelList.includes(instructions[i])){
-            label[instructions[i]] = curAddress;
+            label[instructions[i]] = curAddress.toString(16).toUpperCase().padStart(4, '0');
         }
         else{
             let curInstruction = instructions[i];
@@ -201,6 +201,7 @@ function getOpcodes(instructions){
 
 
 // pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
+// pgm = "   LDA 4000 SUI 30 CPI 0A JC SKIP SUI 07 SKIP: STA 5000 HLT";
 // instructionList = pgm.split(' ');
 // getLabels(instructionList);
 // // console.log(pgm);
@@ -213,4 +214,4 @@ function getOpcodes(instructions){
 // byteCodes = byteCodes.filter(Boolean);
 // console.log(byteCodes);
 // // console.log(errorList);
-// // console.log(labelList);
+// console.log(labelList);
