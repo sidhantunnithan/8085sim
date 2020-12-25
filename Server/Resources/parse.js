@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 
-const { registers, numBytes, opcode, memLoc, label } = require(__dirname + '/dataStructures.js');
+const { registers, numBytes, opcode} = require(__dirname + '/dataStructures.js');
 
 const errorDict = {
     0 : "No Error",
@@ -41,7 +41,7 @@ function isHex(operand){
     Checks whether a given instruction is valid or not.
     Returns false if the instruction is valid, else returns true
 */
-function checkInstructionError(instruction){
+function checkInstructionError(instruction, label){
     let isError = false;
     let errorCode = 0;
     
@@ -136,7 +136,7 @@ function checkInstructionError(instruction){
 
 // to parse the instruction to object code
 
-function parse(instruction){
+function parse(instruction, label){
     try{
         let err = checkInstructionError(instruction);
 
