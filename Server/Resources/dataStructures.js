@@ -11,9 +11,6 @@ var  registers = {
     'L' : '00'
 };  
 
-// contains memory_location -> data(byte) it contains
-var memLoc = {};
-
 // contains label -> memory location
 var label = {};
 
@@ -34,5 +31,4 @@ Object.entries(instructions).forEach(([key, value]) => {
     opcode[key] = value.opcode;
 })
 
-module.exports = {registers, numBytes, opcode, memLoc, label};
 module.exports = {registers, numBytes, opcode};
