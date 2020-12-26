@@ -1,23 +1,36 @@
-const {checkInstructionError, parse} = require(__dirname + "/Resources/parse.js")
-const { registers, numBytes, opcode } = require(__dirname + '/Resources/dataStructures.js');
-
-const startAddress = "0000";
 /* 
     The list of instructions are given as input. The input is like 
-    ["MOV", "A", "B", "ADD", "B", ...].
-    These are to be joined correctly to form proper instructions.
-    Returns the instructions in the preferred format, which is like 
-    ["MOV A B", "ADD B", ...]
-    Labels are of the format "START:", "LOOP:" etc.
+    ["MOV", "A", "B", "ADD", "B", ...]. This is the instructionList.
+    
+    These are to be joined correctly to form proper instructions and stored
+    in instructions so that it is in the format ["MOV A B", "ADD B", ...].
+
+    Labels are of the format "START:", "LOOP:" etc. These are extracted from
+    the instructionList, and stored in labelList.
+
+    Labels are then paired with an address, and stored in label.
+
+    After this, the opcodes of the program is obtained using the datastructures 
+    mentioned above.
+
+    If any error is found, the index of the error producing entity in 
+    the instructionList is added to errorList.
 */
+
+
+const {checkInstructionError, parse} = require(__dirname + "/Resources/parse.js")
+const {numBytes, opcode} = require(__dirname + '/Resources/dataStructures.js');
+
+const startAddress = "0000";
 
 var errorList = [];
 var labelList = [];
 var label = {};
 
-// adds the labels into the labelList from the given input instructionList
+
 function getLabels(instructionList){
-    /* 
+    /*
+        Adds the labels into the labelList from the given input instructionList.
         All labels are of the format "[A-Z]*:". For example, "START:", "LOOP:".
         So words found in this format are added to labelList.
     */
@@ -35,7 +48,6 @@ function getLabels(instructionList){
 }
 
 
-// The program instructions are made from the input
 function getInstructions(instructionList){
     /* 
         Any instruction in 8085 assembly language can have a maximum of 3 words,
@@ -99,8 +111,6 @@ function getInstructions(instructionList){
             i = i + 2;
         }
 
-        // console.log(curInstruction);
-
         if(curInstruction.length === 0){
             curInstruction = i;
             errorList.push(curInstruction);
@@ -142,12 +152,11 @@ function getLabelMemoryLocation(instructions){
 }
 
 
-/* 
-    The input will be an array of instructions.
-    Returns the opcode of the instructions.
-*/
 function getOpcodes(instructions){
-    
+    /* 
+        The input will be an array of instructions.
+        Returns the opcode of the instructions.
+    */    
     let opcodeList = [];
     try{
         for(let i=0; i<instructions.length; i++){
@@ -168,39 +177,6 @@ function getOpcodes(instructions){
         console.log(err[1]);
     }
 }
-
-// pgm = "LXI Y 5000 MOV MOV A M";
-// instructionList = pgm.split(' ');
-// console.log(pgm);
-// console.log(instructionList);
-// instructions = getInstructions(instructionList);
-// console.log(instructions);
-// console.log(getOpcodes(instructions));
-// console.log(errorList);
-// console.log(labelList);
-
-
-// pgm = "LXI H 5000 MOV A M MOV B A MVI C 09 ADD B DCR C JNZ 5200 INX H ADD M STA 5100 HLT"
-// instructionList = pgm.split(' ');
-// console.log(pgm);
-// console.log(instructionList);
-// instructions = getInstructions(instructionList);
-// console.log(instructions);
-// console.log(getOpcodes(instructions));
-// console.log(errorList);
-// console.log(labelList);
-
-
-// pgm = "START: LOOP: END: LOL";
-// instructionList = pgm.split(' ');
-// getLabels(instructionList);
-// console.log(pgm);
-// console.log(instructionList);
-// instructions = getInstructions(instructionList);
-// console.log(instructions);
-// console.log(getOpcodes(instructions));
-// console.log(errorList);
-// console.log(labelList);
 
 
 // pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
