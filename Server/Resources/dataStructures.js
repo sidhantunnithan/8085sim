@@ -31,4 +31,5 @@ Object.entries(instructions).forEach(([key, value]) => {
     opcode[key] = value.opcode;
 })
 
+module.exports = {numBytes, opcode};
 module.exports = {registers, numBytes, opcode};
