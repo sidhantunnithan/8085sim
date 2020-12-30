@@ -1,19 +1,15 @@
 import React, { Component } from "react";
 import "./Styles/BodyStyles.scss";
 import EntireMemoryView from "./MemoryViews/EntireMemoryView";
+import LoadedMemoryView from "./MemoryViews/LoadedMemoryView";
 
 export class Memory extends Component {
     constructor(props) {
         super(props);
-
-        this.memoryArray = new Array(65535).fill(0).map((i) => {
-            return new Array(16).fill(0);
-        });
-
         this.state = {
-            memory: this.memoryArray,
             memoryView: "entire-memory",
-            visible: 0,
+            jumpText: "",
+            jumpTo: 0,
         };
     }
 
@@ -23,21 +19,44 @@ export class Memory extends Component {
         });
     };
 
+    onJumpToChange = (e) => {
+        var re = /^$|^([0-9A-F]){1,4}$/;
+        if (!re.test(e.target.value.toUpperCase())) {
+            return;
+        }
+
+        this.setState({
+            jumpText: e.target.value.toUpperCase(),
+        });
+    };
+
+    onJumpEnter = (e) => {
+        if (e.key === "Enter") {
+            this.setState({
+                jumpText: ("0000" + e.target.value).slice(-4),
+                jumpTo: parseInt("0000" + e.target.value.slice(0, -1), 16),
+            });
+        }
+    };
+
     render() {
         return (
             <div className="memory-container">
                 <div className="header">
                     <h1>Memory</h1>
                     {this.state.memoryView === "entire-memory" ? (
-                        <input type="text" placeholder="Jump to"></input>
+                        <input
+                            type="text"
+                            placeholder="Jump to"
+                            value={this.state.jumpText}
+                            onChange={this.onJumpToChange}
+                            onKeyDown={this.onJumpEnter}
+                        ></input>
                     ) : null}
                 </div>
 
                 {this.state.memoryView === "entire-memory" ? (
-                    <EntireMemoryView
-                        memory={this.state.memory}
-                        visible={this.state.visible}
-                    />
+                    <EntireMemoryView jumpTo={this.state.jumpTo} />
                 ) : (
                     <LoadedMemoryView />
                 )}
@@ -69,9 +88,5 @@ export class Memory extends Component {
         );
     }
 }
-
-const LoadedMemoryView = (props) => {
-    return <div className=""></div>;
-};
 
 export default Memory;
