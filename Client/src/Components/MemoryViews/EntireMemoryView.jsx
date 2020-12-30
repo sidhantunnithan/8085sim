@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import "../Styles/BodyStyles.scss";
 
 export class EntireMemoryView extends Component {
@@ -6,9 +7,13 @@ export class EntireMemoryView extends Component {
         super(props);
 
         this.state = {
-            memory: props.memory,
-            visible: props.visible,
+            visible: 0,
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        var vis = Math.floor(nextProps.jumpTo / 16) * 16;
+        this.setState({ visible: vis });
     }
 
     onRightNav = () => {
@@ -28,7 +33,7 @@ export class EntireMemoryView extends Component {
         var ending = starting + 15;
 
         return (
-            <React.Fragment>
+            <div className="entire-memory-view">
                 <div className="grid">
                     <div className="grid-element"></div>
                     <div className="grid-element grid-bold">0</div>
@@ -48,7 +53,7 @@ export class EntireMemoryView extends Component {
                     <div className="grid-element grid-bold">E</div>
                     <div className="grid-element grid-bold">F</div>
 
-                    {this.state.memory
+                    {this.props.memory
                         .slice(starting, ending + 1)
                         .map((row, index) => {
                             return (
@@ -93,7 +98,7 @@ export class EntireMemoryView extends Component {
                             .toUpperCase() + "F"}
                     </div>
 
-                    {this.state.visible < 4094 ? (
+                    {this.state.visible !== 4080 ? (
                         <i
                             className="fas fa-chevron-right"
                             onClick={this.onRightNav}
@@ -102,9 +107,16 @@ export class EntireMemoryView extends Component {
                         <i className="fas fa-chevron-right disabled"></i>
                     )}
                 </div>
-            </React.Fragment>
+            </div>
         );
     }
 }
 
-export default EntireMemoryView;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        memory: state.memoryReducer.memory,
+        visible: ownProps.jumpTo,
+    };
+};
+
+export default connect(mapStateToProps)(EntireMemoryView);
