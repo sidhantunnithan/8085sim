@@ -1,0 +1,54 @@
+input = {
+    instructions: [ (array opcodes returned from server) ]
+    start-instruction: (index from where to start execution)
+    steps: (number of instructions to process)
+	primary-registers: {
+		A: "00"
+		B: "00"		
+		C: "00"
+        ...		
+	}
+
+    flag-registers: {
+        S: "00"
+        CY: "00"
+        Z: "00"
+        ...
+    }
+
+    memory: [
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        .... (4095 times)    
+    ]
+}
+
+output = {
+    primary-registers: {
+		A: "00"
+		B: "00"		
+		C: "00"
+        ...		
+	}
+
+    flag-registers: {
+        S: "00"
+        CY: "00"
+        Z: "00"
+        ...
+    }
+
+    memory: [
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        [0, 0, 0, 0, ... (16 times)], 
+        .... (4095 times)    
+    ]
+}
