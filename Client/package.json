@@ -1,8 +1,10 @@
 {
     "name": "8085sim",
     "version": "0.1.0",
+    "homepage": ".",
     "private": true,
     "dependencies": {
+        "@monaco-editor/react": "^3.7.4",
         "@testing-library/jest-dom": "^5.11.6",
         "@testing-library/react": "^11.2.2",
         "@testing-library/user-event": "^12.5.0",

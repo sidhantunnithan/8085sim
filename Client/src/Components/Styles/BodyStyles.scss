@@ -63,19 +63,16 @@
 .editor-container {
     flex: 2;
     width: 100%;
-    height: 500px;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
+    height: 600px;
+    margin-right: 30px;
 
-    .CodeMirror {
-        width: 100%;
-        height: 500px;
-        background-color: #fff;
+    .editor-child {
+        height: 100%;
+        margin-top: 20px;
     }
 
-    .CodeMirror-gutters {
-        border: none;
+    .margin-view-overlays {
+        width: 20px;
     }
 }
 
