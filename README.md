@@ -2,8 +2,6 @@
 
 8085sim is an open source online simulator and development environment for the [Intel 8085](https://en.wikipedia.org/wiki/Intel_8085) Microprocessor.
 
-<br>
-
 ## Info for Developers
 
 ### Client Side
@@ -15,8 +13,6 @@
 ### Server Side
 
 -   Uses [Express](https://expressjs.com/) back-end framework
-
-<br>
 
 ## Setup for Developers
 
