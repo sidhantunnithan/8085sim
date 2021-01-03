@@ -188,6 +188,23 @@ function add(reg, genReg, flagReg){
 }
 
 
+function ana(reg, genReg, flagReg){
+    let operand1 = genReg['A'];
+    let operand2 = genReg[reg];
+
+    operand1 = parseInt(operand1, 16);
+    operand2 = parseInt(operand2, 16);
+
+    operand1 = operand1 & operand2;
+    flagReg = setFlagReg(operand1, flagReg);
+
+    operand1 = operand1.toString(16).toUpperCase().padStart(2, '0').slice(-2);
+    genReg['A'] = operand1;
+
+    return [genReg, flagReg];
+}
+
+
 function dcr(reg, genReg, flagReg){
     let operand = genReg[reg]
     
@@ -307,6 +324,8 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
     
     switch(opcode){
         
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // ACI statement
         case "CE" :
             // ACI 8bit_data
@@ -320,6 +339,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
 
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
         
         // ADC statements
         case "8F" :
@@ -402,6 +422,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // ADD statements
         case "87" :
@@ -484,6 +505,158 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        
+        // ADI statement
+        case "C6" :
+            byte2 = instruction[1];
+            byte2 = parseInt(byte2, 16);
+            genReg["A"] = parseInt(genReg["A"], 16);
+            genReg["A"] += byte2;
+            flagReg = setFlagReg(genReg["A"], flagReg);
+            genReg["A"] = genReg["A"].toString(16).toUpperCase().padStart(2, '0').slice(-2);
+            
+            numBytes = 2;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // ANA statements
+        case "A7" :
+            // ANA A
+            reg = ana('A', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "A0" :
+            // ANA B
+            reg = ana('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "A1" :
+            // ANA C
+            reg = ana('C', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "A2" :
+            // ANA D
+            reg = ana('D', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "A3" :
+            // ANA E
+            reg = ana('E', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "A4" :
+            // ANA H
+            reg = ana('H', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "A5" :
+            // ANA L
+            reg = ana('L', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "A6" :
+            // ANA M
+            reg = ana('M', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // ANI statement
+        case "E6" :
+            // ANI 8bit_data
+            byte2 = instruction[1];
+            byte2 = parseInt(byte2, 16);
+            genReg['A'] = parseInt(genReg['A'], 16);
+            genReg['A'] = genReg['A'] & byte2;
+            flagReg = setFlagReg(genReg['A'], flagReg);
+            genReg['A'] = genReg['A'].toString(16).toUpperCase().padStart(2, '0').slice(-2);
+
+            numBytes = 2;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CALL statement
+        case "CD" :
+            // CALL 16bit_data
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CC statement
+        case 'DC' :
+            // CC 16bit_data
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CM statement
+        case "FC" :
+            // CM 16bit_data
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CMA statement
+        case "2F" :
+            // CMA
+            genReg['A'] = parseInt(genReg['A'] - 1, 16);
+            genReg['A'] = (genReg['A'] >>> 0).toString(2).slice(-8);
+            genReg['A'] = parseInt(genReg['A'], 2);
+            genReg['A'] = genReg['A'].toString(16).toUpperCase().padStart(2, '0').slice(-2);
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CMC statement
+        case "3F" :
+            // CMC
+            if(flagReg["CY"] === '0'){
+                flagReg["CY"] = '1';
+            }
+            else if(flagReg["CY"] === '1'){
+                flagReg["CY"] = '0';
+            }
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CMP statements
+        
+
+        // 
 
         // DCR statements
         case "3D" :
@@ -566,6 +739,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // HLT statement
         case "76" :
@@ -575,6 +749,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             return;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // INR statements
         case "3C" :
@@ -657,6 +832,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // INX statements
         case "03" :
@@ -691,6 +867,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // JNZ statement
         case "C2" :
@@ -706,6 +883,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // LXI statements
         case "01" :
@@ -756,6 +934,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // MOV statements
         case "7F" :
@@ -1284,6 +1463,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // MVI statements
         case "3E" :
@@ -1362,7 +1542,8 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
-        
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // STA statement
         case "32" :
             byte3 = instruction[1];
@@ -1374,6 +1555,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
 
         default: console.log(opcode);
     }
