@@ -150,6 +150,25 @@ function setFlagReg(acc, flagReg){
 }
 
 
+function adc(reg, genReg, flagReg){
+    let operand1 = genReg["A"];
+    let operand2 = genReg[reg];
+    let operand3 = flagReg["CY"];
+
+    operand1 = parseInt(operand1, 16);
+    operand2 = parseInt(operand2, 16);
+    operand3 = parseInt(operand3, 16);
+
+    operand1 += (operand2 + operand3);
+    flagReg = setFlagReg(operand1, flagReg);
+
+    operand1 = operand1.toString(16).toUpperCase().padStart(2, '0').slice(-2);
+    genReg["A"] = operand1;
+
+    return [genReg, flagReg];
+}
+
+
 function add(reg, genReg, flagReg){
     let operand1 = genReg['A'];
     operand1 = parseInt(operand1, 16)
@@ -234,7 +253,7 @@ function inx(reg, genReg){
             operand = genReg['SP'];
             operand = parseInt(operand, 16);
             operand++;
-            operand = operand.toString(16).toUpperCase().padStart(4, '0');
+            operand = operand.toString(16).toUpperCase().padStart(4, '0').slice(-4);
             genReg['SP'] = operand;
             break;
 
@@ -288,7 +307,102 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
     
     switch(opcode){
         
+        // ACI statement
+        case "CE" :
+            // ACI 8bit_data
+            byte2 = instruction[1];
+            byte2 = parseInt(byte2, 16);
+            genReg["A"] = parseInt(genReg["A"]) + byte2 + parseInt(flagReg["CY"]);
+            flagReg = setFlagReg(genReg["A"], flagReg);
+            genReg["A"] = genReg["A"].toString(16).toUpperCase().padStart(2, '0').slice(-2);
+
+            numBytes = 1;
+
+            break;
+
         
+        // ADC statements
+        case "8F" :
+            // ADC A
+            reg = adc('A', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+
+            break;
+
+        case "88" :
+            // ADC B
+            reg = adc('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+            
+            break;
+
+        case "89" :
+            // ADC C
+            reg = adc('C', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+        numBytes = 1;
+        
+        break;
+
+        case "8A" :
+            // ADC D
+            reg = adc('D', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+            
+            break;
+
+        case "8B" :
+            // ADC E
+            reg = adc('E', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+            
+            break;
+
+        case "8C" :
+            // ADC F
+            reg = adc('F', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+            
+            break;
+
+        case "8D" :
+            // ADC L
+            reg = adc('L', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+            
+            break;
+
+        case "8E" :
+            // ADC M
+            reg = adc('M', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+            
+            break;
+
+
         // ADD statements
         case "87" :
             // ADD A
@@ -1255,7 +1369,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             byte2 = instruction[2];
 
             memory[byte2 + byte3] = genReg['A'];
-            
+
             numBytes = 3;
             
             break;
