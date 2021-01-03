@@ -155,16 +155,8 @@ function add(reg, memory, genReg, flagReg){
     operand1 = parseInt(operand1, 16)
     let operand2;
 
-    if(reg === 'M'){
-        let tempAdd = genReg["H"] + genReg["L"];
-        tempAdd = parseInt(tempAdd, 16);
-        let memoryIndex = getMemoryIndex(tempAdd);
-        operand2 = memory[memoryIndex[0]][memoryIndex[1]];
-    }
-    else{
-        operand2 = genReg[reg];
-        operand2 = parseInt(operand2, 16);
-    }
+    operand2 = genReg[reg];
+    operand2 = parseInt(operand2, 16);
     
     operand1 += operand2;
 
@@ -174,6 +166,19 @@ function add(reg, memory, genReg, flagReg){
     genReg['A'] = operand1;
 
     return [genReg, flagReg];
+}
+
+
+function dcr(reg, genReg, flagReg){
+    let operand = genReg[reg]
+    
+    operand = parseInt(operand, 16);
+
+    operand -= 1;
+    operand.toString(16);
+    flagReg = setFlagReg(operand, flagReg);
+    operand = operand.toUpperCase().padStart(2, '0')
+    genReg[reg] = operand;
 }
 
 
@@ -270,6 +275,63 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "86" :
             // ADD M
             reg = add('M', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        // DCR statements
+        case "3D" :
+            // DCR A
+            reg = dcr('A', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "05" :
+            // DCR B
+            reg = dcr('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "0D" :
+            // DCR C
+            reg = dcr('C', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+        
+        case "15" :
+            // DCR D
+            reg = dcr('D', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "1D" :
+            // DCR E
+            reg = dcr('E', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "25" :
+            // DCR H
+            reg = dcr('H', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "2D" :
+            // DCR L
+            reg = dcr('L', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "35" :
+            // DCR M
+            reg = dcr('M', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
