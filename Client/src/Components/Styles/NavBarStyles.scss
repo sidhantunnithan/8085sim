@@ -59,7 +59,13 @@ input:focus {
         margin-right: 10px;
 
         .navbar-item {
+            padding-bottom: 5px;
             margin-right: 20px;
+            cursor: pointer;
+        }
+
+        .navbar-item:hover {
+            border-bottom: 2px solid blue;
         }
 
         i {

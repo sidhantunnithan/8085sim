@@ -1,20 +1,30 @@
-import React, { Component } from "react";
+import React, { useRef } from "react";
 import { connect } from "react-redux";
 import { monaco } from "@monaco-editor/react";
-import "./Styles/BodyStyles.scss";
 
+import "./Styles/BodyStyles.scss";
 import SIM_LANG from "./EditorConfig/language";
 import SIM_THEME from "./EditorConfig/theme";
+import { editorOnChange } from "../Redux/Actions/editorOnChangeAction";
 
-export const Editor = (code) => {
-    console.log(code);
+export const Editor = (props) => {
+    var editorRef = useRef();
+
+    function handleEditor(editor) {
+        editorRef = editor;
+        editorRef.onDidChangeContent(handleContentChange);
+    }
+
+    function handleContentChange(e) {
+        props.editorOnChange(editorRef.getValue());
+    }
 
     monaco
         .init()
         .then((monacoInstance) => {
             const wrapper = document.getElementById("editor-child");
             const properties = {
-                value: code.code,
+                value: "",
                 language: "sim-lang",
                 theme: "sim-dark",
                 height: "100%",
@@ -36,6 +46,7 @@ export const Editor = (code) => {
                 SIM_LANG
             );
             monacoInstance.editor.defineTheme("sim-dark", SIM_THEME);
+            monacoInstance.editor.onDidCreateModel(handleEditor);
             monacoInstance.editor.create(wrapper, properties);
         })
         .catch((error) =>
@@ -55,10 +66,4 @@ export const Editor = (code) => {
     );
 };
 
-const mapStateToProps = (state, ownProps) => {
-    return {
-        code: state.editorReducer.code,
-    };
-};
-
-export default connect(mapStateToProps)(Editor);
+export default connect(null, { editorOnChange })(Editor);

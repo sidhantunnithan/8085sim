@@ -218,7 +218,7 @@ export const SIM_LANG = {
 
         whitespace: [
             [/[ \t\r\n]+/, "white"],
-            [/\;.*$/, "comment"],
+            [/;.*$/, "comment"],
         ],
     },
 };
