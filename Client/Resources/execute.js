@@ -537,6 +537,65 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["L"];
             break;
 
+        // MVI statements
+        case "3E" :
+            // MVI A 8bit_data
+            memoryIndex = getMemoryIndex(address);
+            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            genReg["A"] = byte2;
+            break;
+
+        case "06" :
+            // MVI B 8bit_data
+            memoryIndex = getMemoryIndex(address);
+            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            genReg["B"] = byte2;
+            break;
+
+        case "0E" :
+            // MVI C 8bit_data
+            memoryIndex = getMemoryIndex(address);
+            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            genReg["C"] = byte2;
+            break;
+
+        case "16" :
+            // MVI D 8bit_data
+            memoryIndex = getMemoryIndex(address);
+            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            genReg["D"] = byte2;
+            break;
+
+        case "1E" :
+            // MVI E 8bit_data
+            memoryIndex = getMemoryIndex(address);
+            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            genReg["E"] = byte2;
+            break;
+
+        case "26" :
+            // MVI H 8bit_data
+            memoryIndex = getMemoryIndex(address);
+            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            genReg["H"] = byte2;
+            break;
+
+        case "2E" :
+            // MVI L 8bit_data
+            memoryIndex = getMemoryIndex(address);
+            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            genReg["L"] = byte2;
+            break;
+
+        case "36" :
+            // MVI M 8bit_data
+            memoryIndex = getMemoryIndex(address);
+            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            tempAdd = genReg["H"] + genReg["L"];
+            memoryIndex = getMemoryIndex(tempAdd);
+            memory[memoryIndex[0]][memoryIndex[1]] = byte2;
+            break;
+
         default: console.log(opcode);
     }
 }
