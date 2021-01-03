@@ -24,7 +24,6 @@ export class Navbar extends Component {
         link.setAttribute("download", "test.asm");
         link.click();
         window.URL.revokeObjectURL(link.href);
-        link.parentNode.removeChild(link);
     };
 
     handleEnter = (e) => {
