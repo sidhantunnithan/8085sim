@@ -1,15 +1,16 @@
 import * as actionTypes from "../Actions/types";
 
 const initialState = {
-    editorText: "",
+    filename: "Untitled",
 };
 
-export default function editor(state = initialState, action) {
+export default function memory(state = initialState, action) {
     switch (action.type) {
-        case actionTypes.EDITOR_CHANGE:
+        case actionTypes.FILENAME_CHANGE:
+            console.log("Entered");
             return {
                 ...state,
-                editorText: action.payload,
+                filename: action.payload,
             };
         default:
             return state;
