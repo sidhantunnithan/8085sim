@@ -150,7 +150,7 @@ function setFlagReg(acc, flagReg){
 }
 
 
-function add(reg, memory, genReg, flagReg){
+function add(reg, genReg, flagReg){
     let operand1 = genReg['A'];
     operand1 = parseInt(operand1, 16)
     let operand2;
@@ -162,7 +162,7 @@ function add(reg, memory, genReg, flagReg){
 
     flagReg = setFlagReg(operand1, flagReg);
 
-    operand1 = operand1.toString(16).toUpperCase().padStart(2, '0');
+    operand1 = operand1.toString(16).toUpperCase().padStart(2, '0').slice(-2);
     genReg['A'] = operand1;
 
     return [genReg, flagReg];
@@ -177,8 +177,72 @@ function dcr(reg, genReg, flagReg){
     operand -= 1;
     operand.toString(16);
     flagReg = setFlagReg(operand, flagReg);
-    operand = operand.toUpperCase().padStart(2, '0')
+    operand = operand.toUpperCase().padStart(2, '0').slice(-2);
     genReg[reg] = operand;
+
+    return [genReg, flagReg];
+}
+
+
+function inr(reg, genReg, flagReg){
+    let operand = genReg[reg]
+    
+    operand = parseInt(operand, 16);
+
+    operand += 1;
+    operand.toString(16);
+    flagReg = setFlagReg(operand, flagReg);
+    operand = operand.toUpperCase().padStart(2, '0').slice(-2);
+    genReg[reg] = operand;
+
+    return [genReg, flagReg];
+}
+
+
+function inx(reg, genReg){
+    let operand;
+
+    switch(reg){
+        case 'B' :
+            operand = genReg['B'] + genReg['C'];
+            operand = parseInt(operand, 16);
+            operand++;
+            operand = operand.toString(16).toUpperCase().padStart(4, '0');
+            genReg['B'] = operand.slice(2);
+            genReg['C'] = operand.slice(-2);
+            break;
+
+        case 'D' :
+            operand = genReg['D'] + genReg['E'];
+            operand = parseInt(operand, 16);
+            operand++;
+            operand = operand.toString(16).toUpperCase().padStart(4, '0');
+            genReg['D'] = operand.slice(2);
+            genReg['E'] = operand.slice(-2);
+            break;
+
+        case 'H' :
+            operand = genReg['H'] + genReg['L'];
+            operand = parseInt(operand, 16);
+            operand++;
+            operand = operand.toString(16).toUpperCase().padStart(4, '0');
+            genReg['H'] = operand.slice(2);
+            genReg['L'] = operand.slice(-2);
+            break;
+
+        case 'SP' :
+            operand = genReg['SP'];
+            operand = parseInt(operand, 16);
+            operand++;
+            operand = operand.toString(16).toUpperCase().padStart(4, '0');
+            genReg['SP'] = operand;
+            break;
+
+        default:
+            console.log('lol');
+    }
+
+    return genReg;
 }
 
 
@@ -210,7 +274,7 @@ function lxi(reg, byte3, byte2, genReg){
 }
 
 
-function instruction_def(opcode, address, genReg, flagReg, memory){
+function instruction_def(instruction, address, genReg, flagReg, memory){
     let tempAdd;
     let memoryIndex;
     let i;
@@ -218,6 +282,8 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
     let reg;
     let byte3;
     let byte2;
+
+    let opcode = instruction[0];
     
     switch(opcode){
         
@@ -225,59 +291,60 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         // ADD statements
         case "87" :
             // ADD A
-            reg = add('A', memory, genReg, flagReg);
+            reg = add('A', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
 
         case "80" :
             // ADD B
-            reg = add('B', memory, genReg, flagReg);
+            reg = add('B', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
 
         case "81" :
             // ADD C
-            reg = add('C', memory, genReg, flagReg);
+            reg = add('C', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
 
         case "82" :
             // ADD D
-            reg = add('D', memory, genReg, flagReg);
+            reg = add('D', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
 
         case "83" :
             // ADD E
-            reg = add('E', memory, genReg, flagReg);
+            reg = add('E', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
 
         case "84" :
             // ADD H
-            reg = add('H', memory, genReg, flagReg);
+            reg = add('H', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
 
         case "85" :
             // ADD L
-            reg = add('L', memory, genReg, flagReg);
+            reg = add('L', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
 
         case "86" :
             // ADD M
-            reg = add('M', memory, genReg, flagReg);
+            reg = add('M', genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             break;
+
 
         // DCR statements
         case "3D" :
@@ -336,54 +403,137 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
             flagReg = reg[1];
             break;
 
+
+        // INR statements
+        case "3C" :
+            // INR A
+            reg = inr('A', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case  "04" :
+            // INR B
+            reg = inr('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case  "0C" :
+            // INR C
+            reg = inr('C', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case  "14" :
+            // INR D
+            reg = inr('D', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case  "1C" :
+            // INR E
+            reg = inr('E', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case  "24" :
+            // INR H
+            reg = inr('H', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case  "2C" :
+            // INR L
+            reg = inr('L', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case  "34" :
+            // INR M
+            reg = inr('M', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+
+        // INX statements
+        case "03" :
+            // INX B 
+            genReg = inx('B', genReg);
+            break;
+
+        case "13" :
+            // INX D 
+            genReg = inx('D', genReg);
+            break;
+
+        case "23" :
+            // INX H 
+            genReg = inx('H', genReg);
+            break;
+
+        case "33" :
+            // INX SP 
+            genReg = inx('SP', genReg);
+            break;
+
+
+        // JNZ statement
+        case "C2" :
+            // JNZ 16bit_data
+            byte3 = instruction[1];
+            byte2 = instruction[2];
+            
+            if(flagReg['Z'] !== 0){
+                genReg["PC"] = byte2 + byte3;
+            }
+
+            break;
+
+
         // LXI statements
         case "01" :
             // LXI B 16bit_data
-            memoryIndex = getMemoryIndex(address);
-            i = memoryIndex[0];
-            j = memoryIndex[1];
             reg = 'B';
-            byte3 = memory[i + (j+1)/16][(j+1)%16];
-            byte2 = memory[i + (j+2)/16][(j+2)%16];
+            byte3 = instruction[1];
+            byte2 = instruction[2];
 
             genReg = lxi(reg, byte3, byte2, genReg);
             break;
 
         case "11" :
             // LXI D 16bit_data
-            memoryIndex = getMemoryIndex(address);
-            i = memoryIndex[0];
-            j = memoryIndex[1];
-            reg = 'B';
-            byte3 = memory[i + (j+1)/16][(j+1)%16];
-            byte2 = memory[i + (j+2)/16][(j+2)%16];
+            reg = 'D';
+            byte3 = instruction[1];
+            byte2 = instruction[2];
 
             genReg = lxi(reg, byte3, byte2, genReg);
             break;
             
         case "21" :
             // LXI H 16bit_data
-            memoryIndex = getMemoryIndex(address);
-            i = memoryIndex[0];
-            j = memoryIndex[1];
-            reg = 'B';
-            byte3 = memory[i + (j+1)/16][(j+1)%16];
-            byte2 = memory[i + (j+2)/16][(j+2)%16];
+            reg = 'H';
+            byte3 = instruction[1];
+            byte2 = instruction[2];
 
             genReg = lxi(reg, byte3, byte2, genReg);
             break;
 
         case "31" :
             // LXI SP 16bit_data
-            memoryIndex = getMemoryIndex(address);
-            i = memoryIndex[0];
-            j = memoryIndex[1];
-            reg = "SP";
-            byte3 = memory[i + (j+1)/16][(j+1)%16];
-            byte2 = memory[i + (j+2)/16][(j+2)%16];
+            reg = 'SP';
+            byte3 = instruction[1];
+            byte2 = instruction[2];
 
             genReg = lxi(reg, byte3, byte2, genReg);
             break;
+
 
         // MOV statements
         case "7F" :
@@ -422,10 +572,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
 
         case "7E" :
             // MOV A M
-            tempAdd = genReg["H"] + genReg["L"];
-            tempAdd = parseInt(tempAdd, 16);
-            memoryIndex = getMemoryIndex(tempAdd);
-            genReg["A"] = memory[memoryIndex[0]][memoryIndex[1]];
+            genReg["A"] = genReg['M'];
             break;
     
 
@@ -465,10 +612,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
 
         case "46" :
             // MOV B M
-            tempAdd = genReg["H"] + genReg["L"];
-            tempAdd = parseInt(tempAdd, 16);
-            memoryIndex = getMemoryIndex(tempAdd);
-            genReg["B"] = memory[memoryIndex[0]][memoryIndex[1]];
+            genReg["B"] = genReg['M'];
             break;
     
         case "4F" :
@@ -507,10 +651,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
 
         case "4E" :
             // MOV C M
-            tempAdd = genReg["H"] + genReg["L"];
-            tempAdd = parseInt(tempAdd, 16);
-            memoryIndex = getMemoryIndex(tempAdd);
-            genReg["C"] = memory[memoryIndex[0]][memoryIndex[1]];
+            genReg["C"] = genReg['M'];
             break;
 
         case "57" :
@@ -549,10 +690,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
 
         case "56" :
             // MOV D M
-            tempAdd = genReg["H"] + genReg["L"];
-            tempAdd = parseInt(tempAdd, 16);
-            memoryIndex = getMemoryIndex(tempAdd);
-            genReg["D"] = memory[memoryIndex[0]][memoryIndex[1]];
+            genReg["D"] = genReg['M'];
             break;
 
         case "5F" :
@@ -591,10 +729,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
 
         case "5E" :
             // MOV E M
-            tempAdd = genReg["H"] + genReg["L"];
-            tempAdd = parseInt(tempAdd, 16);
-            memoryIndex = getMemoryIndex(tempAdd);
-            genReg["E"] = memory[memoryIndex[0]][memoryIndex[1]];
+            genReg["E"] = genReg['M'];
             break;
 
         case "67" :
@@ -633,10 +768,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
 
         case "66" :
             // MOV H M
-            tempAdd = genReg["H"] + genReg["L"];
-            tempAdd = parseInt(tempAdd, 16);
-            memoryIndex = getMemoryIndex(tempAdd);
-            genReg["H"] = memory[memoryIndex[0]][memoryIndex[1]];
+            genReg["H"] = genReg['M'];
             break;
 
         case "6F" :
@@ -675,10 +807,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
 
         case "6E" :
             // MOV L M
-            tempAdd = genReg["H"] + genReg["L"];
-            tempAdd = parseInt(tempAdd, 16);
-            memoryIndex = getMemoryIndex(tempAdd);
-            genReg["L"] = memory[memoryIndex[0]][memoryIndex[1]];
+            genReg["L"] = genReg['M'];
             break;
 
         case "77" :
@@ -737,60 +866,53 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["L"];
             break;
 
+
         // MVI statements
         case "3E" :
             // MVI A 8bit_data
-            memoryIndex = getMemoryIndex(address);
-            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            byte2 = instruction[1];
             genReg["A"] = byte2;
             break;
 
         case "06" :
             // MVI B 8bit_data
-            memoryIndex = getMemoryIndex(address);
-            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            byte2 = instruction[1];
             genReg["B"] = byte2;
             break;
 
         case "0E" :
             // MVI C 8bit_data
-            memoryIndex = getMemoryIndex(address);
-            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            byte2 = instruction[1];
             genReg["C"] = byte2;
             break;
 
         case "16" :
             // MVI D 8bit_data
-            memoryIndex = getMemoryIndex(address);
-            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            byte2 = instruction[1];
             genReg["D"] = byte2;
             break;
 
         case "1E" :
             // MVI E 8bit_data
-            memoryIndex = getMemoryIndex(address);
-            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            byte2 = instruction[1];
             genReg["E"] = byte2;
             break;
 
         case "26" :
             // MVI H 8bit_data
-            memoryIndex = getMemoryIndex(address);
-            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            byte2 = instruction[1];
             genReg["H"] = byte2;
             break;
 
         case "2E" :
             // MVI L 8bit_data
-            memoryIndex = getMemoryIndex(address);
-            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            byte2 = instruction[1];
             genReg["L"] = byte2;
             break;
 
         case "36" :
             // MVI M 8bit_data
-            memoryIndex = getMemoryIndex(address);
-            byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
+            byte2 = instruction[1];
             tempAdd = genReg["H"] + genReg["L"];
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
