@@ -24,6 +24,11 @@
 //     [ '76' ]
 //   ]
 
+String.prototype.count=function(s1) { 
+    return (this.length - this.replace(new RegExp(s1,"g"), '').length) / s1.length;
+}
+
+
 function execute(jsonInput)
 {
     // Input
@@ -110,6 +115,68 @@ function getMemoryIndex(address){
 }
 
 
+function setFlagReg(acc, flagReg){
+    let bin = (acc >>> 0).toString(2).padStart(8,'0').slice(-8);
+
+    if(bin[0] === '1'){
+        flagReg['S'] = "1";
+    }
+    else{
+        flagReg['S'] = "0";
+    }
+
+    if(bin.count('1') === 0){
+        flagReg['Z'] = "1";
+    }
+    else{
+        flagReg['Z'] = "0";
+    }
+
+    if(bin.count('1')%2 === 0){
+        flagReg['P'] = "1";
+    }
+    else{
+        flagReg['P'] = "0";
+    }
+
+    if((acc >>> 0).toString(2).padStart(9,'0').slice(-9)[0] === '1'){
+        flagReg['CY'] = '1';
+    }
+    else{
+        flagReg['CY'] = '0';
+    }
+
+    return flagReg;
+}
+
+
+function add(reg, memory, genReg, flagReg){
+    let operand1 = genReg['A'];
+    operand1 = parseInt(operand1, 16)
+    let operand2;
+
+    if(reg === 'M'){
+        let tempAdd = genReg["H"] + genReg["L"];
+        tempAdd = parseInt(tempAdd, 16);
+        let memoryIndex = getMemoryIndex(tempAdd);
+        operand2 = memory[memoryIndex[0]][memoryIndex[1]];
+    }
+    else{
+        operand2 = genReg[reg];
+        operand2 = parseInt(operand2, 16);
+    }
+    
+    operand1 += operand2;
+
+    flagReg = setFlagReg(operand1, flagReg);
+
+    operand1 = operand1.toString(16).toUpperCase().padStart(2, '0');
+    genReg['A'] = operand1;
+
+    return [genReg, flagReg];
+}
+
+
 function lxi(reg, byte3, byte2, genReg){
     switch(reg){
         case 'B':
@@ -148,7 +215,64 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
     let byte2;
     
     switch(opcode){
+        
+        
+        // ADD statements
+        case "87" :
+            // ADD A
+            reg = add('A', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
 
+        case "80" :
+            // ADD B
+            reg = add('B', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "81" :
+            // ADD C
+            reg = add('C', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "82" :
+            // ADD D
+            reg = add('D', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "83" :
+            // ADD E
+            reg = add('E', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "84" :
+            // ADD H
+            reg = add('H', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "85" :
+            // ADD L
+            reg = add('L', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
+
+        case "86" :
+            // ADD M
+            reg = add('M', memory, genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            break;
 
         // LXI statements
         case "01" :
@@ -237,6 +361,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "7E" :
             // MOV A M
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             genReg["A"] = memory[memoryIndex[0]][memoryIndex[1]];
             break;
@@ -279,6 +404,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "46" :
             // MOV B M
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             genReg["B"] = memory[memoryIndex[0]][memoryIndex[1]];
             break;
@@ -320,6 +446,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "4E" :
             // MOV C M
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             genReg["C"] = memory[memoryIndex[0]][memoryIndex[1]];
             break;
@@ -361,6 +488,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "56" :
             // MOV D M
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             genReg["D"] = memory[memoryIndex[0]][memoryIndex[1]];
             break;
@@ -402,6 +530,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "5E" :
             // MOV E M
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             genReg["E"] = memory[memoryIndex[0]][memoryIndex[1]];
             break;
@@ -443,6 +572,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "66" :
             // MOV H M
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             genReg["H"] = memory[memoryIndex[0]][memoryIndex[1]];
             break;
@@ -484,6 +614,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "6E" :
             // MOV L M
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             genReg["L"] = memory[memoryIndex[0]][memoryIndex[1]];
             break;
@@ -491,6 +622,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "77" :
             // MOV M A
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["A"];
             break;
@@ -498,6 +630,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "70" :
             // MOV M B
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["B"];
             break;
@@ -505,6 +638,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "71" :
             // MOV M C
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["C"];
             break;
@@ -512,6 +646,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "72" :
             // MOV M D
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["D"];
             break;
@@ -519,6 +654,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "73" :
             // MOV M E
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["E"];
             break;
@@ -526,6 +662,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "74" :
             // MOV M H
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["H"];
             break;
@@ -533,6 +670,7 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
         case "75" :
             // MOV M L
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["L"];
             break;
@@ -592,9 +730,12 @@ function instruction_def(opcode, address, genReg, flagReg, memory){
             memoryIndex = getMemoryIndex(address);
             byte2 = memory[memoryIndex[0] + (memoryIndex[1]+1)/16][(memoryIndex[1]+1)%16];
             tempAdd = genReg["H"] + genReg["L"];
+            tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = byte2;
             break;
+
+        
 
         default: console.log(opcode);
     }
