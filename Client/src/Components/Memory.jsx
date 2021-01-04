@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import "./Styles/BodyStyles.scss";
 import EntireMemoryView from "./MemoryViews/EntireMemoryView";
 import LoadedMemoryView from "./MemoryViews/LoadedMemoryView";
+import { memoryOnReset } from "../Redux/Actions/memoryOnChangeAction";
 
 export class Memory extends Component {
     constructor(props) {
@@ -18,6 +20,10 @@ export class Memory extends Component {
         this.setState({
             memoryView: e.target.value,
         });
+    };
+
+    onMemoryReset = (e) => {
+        this.props.memoryOnReset();
     };
 
     // Handle Jump To Address input field
@@ -48,13 +54,19 @@ export class Memory extends Component {
                 <div className="header">
                     <h1>Memory</h1>
                     {this.state.memoryView === "entire-memory" ? (
-                        <input
-                            type="text"
-                            placeholder="Jump to"
-                            value={this.state.jumpText}
-                            onChange={this.onJumpToChange}
-                            onKeyDown={this.onJumpEnter}
-                        ></input>
+                        <div className="header-tail">
+                            <i
+                                className="fas fa-sync"
+                                onClick={this.onMemoryReset}
+                            ></i>
+                            <input
+                                type="text"
+                                placeholder="Jump to"
+                                value={this.state.jumpText}
+                                onChange={this.onJumpToChange}
+                                onKeyDown={this.onJumpEnter}
+                            ></input>
+                        </div>
                     ) : null}
                 </div>
 
@@ -64,16 +76,14 @@ export class Memory extends Component {
                     <LoadedMemoryView />
                 )}
 
-                <div
-                    className="memory-views"
-                    onChange={this.onMemoryViewChange}
-                >
+                <div className="memory-views">
                     <div className="radio-item">
                         <input
                             type="radio"
                             value="entire-memory"
                             name="memory-view"
                             checked={this.state.memoryView === "entire-memory"}
+                            onChange={this.onMemoryViewChange}
                         />
                         <label>Entire Memory</label>
                     </div>
@@ -83,6 +93,7 @@ export class Memory extends Component {
                             value="loaded-memory"
                             name="memory-view"
                             checked={this.state.memoryView === "loaded-memory"}
+                            onChange={this.onMemoryViewChange}
                         />
                         <label>Loaded Memory</label>
                     </div>
@@ -92,4 +103,4 @@ export class Memory extends Component {
     }
 }
 
-export default Memory;
+export default connect(null, { memoryOnReset })(Memory);
