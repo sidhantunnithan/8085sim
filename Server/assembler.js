@@ -174,18 +174,21 @@ function getOpcodes(instructions) {
 }
 
 function getAssembledInstructions(pgm) {
-    getLabels(pgm);
-    var instructions = getInstructions(pgm);
-    getLabelMemoryLocation(instructions);
-    var byteCodes = getOpcodes(instructions);
-    byteCodes = byteCodes.filter(Boolean);
+    return new Promise((resolve, reject) => {
+        getLabels(pgm);
+        var instructions = getInstructions(pgm);
+        getLabelMemoryLocation(instructions);
+        var byteCodes = getOpcodes(instructions);
+        byteCodes = byteCodes.filter(Boolean);
 
-    assembledJSON = {
-        byteCodes: byteCodes,
-        errorCodes: errorList,
-    };
+        assembledJSON = {
+            byteCodes: byteCodes,
+            instructions: instructions,
+            errorCodes: errorList,
+        };
 
-    return assembledJSON;
+        resolve(assembledJSON);
+    });
 }
 
 module.exports = { getAssembledInstructions };
