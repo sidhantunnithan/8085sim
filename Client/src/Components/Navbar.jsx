@@ -1,20 +1,33 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import axios from "axios";
 import "./Styles/NavBarStyles.scss";
 import store from "../Redux/store";
 import Logo from "../res/logo.png";
 import { navbarOnChange } from "../Redux/Actions/navbarOnChange";
+import { memoryOnInit } from "../Redux/Actions/memoryOnChangeAction";
 
 export class Navbar extends Component {
     constructor(props) {
         super(props);
     }
 
+    // Set state when project name is changed
     handleProjectName = (e) => {
         this.props.navbarOnChange(e.target.value);
     };
 
-    handleRunClick = (e) => {};
+    handleRunClick = (e) => {
+        axios
+            .post(`/api`, {
+                code: store
+                    .getState()
+                    .editorReducer.editorText.replace(/[\r\n\t]+/gm, " "),
+            })
+            .then((res) => {
+                this.props.memoryOnInit(res.data.payload.byteCodes);
+            });
+    };
 
     // Generate a new <a> tag and
     // click it
@@ -114,4 +127,6 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, { navbarOnChange })(Navbar);
+export default connect(mapStateToProps, { memoryOnInit, navbarOnChange })(
+    Navbar
+);
