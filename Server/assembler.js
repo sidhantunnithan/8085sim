@@ -17,9 +17,10 @@
     the instructionList is added to errorList.
 */
 
-
-const {checkInstructionError, parse} = require(__dirname + "/Resources/parse.js")
-const {numBytes, opcode} = require(__dirname + '/Resources/dataStructures.js');
+const { checkInstructionError, parse } = require(__dirname +
+    "/Resources/parse.js");
+const { numBytes, opcode } = require(__dirname +
+    "/Resources/dataStructures.js");
 
 const startAddress = "0000";
 
@@ -27,28 +28,25 @@ var errorList = [];
 var labelList = [];
 var label = {};
 
-
-function getLabels(instructionList){
+function getLabels(instructionList) {
     /*
         Adds the labels into the labelList from the given input instructionList.
         All labels are of the format "[A-Z]*:". For example, "START:", "LOOP:".
         So words found in this format are added to labelList.
     */
-   
+
     let re = /[A-Z]*:/;
 
-    for(var i=0; i<instructionList.length; i++){
+    for (var i = 0; i < instructionList.length; i++) {
         let cur = instructionList[i];
-        
-        if(re.test(cur)){
+
+        if (re.test(cur)) {
             labelList.push(cur);
         }
     }
-
 }
 
-
-function getInstructions(instructionList){
+function getInstructions(instructionList) {
     /* 
         Any instruction in 8085 assembly language can have a maximum of 3 words,
         like "LXI H 5000". So iterating through every index, we set the 3 words.
@@ -61,126 +59,140 @@ function getInstructions(instructionList){
     let instructions = [];
     let n = 0;
 
-    for(var i=0; i<instructionList.length; i++){
+    for (var i = 0; i < instructionList.length; i++) {
         let curInstruction = "";
-        let  one = instructionList[i];
-        let  two,  three;
-        if(i+1 < instructionList.length)
-            two = instructionList[i+1];
-        if(i+2 < instructionList.length)
-            three = instructionList[i+2];
+        let one = instructionList[i];
+        let two, three;
+        if (i + 1 < instructionList.length) two = instructionList[i + 1];
+        if (i + 2 < instructionList.length) three = instructionList[i + 2];
 
-        if(labelList.includes(one)){
+        if (labelList.includes(one)) {
             curInstruction = one;
             instructions.push(curInstruction);
             continue;
         }
 
-        if(one in opcode){
+        if (one in opcode) {
             curInstruction = one;
 
-            if(numBytes[curInstruction] == 2 || numBytes[curInstruction] == 3){
-                curInstruction += (" " + two);
+            if (
+                numBytes[curInstruction] == 2 ||
+                numBytes[curInstruction] == 3
+            ) {
+                curInstruction += " " + two;
                 instructions.push(curInstruction);
 
                 i = i + 1;
-            }
-            else{
+            } else {
                 instructions.push(curInstruction);
             }
         }
 
-        if((one + " " + two) in opcode){
-            curInstruction =  one + " " +  two;
-            
+        if (one + " " + two in opcode) {
+            curInstruction = one + " " + two;
+
             i = i + 1;
 
-            if(numBytes[curInstruction] == 2 || numBytes[curInstruction] == 3){
+            if (
+                numBytes[curInstruction] == 2 ||
+                numBytes[curInstruction] == 3
+            ) {
                 curInstruction = curInstruction + " " + three;
                 instructions.push(curInstruction);
                 i = i + 1;
-            }
-            else{
+            } else {
                 instructions.push(curInstruction);
             }
         }
 
-        if((one+ " " + two + " " + three) in opcode){
+        if (one + " " + two + " " + three in opcode) {
             curInstruction = one + " " + two + " " + three;
             instructions.push(curInstruction);
             i = i + 2;
         }
 
-        if(curInstruction.length === 0){
+        if (curInstruction.length === 0) {
             curInstruction = i;
             errorList.push(curInstruction);
         }
-        
     }
     return instructions;
 }
 
-
-function getLabelMemoryLocation(instructions){
+function getLabelMemoryLocation(instructions) {
     let start = parseInt(startAddress);
     let offset = 0;
 
-    for(let i=0; i<instructions.length; i++){
+    for (let i = 0; i < instructions.length; i++) {
         curAddress = start + offset;
 
-        if(labelList.includes(instructions[i])){
-            label[instructions[i]] = curAddress.toString(16).toUpperCase().padStart(4, '0');
-        }
-        else{
+        if (labelList.includes(instructions[i])) {
+            label[instructions[i]] = curAddress
+                .toString(16)
+                .toUpperCase()
+                .padStart(4, "0");
+        } else {
             let curInstruction = instructions[i];
-            curInstruction = curInstruction.split(' ');
+            curInstruction = curInstruction.split(" ");
 
             let mnemonic = "";
-            for(let j=0; j<curInstruction.length; j++){
-                mnemonic += (" " + curInstruction[j]);
+            for (let j = 0; j < curInstruction.length; j++) {
+                mnemonic += " " + curInstruction[j];
                 mnemonic = mnemonic.trim();
 
-                if(mnemonic in opcode){
+                if (mnemonic in opcode) {
                     offset += parseInt(numBytes[mnemonic]);
                 }
             }
-            
         }
-
     }
-    
 }
 
-
-function getOpcodes(instructions){
+function getOpcodes(instructions) {
     /* 
         The input will be an array of instructions.
         Returns the opcode of the instructions.
-    */    
+    */
     let opcodeList = [];
-    try{
-        for(let i=0; i<instructions.length; i++){
-            if(checkInstructionError(instructions[i], label)[0]){
+    try {
+        for (let i = 0; i < instructions.length; i++) {
+            if (checkInstructionError(instructions[i], label)[0]) {
                 // err = checkInstructionError(instructions[i]);
                 // throw(err);
                 // console.log("Error")
             }
-                
+
             let code = parse(instructions[i], label);
             // console.log(code);
             opcodeList.push(code);
         }
 
         return opcodeList;
-    }
-    catch(err){
+    } catch (err) {
         console.log(err[1]);
     }
 }
 
+function getAssembledInstructions(pgm) {
+    getLabels(pgm);
+    var instructions = getInstructions(pgm);
+    getLabelMemoryLocation(instructions);
+    var byteCodes = getOpcodes(instructions);
+    byteCodes = byteCodes.filter(Boolean);
 
-// pgm = "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
-// instructionList = pgm.split(' ');
+    assembledJSON = {
+        byteCodes: byteCodes,
+        errorCodes: errorList,
+    };
+
+    return assembledJSON;
+}
+
+module.exports = { getAssembledInstructions };
+
+// pgm =
+//     "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
+// instructionList = pgm.split(" ");
 // getLabels(instructionList);
 // console.log(pgm);
 // console.log(instructionList);
