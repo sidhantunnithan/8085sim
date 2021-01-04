@@ -180,9 +180,15 @@ export class Registers extends Component {
                 <table className="number-converter">
                     <tbody>
                         <tr>
-                            <td className="register-value">Dec</td>
-                            <td className="register-value">Hex</td>
-                            <td className="register-value">Bin</td>
+                            <td className="register-value register-label">
+                                Dec
+                            </td>
+                            <td className="register-value register-label">
+                                Hex
+                            </td>
+                            <td className="register-value register-label">
+                                Bin
+                            </td>
                         </tr>
                         <tr>
                             <td className="register-value">

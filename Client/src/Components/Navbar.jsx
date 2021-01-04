@@ -36,7 +36,7 @@ export class Navbar extends Component {
         const url = window.URL.createObjectURL(new Blob([blob]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "test.asm");
+        link.setAttribute("download", `${this.props.filename}.asm`);
         link.click();
         window.URL.revokeObjectURL(link.href);
     };
@@ -95,7 +95,7 @@ export class Navbar extends Component {
                                     />
                                     <i className="fas fa-pen"></i>
                                 </li>
-                                <li className="projectAuthor">Sidhant</li>
+                                <li className="projectAuthor">8085sim</li>
                             </ul>
                         </li>
                     </ul>
