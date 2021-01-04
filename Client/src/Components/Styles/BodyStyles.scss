@@ -10,6 +10,10 @@
     overflow: hidden;
 }
 
+h1 {
+    cursor: alias;
+}
+
 /* Registers Start*/
 
 .registers-container {
@@ -31,16 +35,22 @@
     .primary-registers {
         margin-top: 20px;
         width: 100%;
+        cursor: alias;
     }
 
     .flag-registers {
         margin-top: 40px;
         width: 80%;
+        cursor: alias;
     }
 
     .number-converter {
         margin-top: 40px;
         width: 70%;
+
+        .register-label {
+            cursor: alias;
+        }
 
         input {
             border: none;
@@ -99,6 +109,10 @@
                 margin-right: 20px;
                 cursor: pointer;
             }
+            i:hover {
+                transform: rotate(360deg);
+                transition: transform 1s ease-in-out 0s;
+            }
         }
 
         input {
@@ -129,6 +143,7 @@
             width: 100%;
             display: grid;
             grid-template-columns: repeat(17, auto);
+            cursor: alias;
 
             .grid-bold {
                 font-weight: bold;
@@ -150,6 +165,11 @@
 
             i {
                 cursor: pointer;
+            }
+
+            i:hover {
+                transform: scale(1.2, 1.2);
+                transition: transform 0.1s ease-in-out 0s;
             }
 
             .disabled {
