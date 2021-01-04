@@ -11,17 +11,20 @@ export class EntireMemoryView extends Component {
         };
     }
 
+    // Load visible memory
     componentWillReceiveProps(nextProps) {
         var vis = Math.floor(nextProps.jumpTo / 16) * 16;
         this.setState({ visible: vis });
     }
 
+    // Handle right button clicked
     onRightNav = () => {
         this.setState({
             visible: this.state.visible + 16,
         });
     };
 
+    // Handle left button clicked
     onLeftNav = () => {
         this.setState({
             visible: this.state.visible - 16,

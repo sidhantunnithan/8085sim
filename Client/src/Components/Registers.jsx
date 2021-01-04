@@ -12,6 +12,11 @@ export class Registers extends Component {
         };
     }
 
+    // Utility functions :
+    // handleDecChange -> change in the decimal text field
+    // handleHexChange -> change in the hex text field
+    // handleBinChange -> change in the binary text field
+
     handleDecChange = (e) => {
         if (isNaN(e.target.value)) {
             return;

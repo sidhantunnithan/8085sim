@@ -13,12 +13,14 @@ export class Memory extends Component {
         };
     }
 
+    // Switch views between entire memory and loaded memory
     onMemoryViewChange = (e) => {
         this.setState({
             memoryView: e.target.value,
         });
     };
 
+    // Handle Jump To Address input field
     onJumpToChange = (e) => {
         var re = /^$|^([0-9A-F]){1,4}$/;
         if (!re.test(e.target.value.toUpperCase())) {
@@ -30,6 +32,7 @@ export class Memory extends Component {
         });
     };
 
+    // Handle Enter button pressed on Jump To Address input field
     onJumpEnter = (e) => {
         if (e.key === "Enter") {
             this.setState({
