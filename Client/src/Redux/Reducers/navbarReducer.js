@@ -1,5 +1,6 @@
 import * as actionTypes from "../Actions/types";
 
+// File name initialised to "Untitled"
 const initialState = {
     filename: "Untitled",
 };

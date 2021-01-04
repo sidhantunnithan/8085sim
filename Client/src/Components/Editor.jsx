@@ -10,15 +10,25 @@ import { editorOnChange } from "../Redux/Actions/editorOnChangeAction";
 export const Editor = (props) => {
     var editorRef = useRef();
 
+    // Save a reference to the editor
+    // editorRef will be used to get the value later
     function handleEditor(editor) {
         editorRef = editor;
         editorRef.onDidChangeContent(handleContentChange);
     }
 
+    // Change the state whenever content of the editor changes
     function handleContentChange(e) {
         props.editorOnChange(editorRef.getValue());
     }
 
+    // Initialise editor with following properties :
+    // value -> Initial Value of the editor
+    // language -> Custom language defined and imported as sim-lang
+    // theme -> Custom theme with syntax highlighting for specific language defined
+    //          and imported as sim-dark
+    // scrollbar -> Options to reduce the size from the default
+    // minimap -> Enable/Disable the minimap for the Monaco Editor
     monaco
         .init()
         .then((monacoInstance) => {

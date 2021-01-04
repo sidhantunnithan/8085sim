@@ -1,5 +1,6 @@
 import * as actionTypes from "../Actions/types";
 
+// Initial value of the text of the editor
 const initialState = {
     editorText: "",
 };

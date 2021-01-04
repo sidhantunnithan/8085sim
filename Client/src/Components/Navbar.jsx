@@ -16,6 +16,8 @@ export class Navbar extends Component {
 
     handleRunClick = (e) => {};
 
+    // Generate a new <a> tag and
+    // click it
     handleSaveClick = (e) => {
         const blob = store.getState().editorReducer.editorText;
         const url = window.URL.createObjectURL(new Blob([blob]));
@@ -26,6 +28,7 @@ export class Navbar extends Component {
         window.URL.revokeObjectURL(link.href);
     };
 
+    // Move text field out of focus on enter
     handleEnter = (e) => {
         if (e.keyCode === 13) {
             document.activeElement.blur();
@@ -33,6 +36,7 @@ export class Navbar extends Component {
         }
     };
 
+    // Handling empty text field
     handleBlur = (e) => {
         if (e.target.value == "") {
             this.props.navbarOnChange("Untitled");

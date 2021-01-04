@@ -1,3 +1,6 @@
+// Defining the custom language for Monaco Editor
+// with Intel 8085 Micro processor syntax
+
 export const SIM_LANG = {
     defaultToken: "invalid",
     ignoreCase: "true",
