@@ -60,11 +60,8 @@ export class EntireMemoryView extends Component {
                         .slice(starting, ending + 1)
                         .map((row, index) => {
                             return (
-                                <React.Fragment>
-                                    <div
-                                        key={index}
-                                        className="grid-element grid-bold"
-                                    >
+                                <React.Fragment key={index}>
+                                    <div className="grid-element grid-bold">
                                         {(
                                             "000" +
                                             (this.state.visible + index)
