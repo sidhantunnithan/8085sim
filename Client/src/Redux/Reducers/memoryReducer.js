@@ -2,6 +2,7 @@
 // The 65535 memory addresses from 0x0000 to 0xFFFF
 // is represented as a 4096 x 16 matrix
 // all initialised to zero
+import * as actionTypes from "../Actions/types";
 
 const initialState = {
     memory: new Array(4095).fill(0).map((i) => {
@@ -11,8 +12,16 @@ const initialState = {
 
 export default function memory(state = initialState, action) {
     switch (action.type) {
-        case "TEST":
-            return state.concat([action.text]);
+        case actionTypes.MEMORY_INIT:
+            return {
+                ...state,
+                memory: action.payload,
+            };
+        case actionTypes.MEMORY_RESET:
+            return {
+                ...state,
+                memory: action.payload,
+            };
         default:
             return state;
     }
