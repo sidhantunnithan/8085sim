@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const path = require("path");
 const { json } = require("body-parser");
 const { getAssembledInstructions } = require(__dirname + "/assembler.js");
 
@@ -8,7 +9,7 @@ const jsonParser = bodyParser.json();
 const port = 5050;
 
 app.get("/", (req, res) => {
-    res.send("<h1> Hello </h1>");
+    res.sendFile(path.join(__dirname, "../Client/build/index.html"));
 });
 
 app.post("/api", jsonParser, (req, res) => {
