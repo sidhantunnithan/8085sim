@@ -5,7 +5,7 @@ const { getAssembledInstructions } = require(__dirname + "/assembler.js");
 
 const app = express();
 const jsonParser = bodyParser.json();
-const port = 5000;
+const port = 5050;
 
 app.get("/", (req, res) => {
     res.send("<h1> Hello </h1>");
