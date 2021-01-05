@@ -2,11 +2,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const { json } = require("body-parser");
+
 const { getAssembledInstructions } = require(__dirname + "/assembler.js");
 
 const app = express();
 const jsonParser = bodyParser.json();
 const port = 5050;
+
+app.use(express.static(path.join(__dirname, "../Client/build")));
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../Client/build/index.html"));
@@ -31,5 +34,5 @@ app.post("/api", jsonParser, (req, res) => {
 });
 
 app.listen(port, function () {
-    console.log("server started");
+    console.log("Server Started on port " + port);
 });

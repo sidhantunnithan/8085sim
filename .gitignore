@@ -1,7 +1,7 @@
 Client/node_modules
+Client/.eslintcache
+Client/build/
 .vscode
 8085Instructions.pdf
 getInstructions.py  
 Server/node_modules
-
-Client/.eslintcache
