@@ -1,16 +1,16 @@
 import * as actionTypes from "../Actions/types";
 
-// File name initialised to "Untitled"
+// Initial value of the text of the editor
 const initialState = {
-    filename: "Untitled",
+    labelIndex: -1,
 };
 
-export default function navbar(state = initialState, action) {
+export default function assembled(state = initialState, action) {
     switch (action.type) {
-        case actionTypes.FILENAME_CHANGE:
+        case actionTypes.STEP_LABEL:
             return {
                 ...state,
-                filename: action.payload,
+                labelIndex: action.payload,
             };
         default:
             return state;

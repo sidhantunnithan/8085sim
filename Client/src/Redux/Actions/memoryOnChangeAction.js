@@ -1,12 +1,25 @@
 import * as actionTypes from "./types";
 import store from "../store";
 
+// payload = {
+//     byteCodes : [
+//         [byteCodes of line 1]
+//         [byteCodes of line 2]
+//         ...
+//     ]
+//     instructions: [
+//         "line 1"
+//         "line 2"
+//         ...
+//     ]
+// }
+
 export const memoryOnInit = (payload) => (dispatch) => {
     var linearMem = [];
     var memory = [...store.getState().memoryReducer.memory];
 
-    for (var i = 0; i < payload.length; i++) {
-        linearMem = linearMem.concat(payload[i]);
+    for (var i = 0; i < payload.byteCodes.length; i++) {
+        linearMem = linearMem.concat(payload.byteCodes[i]);
     }
 
     var j = 0;
@@ -20,7 +33,10 @@ export const memoryOnInit = (payload) => (dispatch) => {
 
     dispatch({
         type: actionTypes.MEMORY_INIT,
-        payload: memory,
+        payload: {
+            memory: memory,
+            instructions: payload.instructions,
+        },
     });
 };
 

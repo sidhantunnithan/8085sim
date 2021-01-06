@@ -8,6 +8,7 @@ const initialState = {
     memory: new Array(4095).fill(0).map((i) => {
         return new Array(16).fill(0);
     }),
+    instructions: [],
 };
 
 export default function memory(state = initialState, action) {
@@ -15,7 +16,8 @@ export default function memory(state = initialState, action) {
         case actionTypes.MEMORY_INIT:
             return {
                 ...state,
-                memory: action.payload,
+                memory: action.payload.memory,
+                instructions: action.payload.instructions,
             };
         case actionTypes.MEMORY_RESET:
             return {

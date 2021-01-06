@@ -6,6 +6,7 @@ import "./Styles/BodyStyles.scss";
 import SIM_LANG from "./EditorConfig/language";
 import SIM_THEME from "./EditorConfig/theme";
 import { editorOnChange } from "../Redux/Actions/editorOnChangeAction";
+import { bodyOnChange } from "../Redux/Actions/bodyOnChangeAction";
 
 export const Editor = (props) => {
     const [large, setLarge] = useState(0);
@@ -29,6 +30,11 @@ export const Editor = (props) => {
     // Change the state whenever content of the editor changes
     function handleContentChange(e) {
         props.editorOnChange(editorRef.getValue());
+    }
+
+    // Change editor view
+    function onViewChange(e) {
+        props.bodyOnChange(!props.editorView, editorRef.getValue());
     }
 
     // Initialise editor with following properties :
@@ -70,6 +76,9 @@ export const Editor = (props) => {
             monacoInstance.editor.onDidCreateModel(handleEditor);
             monacoInstance.editor.create(wrapper, properties);
         })
+        .then(() => {
+            editorRef.setValue(props.editorDisappearText);
+        })
         .catch((error) =>
             console.error(
                 "An error occurred during initialization of Monaco: ",
@@ -81,10 +90,21 @@ export const Editor = (props) => {
         <div id="editor-container" className="editor-container">
             <div className="header">
                 <h1>Editor</h1>
+                <i className="fas fa-table" onClick={onViewChange}></i>
             </div>
             <div id="editor-child" className="editor-child"></div>
         </div>
     );
 };
 
-export default connect(null, { editorOnChange })(Editor);
+const mapStateToProps = (state) => {
+    return {
+        editorView: state.bodyReducer.editorView,
+        editorDisappearText: state.bodyReducer.editorDisappearText,
+    };
+};
+
+export default connect(mapStateToProps, {
+    editorOnChange,
+    bodyOnChange,
+})(Editor);
