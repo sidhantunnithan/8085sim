@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { connect } from "react-redux";
 import { monaco } from "@monaco-editor/react";
 
@@ -8,13 +8,22 @@ import SIM_THEME from "./EditorConfig/theme";
 import { editorOnChange } from "../Redux/Actions/editorOnChangeAction";
 
 export const Editor = (props) => {
+    const [large, setLarge] = useState(0);
     var editorRef = useRef();
+
+    window.addEventListener("resize", handleEditorWidth);
 
     // Save a reference to the editor
     // editorRef will be used to get the value later
     function handleEditor(editor) {
         editorRef = editor;
         editorRef.onDidChangeContent(handleContentChange);
+    }
+
+    // handle 4K displays
+    function handleEditorWidth() {
+        if (window.innerWidth >= 2560) setLarge(1);
+        else setLarge(0);
     }
 
     // Change the state whenever content of the editor changes
@@ -38,6 +47,8 @@ export const Editor = (props) => {
                 language: "sim-lang",
                 theme: "sim-dark",
                 height: "100%",
+                fontSize: large == 1 ? "28px" : "16px",
+                automaticLayout: true,
                 scrollbar: {
                     useShadows: false,
                     vertical: "auto",

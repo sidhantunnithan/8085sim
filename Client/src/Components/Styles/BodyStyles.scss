@@ -1,3 +1,9 @@
+$large-monitor: 2506px;
+$intermediate-laptop-size: 1222px;
+$tablet-size: 901px;
+$mobile-size: 559px;
+$small-mobile-size: 375px;
+
 .body {
     flex: 1 1 auto;
     height: 90%;
@@ -196,3 +202,119 @@ h1 {
 }
 
 /* Memory End */
+
+@media (max-width: $intermediate-laptop-size) {
+    .registers-container {
+        flex: 1;
+    }
+
+    .editor-container {
+        flex: 2;
+        margin-right: 10px;
+    }
+
+    .memory-container {
+        flex: 2;
+    }
+}
+
+@media (max-width: $tablet-size) {
+    .body {
+        flex-wrap: wrap;
+        overflow: scroll;
+    }
+
+    .registers-container {
+        flex: 1;
+        order: 2;
+    }
+
+    .editor-container {
+        flex: 2;
+        order: 1;
+        flex-basis: 100%;
+        margin-bottom: 100px;
+    }
+
+    .memory-container {
+        flex: 2;
+        order: 3;
+        margin-bottom: 50px;
+    }
+}
+
+@media (max-width: $mobile-size) {
+    .registers-container {
+        flex-basis: 100%;
+        margin-bottom: 100px;
+        flex: 1;
+
+        .primary-registers {
+            .register-value {
+                text-align: right;
+            }
+        }
+
+        .flag-registers {
+            width: 100%;
+        }
+
+        .number-converter {
+            width: 100%;
+        }
+    }
+
+    .memory-container {
+        flex: 1;
+        margin-bottom: 50px;
+    }
+}
+
+@media (max-width: $small-mobile-size) {
+    .body {
+        padding: 50px 10px 0 10px;
+    }
+}
+
+@media (min-width: $large-monitor) {
+    h1 {
+        font-size: 5rem;
+    }
+
+    .registers-container {
+        font-size: 1.8rem;
+    }
+
+    .editor-container {
+        height: 1000px;
+
+        .editor-child {
+            font-size: 5rem;
+        }
+    }
+
+    .memory-container {
+        height: 1100px;
+
+        .header {
+            input {
+                font-size: 2rem;
+                width: 150px;
+            }
+        }
+
+        .entire-memory-view {
+            .grid {
+                font-size: 1.5rem;
+            }
+
+            .navigation {
+                font-size: 1.5rem;
+            }
+        }
+
+        .memory-views {
+            font-size: 2rem;
+        }
+    }
+}
