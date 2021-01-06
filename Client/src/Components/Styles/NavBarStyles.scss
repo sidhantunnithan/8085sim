@@ -8,6 +8,9 @@
     /* background-color: #fff; */
 }
 
+$small-mobile-size: 375px;
+$large-monitor-size: 2560px;
+
 *:focus {
     outline: none;
 }
@@ -95,4 +98,26 @@ input:focus {
     display: flex;
     align-items: center;
     justify-content: space-around;
+}
+
+@media (max-width: $small-mobile-size) {
+    .projectName {
+        font-size: 1rem;
+
+        i {
+            display: none;
+        }
+    }
+
+    .navbar {
+        .navbar-tail {
+            .navbar-item {
+                font-size: 0.9rem;
+            }
+
+            i {
+                margin-right: 5px;
+            }
+        }
+    }
 }
