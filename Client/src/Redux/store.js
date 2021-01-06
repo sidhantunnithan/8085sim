@@ -7,10 +7,18 @@ const middleware = [thunk];
 
 const initialState = {};
 
-const store = createStore(
-    rootReducer,
-    initialState,
-    composeWithDevTools(applyMiddleware(...middleware))
-);
+if (process.env.REACT_APP_PRODUCTION === "production") {
+    var store = createStore(
+        rootReducer,
+        initialState,
+        applyMiddleware(...middleware)
+    );
+} else {
+    var store = createStore(
+        rootReducer,
+        initialState,
+        composeWithDevTools(applyMiddleware(...middleware))
+    );
+}
 
 export default store;
