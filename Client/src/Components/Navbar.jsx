@@ -17,7 +17,8 @@ export class Navbar extends Component {
         this.props.navbarOnChange(e.target.value);
     };
 
-    handleRunClick = (e) => {
+    // Call API and set state with response
+    handleAssemblyClick = (e) => {
         axios
             .post(`/api`, {
                 code: store
@@ -26,7 +27,10 @@ export class Navbar extends Component {
                     .toUpperCase(),
             })
             .then((res) => {
-                this.props.memoryOnInit(res.data.payload.byteCodes);
+                this.props.memoryOnInit({
+                    byteCodes: res.data.payload.byteCodes,
+                    instructions: res.data.payload.instructions,
+                });
             });
     };
 
@@ -57,6 +61,11 @@ export class Navbar extends Component {
         }
     };
 
+    // Handle clicking on the pencil icon
+    handleOnPencilClick = (e) => {
+        document.getElementById("project-name-input").select();
+    };
+
     render() {
         return (
             <div className="navbar">
@@ -76,6 +85,7 @@ export class Navbar extends Component {
                                 <li className="projectName">
                                     <input
                                         type="text"
+                                        id="project-name-input"
                                         value={this.props.filename}
                                         onChange={this.handleProjectName}
                                         onKeyDown={this.handleEnter}
@@ -94,7 +104,10 @@ export class Navbar extends Component {
                                             }px`,
                                         }}
                                     />
-                                    <i className="fas fa-pen"></i>
+                                    <i
+                                        className="fas fa-pen"
+                                        onClick={this.handleOnPencilClick}
+                                    ></i>
                                 </li>
                                 <li className="projectAuthor">8085sim</li>
                             </ul>
@@ -103,10 +116,10 @@ export class Navbar extends Component {
                     <ul className="navbar-tail">
                         <li
                             className="navbar-item"
-                            onClick={this.handleRunClick}
+                            onClick={this.handleAssemblyClick}
                         >
                             <i className="fas fa-play"></i>
-                            Run
+                            Assemble
                         </li>
                         <li
                             className="navbar-item"

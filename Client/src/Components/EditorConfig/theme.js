@@ -12,9 +12,9 @@ export const SIM_THEME = {
         { token: "label", foreground: "00FF00" },
     ],
     colors: {
-        "editor.background": "#3d434d",
+        "editor.background": "#1f2227",
         "editorCursor.foreground": "#586677",
-        "editor.selectionBackground": "#88000030",
+        "editor.selectionBackground": "#153840",
     },
 };
 
