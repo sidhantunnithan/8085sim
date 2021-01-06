@@ -22,7 +22,8 @@ export class Navbar extends Component {
             .post(`/api`, {
                 code: store
                     .getState()
-                    .editorReducer.editorText.replace(/[\r\n\t]+/gm, " "),
+                    .editorReducer.editorText.replace(/[\r\n\t]+/gm, " ")
+                    .toUpperCase(),
             })
             .then((res) => {
                 this.props.memoryOnInit(res.data.payload.byteCodes);
