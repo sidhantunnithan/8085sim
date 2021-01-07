@@ -110,7 +110,7 @@ h1 {
     }
 
     .editor-child {
-        height: 100%;
+        height: 520px;
         margin-top: 20px;
     }
 
@@ -151,7 +151,7 @@ h1 {
     .assembled-child {
         margin-top: 20px;
         width: 100%;
-        height: 550px;
+        height: 520px;
         padding-right: 15px;
         box-sizing: content-box;
         overflow-y: scroll;
@@ -159,8 +159,10 @@ h1 {
         .assembled-table {
             display: flex;
             flex-direction: column;
+            align-items: center;
 
             .assembled-row {
+                width: 100%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -196,7 +198,7 @@ h1 {
     }
 
     .assembled-navigation {
-        margin-top: 40px;
+        margin-top: 20px;
         font-size: 1.2rem;
         width: 100%;
 
@@ -374,7 +376,15 @@ h1 {
         flex: 2;
         order: 1;
         flex-basis: 100%;
-        margin-bottom: 100px;
+        margin-bottom: 10px;
+    }
+
+    .assembled-container {
+        margin-right: 0px;
+        flex: 2;
+        order: 1;
+        flex-basis: 100%;
+        margin-bottom: 10px;
     }
 
     .memory-container {
@@ -427,10 +437,31 @@ h1 {
     }
 
     .editor-container {
-        height: 1000px;
+        height: 1100px;
 
         .editor-child {
+            height: 900px;
             font-size: 5rem;
+        }
+    }
+
+    .assembled-container {
+        height: 1100px;
+
+        .assembled-child {
+            height: 900px;
+            font-size: 2rem;
+
+            .assembled-table {
+                .assembled-row {
+                    .assembled-labels {
+                        height: 50px;
+                    }
+                    .assembled-instructions {
+                        height: 50px;
+                    }
+                }
+            }
         }
     }
 
