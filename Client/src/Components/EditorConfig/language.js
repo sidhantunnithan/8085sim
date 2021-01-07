@@ -197,7 +197,7 @@ export const SIM_LANG = {
         "cy",
     ],
 
-    label: /[a-zA-Z]*:$/,
+    label: /^[a-zA-Z]*:$/,
 
     tokenizer: {
         root: [
