@@ -4,10 +4,6 @@ import { bodyOnChange } from "../Redux/Actions/bodyOnChangeAction";
 import { stepLabel } from "../Redux/Actions/assembledOnChangeAction";
 
 export class Assembled extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     // Change editor view
     onViewChange = (e) => {
         this.props.bodyOnChange(

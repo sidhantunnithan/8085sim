@@ -53,7 +53,7 @@ export const Editor = (props) => {
                 language: "sim-lang",
                 theme: "sim-dark",
                 height: "100%",
-                fontSize: large == 1 ? "28px" : "16px",
+                fontSize: large === 1 ? "28px" : "16px",
                 automaticLayout: true,
                 scrollbar: {
                     useShadows: false,

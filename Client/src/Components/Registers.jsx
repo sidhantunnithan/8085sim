@@ -18,13 +18,14 @@ export class Registers extends Component {
     // handleBinChange -> change in the binary text field
 
     handleDecChange = (e) => {
-        if (isNaN(e.target.value)) {
-            return;
-        }
-
         var decNumber;
         var hexNumber;
         var binNumber;
+
+        var re = /^$|^([0-9]){1,5}$/;
+        if (!re.test(e.target.value)) {
+            return;
+        }
 
         if (e.target.value.length === 0) {
             decNumber = "";
@@ -48,6 +49,11 @@ export class Registers extends Component {
         var hexNumber;
         var binNumber;
 
+        var re = /^$|^([0-9A-F]){1,4}$/;
+        if (!re.test(e.target.value.toUpperCase())) {
+            return;
+        }
+
         if (e.target.value.length === 0) {
             decNumber = "";
             hexNumber = "";
@@ -66,7 +72,8 @@ export class Registers extends Component {
     };
 
     handleBinChange = (e) => {
-        if (isNaN(e.target.value)) {
+        var re = /^$|^([0-1]){1,12}$/;
+        if (!re.test(e.target.value)) {
             return;
         }
 

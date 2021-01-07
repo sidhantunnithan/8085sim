@@ -8,10 +8,6 @@ import { navbarOnChange } from "../Redux/Actions/navbarOnChange";
 import { memoryOnInit } from "../Redux/Actions/memoryOnChangeAction";
 
 export class Navbar extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     // Set state when project name is changed
     handleProjectName = (e) => {
         this.props.navbarOnChange(e.target.value);
@@ -56,7 +52,7 @@ export class Navbar extends Component {
 
     // Handling empty text field
     handleBlur = (e) => {
-        if (e.target.value == "") {
+        if (e.target.value === "") {
             this.props.navbarOnChange("Untitled");
         }
     };
