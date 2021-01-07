@@ -3,7 +3,10 @@ import { connect } from "react-redux";
 import "./Styles/BodyStyles.scss";
 import EntireMemoryView from "./MemoryViews/EntireMemoryView";
 import LoadedMemoryView from "./MemoryViews/LoadedMemoryView";
-import { memoryOnReset } from "../Redux/Actions/memoryOnChangeAction";
+import {
+    memoryOnReset,
+    memoryOnStep,
+} from "../Redux/Actions/memoryOnChangeAction";
 
 export class Memory extends Component {
     constructor(props) {
@@ -41,10 +44,11 @@ export class Memory extends Component {
     // Handle Enter button pressed on Jump To Address input field
     onJumpEnter = (e) => {
         if (e.key === "Enter") {
-            this.setState({
-                jumpText: ("0000" + e.target.value).slice(-4),
-                jumpTo: parseInt("0000" + e.target.value.slice(0, -1), 16),
-            });
+            this.props.memoryOnStep(
+                Math.floor(
+                    parseInt("0000" + e.target.value.slice(0, -1), 16) / 16
+                ) * 16
+            );
         }
     };
 
@@ -71,7 +75,7 @@ export class Memory extends Component {
                 </div>
 
                 {this.state.memoryView === "entire-memory" ? (
-                    <EntireMemoryView jumpTo={this.state.jumpTo} />
+                    <EntireMemoryView />
                 ) : (
                     <LoadedMemoryView />
                 )}
@@ -103,4 +107,4 @@ export class Memory extends Component {
     }
 }
 
-export default connect(null, { memoryOnReset })(Memory);
+export default connect(null, { memoryOnReset, memoryOnStep })(Memory);
