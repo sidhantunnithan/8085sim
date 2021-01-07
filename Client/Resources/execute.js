@@ -91,18 +91,23 @@ function execute(jsonInput)
 
 
     let opcodes = jsonInput["instructions"];
-    let start_address = jsonInput["start-instruction"];
+    let start_index = jsonInput["start-instruction"];
     let steps = jsonInput["steps"];
     let genReg = jsonInput["primary-registers"];
     let flagReg = jsonInput["flag-registers"];
     let memory = jsonInput["memory"];
 
-    start_address = parseInt(start_address, 16);    // converting to int
-    let memoryIndex = getMemoryIndex(start_address);
+    let ret;
+    for(let x=0; x<steps; x++){
+        console.log(opcodes[start_index + x]);
+        ret = instruction_def(opcodes[start_index + x], genReg, flagReg, memory);    
+        genReg = ret[0];
+        flagReg = ret[1];
+        memory = ret[2];
 
-    // for(let x=0; x<steps; x++){
-    
-    // }
+        console.log(genReg);
+        console.log(flagReg);
+    }
 
 }
 
@@ -116,7 +121,8 @@ function getMemoryIndex(address){
 
 
 function setFlagReg(acc, flagReg){
-    let bin = (acc >>> 0).toString(2).padStart(8,'0').slice(-8);
+    let bin = acc;
+    bin = (bin >>> 0).toString(2).padStart(8,'0').slice(-8);
 
     if(bin[0] === '1'){
         flagReg['S'] = "1";
@@ -209,10 +215,9 @@ function dcr(reg, genReg, flagReg){
     let operand = genReg[reg]
     
     operand = parseInt(operand, 16);
-
     operand -= 1;
-    operand.toString(16);
     flagReg = setFlagReg(operand, flagReg);
+    operand = operand.toString(16);
     operand = operand.toUpperCase().padStart(2, '0').slice(-2);
     genReg[reg] = operand;
 
@@ -310,7 +315,7 @@ function lxi(reg, byte3, byte2, genReg){
 }
 
 
-function instruction_def(instruction, address, genReg, flagReg, memory){
+function instruction_def(instruction, genReg, flagReg, memory){
     let tempAdd;
     let memoryIndex;
     let i;
@@ -747,7 +752,7 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             
             numBytes = 1;
             
-            return;
+            break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
@@ -875,8 +880,14 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
             byte3 = instruction[1];
             byte2 = instruction[2];
             
-            if(flagReg['Z'] !== 0){
+            if(flagReg['Z'] !== '0'){
                 genReg["PC"] = byte2 + byte3;
+            }
+            else{
+                let pc = genReg["PC"];
+                pc = parseInt(pc, 16) + 3;
+                pc = pc.toString(16).toUpperCase().padStart(4, '0');
+                genReg["PC"] = pc;
             }
 
             numBytes = 3;
@@ -1560,9 +1571,55 @@ function instruction_def(instruction, address, genReg, flagReg, memory){
         default: console.log(opcode);
     }
 
-    if(opcode !== "DA" || opcode !== "FA" || opcode !== "C3" || opcode !== "D2" || opcode !== "C2" || opcode !== "F2" || opcode !== "EA" || opcode !== "E2" || opcode !== "CA"){
-        genReg["PC"] = parseInt(genReg["PC"], 16) + numBytes;
-        genReg["PC"] = genReg["PC"].toString(16).toUpperCase().padStart(4, '0');
+    if(instruction[0] !== "DA" && instruction[0] !== "FA" && instruction[0] !== "C3" && instruction[0] !== "D2" && instruction[0] !== "C2" && instruction[0] !== "F2" && instruction[0] !== "EA" && instruction[0] !== "E2" && instruction[0] !== "CA"){
+        let pc = genReg["PC"];
+        pc = parseInt(pc, 16) + numBytes;
+        pc = pc.toString(16).toUpperCase().padStart(4, '0');
+        genReg["PC"] = pc;
     }
+
+    return [genReg, flagReg, memory];
     
 }
+
+
+// let input =  {
+//     instructions: [
+//             [ '21', '00', '50' ],
+//             [ '7E' ],
+//             [ '47' ],
+//             [ '0E', '09' ],
+//             [ '80' ],
+//             [ '0D' ],
+//             [ 'C2', '07', '00' ],
+//             [ '23' ],
+//             [ '86' ],
+//             [ '32', '00', '51' ],
+//             [ '76' ]
+//         ],
+//     "start-instruction": 2,
+//     steps: 9,
+//     "primary-registers": {
+//         A: "00",
+//         B: "00",    
+//         C: "00",
+//         D: "00",
+//         E: "00",
+//         H: "00",
+//         L: "00",
+//         M: "00",
+//         PC: "0000"
+//     },
+
+//     "flag-registers": {
+//         S: "00",
+//         Z: "00",
+//         P: "00",
+//         CY: "00",
+//         AC: "00",
+//     },
+
+//     memory: new Array(4096).fill(0).map(() => new Array(16).fill(0))
+// };
+
+// execute(input);
