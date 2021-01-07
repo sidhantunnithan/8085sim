@@ -59,14 +59,14 @@ function checkInstructionError(instruction, label) {
                 let operand = instruction.split(" ")[1];
                 let instructionSize = numBytes[mnemonic];
 
-                if (instructionSize === 2) {
+                if (instructionSize === "2") {
                     // for 2 byte instructions like ADI
                     if (operand.length !== 2 || !isHex(operand)) {
                         // to check if the operand is of 1 byte size
                         isError = true;
                         errorCode = 2;
                     }
-                } else if (instructionSize === 3) {
+                } else if (instructionSize === "3") {
                     // for 3 byte instructions like STA
                     if (
                         (operand.length !== 4 || !isHex(operand)) &&
@@ -85,14 +85,14 @@ function checkInstructionError(instruction, label) {
                 if (mnemonic in opcode) {
                     operand = instruction.split(" ")[2];
 
-                    if (numBytes[mnemonic] === 2) {
+                    if (numBytes[mnemonic] === "2") {
                         if (operand.length !== 2 || !isHex(operand)) {
                             isError = true;
                             errorCode = 2;
                         }
                     }
 
-                    if (numBytes[mnemonic] === 3) {
+                    if (numBytes[mnemonic] === "3") {
                         if (
                             (operand.length !== 4 || !isHex(operand)) &&
                             !(operand + ":" in label)
@@ -148,10 +148,10 @@ function parse(instruction, label) {
                 // for 2 byte instructions like ADI and 3 byte instructions like STA
                 instructionSize = numBytes[mnemonic];
 
-                if (instructionSize === 2) {
+                if (instructionSize === "2") {
                     // for 2 byte instructions like ADI
                     code = [opcode[mnemonic], instruction.split(" ")[1]];
-                } else if (instructionSize === 3) {
+                } else if (instructionSize === "3") {
                     // for 3 byte instructions like STA
                     var operand = instruction.split(" ")[1];
                     if (operand + ":" in label)
@@ -168,7 +168,7 @@ function parse(instruction, label) {
                 mnemonic = mnemonic + " " + instruction.split(" ")[1];
                 instructionSize = numBytes[mnemonic];
 
-                if (instructionSize === 2) {
+                if (instructionSize === "2") {
                     // for 2 byte instructions like MVI A
                     code = [opcode[mnemonic], instruction.split(" ")[2]];
                 } else {
