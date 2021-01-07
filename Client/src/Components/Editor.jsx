@@ -44,6 +44,7 @@ export const Editor = (props) => {
             model
                 .getValue()
                 .replace(/[\r\n\t]+/gm, " ")
+                .toUpperCase()
                 .split(" ")
         );
         console.log(instructionArray);
