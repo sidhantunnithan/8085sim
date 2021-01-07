@@ -17,10 +17,8 @@
     the instructionList is added to errorList.
 */
 
-const { checkInstructionError, parse } = require(__dirname +
-    "/Resources/parse.js");
-const { numBytes, opcode } = require(__dirname +
-    "/Resources/dataStructures.js");
+import { checkInstructionError, parse } from "./Resources/parse";
+import { numBytes, opcode } from "./Resources/dataStructures";
 
 const startAddress = "0000";
 
@@ -57,7 +55,6 @@ function getInstructions(instructionList) {
     */
 
     let instructions = [];
-    let n = 0;
 
     for (var i = 0; i < instructionList.length; i++) {
         let curInstruction = "";
@@ -76,8 +73,8 @@ function getInstructions(instructionList) {
             curInstruction = one;
 
             if (
-                numBytes[curInstruction] == 2 ||
-                numBytes[curInstruction] == 3
+                numBytes[curInstruction] === 2 ||
+                numBytes[curInstruction] === 3
             ) {
                 curInstruction += " " + two;
                 instructions.push(curInstruction);
@@ -94,8 +91,8 @@ function getInstructions(instructionList) {
             i = i + 1;
 
             if (
-                numBytes[curInstruction] == 2 ||
-                numBytes[curInstruction] == 3
+                numBytes[curInstruction] === 2 ||
+                numBytes[curInstruction] === 3
             ) {
                 curInstruction = curInstruction + " " + three;
                 instructions.push(curInstruction);
@@ -124,7 +121,7 @@ function getLabelMemoryLocation(instructions) {
     let offset = 0;
 
     for (let i = 0; i < instructions.length; i++) {
-        curAddress = start + offset;
+        var curAddress = start + offset;
 
         if (labelList.includes(instructions[i])) {
             label[instructions[i]] = curAddress
@@ -174,24 +171,22 @@ function getOpcodes(instructions) {
 }
 
 function getAssembledInstructions(pgm) {
-    return new Promise((resolve, reject) => {
-        getLabels(pgm);
-        var instructions = getInstructions(pgm);
-        getLabelMemoryLocation(instructions);
-        var byteCodes = getOpcodes(instructions);
-        byteCodes = byteCodes.filter(Boolean);
+    getLabels(pgm);
+    var instructions = getInstructions(pgm);
+    getLabelMemoryLocation(instructions);
+    var byteCodes = getOpcodes(instructions);
+    byteCodes = byteCodes.filter(Boolean);
 
-        assembledJSON = {
-            byteCodes: byteCodes,
-            instructions: instructions,
-            errorCodes: errorList,
-        };
+    var assembledJSON = {
+        byteCodes: byteCodes,
+        instructions: instructions,
+        errorCodes: errorList,
+    };
 
-        resolve(assembledJSON);
-    });
+    return assembledJSON;
 }
 
-module.exports = { getAssembledInstructions };
+export { getAssembledInstructions };
 
 // pgm =
 //     "START: LXI H 5000 MOV A M MOV B A MVI C 09 LOOP: ADD B DCR C JNZ LOOP INX H ADD M STA 5100 HLT";
