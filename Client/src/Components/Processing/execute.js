@@ -105,13 +105,18 @@ function execute(jsonInput)
         flagReg = ret[1];
         memory = ret[2];
 
-        console.log(genReg);
-        console.log(flagReg);
+        // console.log(genReg);
+        // console.log(flagReg);
     }
 
     let idx = getMemoryIndex(5000);
-    console.log(memory[idx[0]][idx[1]]);
+    // console.log(memory[idx[0]][idx[1]]);
 
+    return {
+        "primary-registers" : genReg,
+        "flag-registers" : flagReg,
+        "memory" : memory
+    };
 }
 
 
@@ -1590,42 +1595,47 @@ function instruction_def(instruction, genReg, flagReg, memory){
 }
 
 
-let input =  {
-    instructions: [
-            [ '3E', '09' ],
-            [ '47' ],
-            [ '0E', '09' ],
-            [ '80' ],
-            [ '0D' ],
-            [ 'C2', '07', '00' ],
-            [ '23' ],
-            [ '86' ],
-            [ '32', '00', '51' ],
-            [ '76' ]
-        ],
-    "start-instruction": 0,
-    steps: 9,
-    "primary-registers": {
-        A: "00",
-        B: "00",    
-        C: "00",
-        D: "00",
-        E: "00",
-        H: "00",
-        L: "00",
-        M: "00",
-        PC: "0000"
-    },
+export {execute};
 
-    "flag-registers": {
-        S: "00",
-        Z: "00",
-        P: "00",
-        CY: "00",
-        AC: "00",
-    },
 
-    memory: new Array(4096).fill(0).map(() => new Array(16).fill(0))
-};
+// let input =  {
+//     instructions: [
+//             [ '3E', '09' ],
+//             [ '47' ],
+//             [ '0E', '09' ],
+//             [ '80' ],
+//             [ '0D' ],
+//             [ 'C2', '07', '00' ],
+//             [ '23' ],
+//             [ '86' ],
+//             [ '32', '00', '51' ],
+//             [ '76' ]
+//         ],
+//     "start-instruction": 0,
+//     steps: 9,
+//     "primary-registers": {
+//         A: "00",
+//         B: "00",    
+//         C: "00",
+//         D: "00",
+//         E: "00",
+//         H: "00",
+//         L: "00",
+//         M: "00",
+//         PC: "0000"
+//     },
 
-execute(input);
+//     "flag-registers": {
+//         S: "00",
+//         Z: "00",
+//         P: "00",
+//         CY: "00",
+//         AC: "00",
+//     },
+
+//     memory: new Array(4096).fill(0).map(() => new Array(16).fill(0))
+// };
+
+// console.log(execute(input));
+
+
