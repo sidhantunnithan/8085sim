@@ -6,9 +6,9 @@ cd Client
 npm i
 npm run build
 
-print "\n\n### Building Server ###\n\n"
+printf "\n\n### Building Server ###\n\n"
 cd ../Server
 npm i
 
-print "\n\n### Restarting Service ###\n\n"
+printf "\n\n### Restarting Service ###\n\n"
 pm2 restart 8085-sim
