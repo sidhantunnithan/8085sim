@@ -37,6 +37,26 @@ export const Editor = (props) => {
         props.bodyOnChange(!props.editorView, editorRef.getValue());
     }
 
+    function onFormat(model, options, token) {
+        var instructionArray = model
+            .getValue()
+            .replace(/[\r\n\t]+/gm, " ")
+            .split(" ");
+        console.log(instructionArray);
+
+        return [
+            {
+                range: {
+                    startLineNumber: 1,
+                    startColumn: 1,
+                    endLineNumber: model.getLineCount() + 1,
+                    endColumn: 1,
+                },
+                text: "ADD B",
+            },
+        ];
+    }
+
     // Initialise editor with following properties :
     // value -> Initial Value of the editor
     // language -> Custom language defined and imported as sim-lang
@@ -71,6 +91,12 @@ export const Editor = (props) => {
             monacoInstance.languages.setMonarchTokensProvider(
                 "sim-lang",
                 SIM_LANG
+            );
+            monacoInstance.languages.registerDocumentFormattingEditProvider(
+                "sim-lang",
+                {
+                    provideDocumentFormattingEdits: onFormat,
+                }
             );
             monacoInstance.editor.defineTheme("sim-dark", SIM_THEME);
             monacoInstance.editor.onDidCreateModel(handleEditor);
