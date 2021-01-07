@@ -73,8 +73,8 @@ function getInstructions(instructionList) {
             curInstruction = one;
 
             if (
-                numBytes[curInstruction] === 2 ||
-                numBytes[curInstruction] === 3
+                numBytes[curInstruction] === "2" ||
+                numBytes[curInstruction] === "3"
             ) {
                 curInstruction += " " + two;
                 instructions.push(curInstruction);
@@ -91,8 +91,8 @@ function getInstructions(instructionList) {
             i = i + 1;
 
             if (
-                numBytes[curInstruction] === 2 ||
-                numBytes[curInstruction] === 3
+                numBytes[curInstruction] === "2" ||
+                numBytes[curInstruction] === "3"
             ) {
                 curInstruction = curInstruction + " " + three;
                 instructions.push(curInstruction);
@@ -171,6 +171,7 @@ function getOpcodes(instructions) {
 }
 
 function getAssembledInstructions(pgm) {
+    console.log(pgm);
     getLabels(pgm);
     var instructions = getInstructions(pgm);
     getLabelMemoryLocation(instructions);

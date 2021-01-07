@@ -56,6 +56,7 @@ export const Editor = (props) => {
             } else {
                 formattedString += "\t\t" + value + "\n";
             }
+            return value;
         });
 
         console.log(formattedString);
