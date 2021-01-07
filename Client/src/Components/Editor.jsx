@@ -7,6 +7,7 @@ import SIM_LANG from "./EditorConfig/language";
 import SIM_THEME from "./EditorConfig/theme";
 import { editorOnChange } from "../Redux/Actions/editorOnChangeAction";
 import { bodyOnChange } from "../Redux/Actions/bodyOnChangeAction";
+import { getAssembledInstructions } from "./Processing/assembler";
 
 export const Editor = (props) => {
     const [large, setLarge] = useState(0);
@@ -35,6 +36,41 @@ export const Editor = (props) => {
     // Change editor view
     function onViewChange(e) {
         props.bodyOnChange(!props.editorView, editorRef.getValue());
+    }
+
+    // Handle Formatter of Editor
+    function onFormat(model, options, token) {
+        var instructionArray = getAssembledInstructions(
+            model
+                .getValue()
+                .replace(/[\r\n\t]+/gm, " ")
+                .toUpperCase()
+                .split(" ")
+        );
+        console.log(instructionArray);
+
+        var formattedString = "";
+        instructionArray.instructions.map((value, index) => {
+            if (value.endsWith(":")) {
+                formattedString += value + "\n";
+            } else {
+                formattedString += "\t\t" + value + "\n";
+            }
+        });
+
+        console.log(formattedString);
+
+        return [
+            {
+                range: {
+                    startLineNumber: 1,
+                    startColumn: 1,
+                    endLineNumber: model.getLineCount() + 1,
+                    endColumn: 1,
+                },
+                text: formattedString,
+            },
+        ];
     }
 
     // Initialise editor with following properties :
@@ -71,6 +107,12 @@ export const Editor = (props) => {
             monacoInstance.languages.setMonarchTokensProvider(
                 "sim-lang",
                 SIM_LANG
+            );
+            monacoInstance.languages.registerDocumentFormattingEditProvider(
+                "sim-lang",
+                {
+                    provideDocumentFormattingEdits: onFormat,
+                }
             );
             monacoInstance.editor.defineTheme("sim-dark", SIM_THEME);
             monacoInstance.editor.onDidCreateModel(handleEditor);
