@@ -5,10 +5,11 @@
 import * as actionTypes from "../Actions/types";
 
 const initialState = {
-    memory: new Array(4095).fill(0).map((i) => {
+    memory: new Array(4096).fill(0).map((i) => {
         return new Array(16).fill(0);
     }),
     instructions: [],
+    visible: 0,
 };
 
 export default function memory(state = initialState, action) {
@@ -23,6 +24,11 @@ export default function memory(state = initialState, action) {
             return {
                 ...state,
                 memory: action.payload,
+            };
+        case actionTypes.MEMORY_STEP:
+            return {
+                ...state,
+                visible: action.payload,
             };
         default:
             return state;

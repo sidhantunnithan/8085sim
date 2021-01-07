@@ -1,38 +1,22 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+
 import "../Styles/BodyStyles.scss";
+import { memoryOnStep } from "../../Redux/Actions/memoryOnChangeAction";
 
 export class EntireMemoryView extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            visible: 0,
-        };
-    }
-
-    // Load visible memory
-    componentWillReceiveProps(nextProps) {
-        var vis = Math.floor(nextProps.jumpTo / 16) * 16;
-        this.setState({ visible: vis });
-    }
-
     // Handle right button clicked
     onRightNav = () => {
-        this.setState({
-            visible: this.state.visible + 16,
-        });
+        this.props.memoryOnStep(this.props.visible + 16);
     };
 
     // Handle left button clicked
     onLeftNav = () => {
-        this.setState({
-            visible: this.state.visible - 16,
-        });
+        this.props.memoryOnStep(this.props.visible - 16);
     };
 
     render() {
-        var starting = this.state.visible;
+        var starting = this.props.visible;
         var ending = starting + 15;
 
         return (
@@ -64,7 +48,7 @@ export class EntireMemoryView extends Component {
                                     <div className="grid-element grid-bold">
                                         {(
                                             "000" +
-                                            (this.state.visible + index)
+                                            (this.props.visible + index)
                                                 .toString(16)
                                                 .toUpperCase()
                                         ).slice(-3) + "0"}
@@ -85,7 +69,7 @@ export class EntireMemoryView extends Component {
                 </div>
 
                 <div className="navigation">
-                    {this.state.visible > 0 ? (
+                    {this.props.visible > 0 ? (
                         <i
                             className="fas fa-chevron-left"
                             onClick={this.onLeftNav}
@@ -104,7 +88,7 @@ export class EntireMemoryView extends Component {
                             .toUpperCase() + "F"}
                     </div>
 
-                    {this.state.visible !== 4080 ? (
+                    {this.props.visible !== 4080 ? (
                         <i
                             className="fas fa-chevron-right"
                             onClick={this.onRightNav}
@@ -118,11 +102,11 @@ export class EntireMemoryView extends Component {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
     return {
         memory: state.memoryReducer.memory,
-        visible: ownProps.jumpTo,
+        visible: state.memoryReducer.visible,
     };
 };
 
-export default connect(mapStateToProps)(EntireMemoryView);
+export default connect(mapStateToProps, { memoryOnStep })(EntireMemoryView);
