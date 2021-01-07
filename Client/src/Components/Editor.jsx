@@ -7,6 +7,7 @@ import SIM_LANG from "./EditorConfig/language";
 import SIM_THEME from "./EditorConfig/theme";
 import { editorOnChange } from "../Redux/Actions/editorOnChangeAction";
 import { bodyOnChange } from "../Redux/Actions/bodyOnChangeAction";
+import { getAssembledInstructions } from "./Processing/assembler";
 
 export const Editor = (props) => {
     const [large, setLarge] = useState(0);
@@ -37,12 +38,26 @@ export const Editor = (props) => {
         props.bodyOnChange(!props.editorView, editorRef.getValue());
     }
 
+    // Handle Formatter of Editor
     function onFormat(model, options, token) {
-        var instructionArray = model
-            .getValue()
-            .replace(/[\r\n\t]+/gm, " ")
-            .split(" ");
+        var instructionArray = getAssembledInstructions(
+            model
+                .getValue()
+                .replace(/[\r\n\t]+/gm, " ")
+                .split(" ")
+        );
         console.log(instructionArray);
+
+        var formattedString = "";
+        instructionArray.instructions.map((value, index) => {
+            if (value.endsWith(":")) {
+                formattedString += value + "\n";
+            } else {
+                formattedString += "\t\t" + value + "\n";
+            }
+        });
+
+        console.log(formattedString);
 
         return [
             {
@@ -52,7 +67,7 @@ export const Editor = (props) => {
                     endLineNumber: model.getLineCount() + 1,
                     endColumn: 1,
                 },
-                text: "ADD B",
+                text: formattedString,
             },
         ];
     }
