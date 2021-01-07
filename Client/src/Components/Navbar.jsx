@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import axios from "axios";
+
 import "./Styles/NavBarStyles.scss";
 import store from "../Redux/store";
 import Logo from "../res/logo.png";
 import { navbarOnChange } from "../Redux/Actions/navbarOnChange";
 import { memoryOnInit } from "../Redux/Actions/memoryOnChangeAction";
+import { getAssembledInstructions } from "./Processing/assembler";
 
 export class Navbar extends Component {
     // Set state when project name is changed
@@ -15,19 +16,18 @@ export class Navbar extends Component {
 
     // Call API and set state with response
     handleAssemblyClick = (e) => {
-        axios
-            .post(`/api`, {
-                code: store
-                    .getState()
-                    .editorReducer.editorText.replace(/[\r\n\t]+/gm, " ")
-                    .toUpperCase(),
-            })
-            .then((res) => {
-                this.props.memoryOnInit({
-                    byteCodes: res.data.payload.byteCodes,
-                    instructions: res.data.payload.instructions,
-                });
-            });
+        var payload = getAssembledInstructions(
+            store
+                .getState()
+                .editorReducer.editorText.replace(/[\r\n\t]+/gm, " ")
+                .toUpperCase()
+                .split(" ")
+        );
+
+        this.props.memoryOnInit({
+            byteCodes: payload.byteCodes,
+            instructions: payload.instructions,
+        });
     };
 
     // Generate a new <a> tag and
