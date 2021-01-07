@@ -90,7 +90,7 @@ function execute(jsonInput)
     // }
 
 
-    let opcodes = jsonInput["instructions"];
+    let instructions = jsonInput["instructions"];
     let start_index = jsonInput["start-instruction"];
     let steps = jsonInput["steps"];
     let genReg = jsonInput["primary-registers"];
@@ -99,8 +99,8 @@ function execute(jsonInput)
 
     let ret;
     for(let x=0; x<steps; x++){
-        console.log(opcodes[start_index + x]);
-        ret = instruction_def(opcodes[start_index + x], genReg, flagReg, memory);    
+        console.log(instructions[start_index + x]);
+        ret = instruction_def(instructions[start_index + x], genReg, flagReg, memory);    
         genReg = ret[0];
         flagReg = ret[1];
         memory = ret[2];
@@ -108,6 +108,9 @@ function execute(jsonInput)
         console.log(genReg);
         console.log(flagReg);
     }
+
+    let idx = getMemoryIndex(5000);
+    console.log(memory[idx[0]][idx[1]]);
 
 }
 
@@ -249,7 +252,7 @@ function inx(reg, genReg){
             operand = parseInt(operand, 16);
             operand++;
             operand = operand.toString(16).toUpperCase().padStart(4, '0');
-            genReg['B'] = operand.slice(2);
+            genReg['B'] = operand.slice(0, 2);
             genReg['C'] = operand.slice(-2);
             break;
 
@@ -258,7 +261,7 @@ function inx(reg, genReg){
             operand = parseInt(operand, 16);
             operand++;
             operand = operand.toString(16).toUpperCase().padStart(4, '0');
-            genReg['D'] = operand.slice(2);
+            genReg['D'] = operand.slice(0, 2);
             genReg['E'] = operand.slice(-2);
             break;
 
@@ -267,7 +270,7 @@ function inx(reg, genReg){
             operand = parseInt(operand, 16);
             operand++;
             operand = operand.toString(16).toUpperCase().padStart(4, '0');
-            genReg['H'] = operand.slice(2);
+            genReg['H'] = operand.slice(0, 2);
             genReg['L'] = operand.slice(-2);
             break;
 
@@ -1560,7 +1563,11 @@ function instruction_def(instruction, genReg, flagReg, memory){
             byte3 = instruction[1];
             byte2 = instruction[2];
 
-            memory[byte2 + byte3] = genReg['A'];
+            tempAdd = byte2 + byte3;
+            tempAdd = parseInt(tempAdd, 16);
+            memoryIndex = getMemoryIndex(tempAdd);
+
+            memory[[memoryIndex[0]][memoryIndex[1]]] = genReg['A'];
 
             numBytes = 3;
             
@@ -1583,43 +1590,42 @@ function instruction_def(instruction, genReg, flagReg, memory){
 }
 
 
-// let input =  {
-//     instructions: [
-//             [ '21', '00', '50' ],
-//             [ '7E' ],
-//             [ '47' ],
-//             [ '0E', '09' ],
-//             [ '80' ],
-//             [ '0D' ],
-//             [ 'C2', '07', '00' ],
-//             [ '23' ],
-//             [ '86' ],
-//             [ '32', '00', '51' ],
-//             [ '76' ]
-//         ],
-//     "start-instruction": 2,
-//     steps: 9,
-//     "primary-registers": {
-//         A: "00",
-//         B: "00",    
-//         C: "00",
-//         D: "00",
-//         E: "00",
-//         H: "00",
-//         L: "00",
-//         M: "00",
-//         PC: "0000"
-//     },
+let input =  {
+    instructions: [
+            [ '3E', '09' ],
+            [ '47' ],
+            [ '0E', '09' ],
+            [ '80' ],
+            [ '0D' ],
+            [ 'C2', '07', '00' ],
+            [ '23' ],
+            [ '86' ],
+            [ '32', '00', '51' ],
+            [ '76' ]
+        ],
+    "start-instruction": 0,
+    steps: 9,
+    "primary-registers": {
+        A: "00",
+        B: "00",    
+        C: "00",
+        D: "00",
+        E: "00",
+        H: "00",
+        L: "00",
+        M: "00",
+        PC: "0000"
+    },
 
-//     "flag-registers": {
-//         S: "00",
-//         Z: "00",
-//         P: "00",
-//         CY: "00",
-//         AC: "00",
-//     },
+    "flag-registers": {
+        S: "00",
+        Z: "00",
+        P: "00",
+        CY: "00",
+        AC: "00",
+    },
 
-//     memory: new Array(4096).fill(0).map(() => new Array(16).fill(0))
-// };
+    memory: new Array(4096).fill(0).map(() => new Array(16).fill(0))
+};
 
-// execute(input);
+execute(input);
