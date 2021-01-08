@@ -1,10 +1,10 @@
 import * as actionTypes from "./types";
 
-export const bodyOnChange = (editorView) => (dispatch, getState) => {
+export const bodyOnChange = () => (dispatch, getState) => {
     dispatch({
-        type: actionTypes.ASSEMBLED_VIEW,
+        type: actionTypes.SWITCH_VIEW,
         payload: {
-            editorView: editorView,
+            editorView: !getState().bodyReducer.editorView,
             editorDisappearText: getState().editorReducer.editorText,
         },
     });
