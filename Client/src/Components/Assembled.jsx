@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bodyOnChange } from "../Redux/Actions/bodyOnChangeAction";
-import { stepLabel } from "../Redux/Actions/assembledOnChangeAction";
+import {
+    stepLabelForward,
+    stepLabelBackward,
+} from "../Redux/Actions/assembledOnChangeAction";
+import { execute } from "../Components/Processing/execute";
 
 export class Assembled extends Component {
     // Change editor view
@@ -14,12 +18,34 @@ export class Assembled extends Component {
 
     // Handle run forward
     onStepForward = (e) => {
-        this.props.stepLabel(this.props.labelIndex + 1);
+        var propsCopy = JSON.parse(JSON.stringify(this.props));
+
+        if (this.props.labelIndex >= this.props.instructions.length - 1) {
+            this.props.stepLabelForward({
+                final: true,
+            });
+        } else {
+            var inputParams = execute({
+                instructions: propsCopy.opCodes,
+                "start-instruction": propsCopy.labelIndex + 1,
+                steps: 1,
+                "primary-registers": propsCopy.primaryRegisters,
+                "flag-registers": propsCopy.flagRegisters,
+                memory: propsCopy.memory,
+            });
+
+            this.props.stepLabelForward({
+                primaryRegisters: inputParams.primaryRegisters,
+                flagRegisters: inputParams.flagRegisters,
+                memory: inputParams.memory,
+                final: false,
+            });
+        }
     };
 
     // Handle run backward
     onStepBackward = (e) => {
-        this.props.stepLabel(this.props.labelIndex - 1);
+        this.props.stepLabelBackward();
     };
 
     render() {
@@ -115,10 +141,17 @@ export class Assembled extends Component {
 const mapStateToProps = (state) => {
     return {
         editorView: state.bodyReducer.editorView,
-        editorDisappearText: state.bodyReducer.editorDisappearText,
         instructions: state.memoryReducer.instructions,
         labelIndex: state.assembledReducer.labelIndex,
+        opCodes: state.memoryReducer.opCodes,
+        primaryRegisters: state.registerReducer.primaryRegisters,
+        flagRegisters: state.registerReducer.flagRegisters,
+        memory: state.memoryReducer.memory,
     };
 };
 
-export default connect(mapStateToProps, { bodyOnChange, stepLabel })(Assembled);
+export default connect(mapStateToProps, {
+    bodyOnChange,
+    stepLabelForward,
+    stepLabelBackward,
+})(Assembled);

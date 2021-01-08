@@ -152,6 +152,12 @@ export class Registers extends Component {
                                 {this.props.primaryRegisters.M}
                             </td>
                         </tr>
+                        <tr>
+                            <td>Program Counter</td>
+                            <td className="register-value">
+                                {this.props.primaryRegisters.PC}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
 

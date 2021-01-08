@@ -171,7 +171,6 @@ function getOpcodes(instructions) {
 }
 
 function getAssembledInstructions(pgm) {
-    console.log(pgm);
     getLabels(pgm);
     var instructions = getInstructions(pgm);
     getLabelMemoryLocation(instructions);
