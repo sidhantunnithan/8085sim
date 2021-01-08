@@ -11,8 +11,9 @@ export const MEMORY_BYTES = "MEMORY_BYTES"; // When memory bytes are changed
 export const MEMORY_RESET = "MEMORY_RESET"; // When memory is reset
 export const MEMORY_STEP = "MEMORY_STEP"; // When memory is reset
 
-export const ASSEMBLED_VIEW = "ASSEMBLED_VIEW"; // When view switched from editor and back
+export const SWITCH_VIEW = "SWITCH_VIEW"; // When view switched from editor and back
 export const STEP_LABEL = "STEP_LABEL"; // When view switched from editor and back
 export const STEP_LABEL_RESET = "STEP_LABEL_RESET"; // When view switched from editor and back
 
 export const STATE_STACK_CHANGE = "STATE_STACK_CHANGE"; // When stack is updated
+export const STATE_STACK_RESET = "STATE_STACK_RESET"; // When stack is updated

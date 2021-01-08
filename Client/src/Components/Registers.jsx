@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import "./Styles/BodyStyles.scss";
+import { registerReset } from "../Redux/Actions/registerOnChangeAction";
 
 export class Registers extends Component {
     constructor(props) {
@@ -11,6 +12,10 @@ export class Registers extends Component {
             bin: "",
         };
     }
+
+    onRegisterReset = (e) => {
+        this.props.registerReset();
+    };
 
     // Utility functions :
     // handleDecChange -> change in the decimal text field
@@ -101,7 +106,13 @@ export class Registers extends Component {
     render() {
         return (
             <div className="registers-container">
-                <h1>Registers</h1>
+                <div className="header">
+                    <h1>Registers</h1>
+                    <i
+                        className="fas fa-sync"
+                        onClick={this.onRegisterReset}
+                    ></i>
+                </div>
                 <table className="primary-registers">
                     <tbody>
                         <tr>
@@ -240,4 +251,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(Registers);
+export default connect(mapStateToProps, { registerReset })(Registers);

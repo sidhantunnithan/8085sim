@@ -1,7 +1,6 @@
 import * as actionTypes from "./types";
 
 export const stepLabelForward = (payloadLocal) => (dispatch, getState) => {
-    console.log(payloadLocal);
     // Push to stack
     var stateStackCopy = getState().stackReducer.stateStack;
 
@@ -10,7 +9,6 @@ export const stepLabelForward = (payloadLocal) => (dispatch, getState) => {
         flagRegisters: getState().registerReducer.flagRegisters,
         memory: getState().memoryReducer.memory,
     });
-    console.log(stateStackCopy);
 
     dispatch({
         type: actionTypes.STATE_STACK_CHANGE,
@@ -41,8 +39,6 @@ export const stepLabelBackward = () => (dispatch, getState) => {
 
     var stateStackCopy = getState().stackReducer.stateStack;
     var pastStack = stateStackCopy.pop();
-
-    console.log(stateStackCopy);
 
     dispatch({
         type: actionTypes.REGISTER_CHANGE,

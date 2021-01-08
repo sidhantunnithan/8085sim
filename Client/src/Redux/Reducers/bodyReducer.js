@@ -8,7 +8,7 @@ const initialState = {
 
 export default function body(state = initialState, action) {
     switch (action.type) {
-        case actionTypes.ASSEMBLED_VIEW:
+        case actionTypes.SWITCH_VIEW:
             return {
                 ...state,
                 editorView: action.payload.editorView,

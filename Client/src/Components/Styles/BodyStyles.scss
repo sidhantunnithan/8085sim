@@ -31,6 +31,21 @@ h1 {
     flex: 1;
     width: 100%;
 
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        i {
+            margin-right: 60px;
+            cursor: pointer;
+        }
+        i:hover {
+            transform: rotate(360deg);
+            transition: transform 1s ease-in-out 0s;
+        }
+    }
+
     table {
         table-layout: fixed;
     }
@@ -347,8 +362,18 @@ h1 {
 /* Memory End */
 
 @media (max-width: $intermediate-laptop-size) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
     .registers-container {
         flex: 1;
+
+        .header {
+            i {
+                margin-right: 40px;
+            }
+        }
     }
 
     .editor-container {
@@ -370,6 +395,12 @@ h1 {
     .registers-container {
         flex: 1;
         order: 2;
+
+        .header {
+            i {
+                margin-right: 52px;
+            }
+        }
     }
 
     .editor-container {
@@ -400,6 +431,12 @@ h1 {
         margin-bottom: 100px;
         flex: 1;
 
+        .header {
+            i {
+                margin-right: 5px;
+            }
+        }
+
         .primary-registers {
             .register-value {
                 text-align: right;
@@ -429,15 +466,27 @@ h1 {
 
 @media (min-width: $large-monitor) {
     h1 {
-        font-size: 5rem;
+        font-size: 4rem;
     }
 
     .registers-container {
         font-size: 1.8rem;
+
+        .header {
+            i {
+                margin-right: 110px;
+            }
+        }
     }
 
     .editor-container {
         height: 1100px;
+
+        .header {
+            i {
+                font-size: 2rem;
+            }
+        }
 
         .editor-child {
             height: 900px;
@@ -472,6 +521,10 @@ h1 {
             input {
                 font-size: 2rem;
                 width: 150px;
+            }
+
+            i {
+                font-size: 2rem;
             }
         }
 

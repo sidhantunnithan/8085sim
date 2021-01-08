@@ -1,5 +1,4 @@
 import * as actionTypes from "./types";
-import store from "../store";
 
 // payload = {
 //     byteCodes : [
@@ -14,9 +13,9 @@ import store from "../store";
 //     ]
 // }
 
-export const memoryOnInit = (payload) => (dispatch) => {
+export const memoryOnInit = (payload) => (dispatch, getState) => {
     var linearMem = [];
-    var memory = [...store.getState().memoryReducer.memory];
+    var memory = [...getState().memoryReducer.memory];
 
     for (let i = 0; i < payload.byteCodes.length; i++) {
         linearMem = linearMem.concat(payload.byteCodes[i]);
@@ -53,6 +52,16 @@ export const memoryOnInit = (payload) => (dispatch) => {
         type: actionTypes.REGISTER_PC_RESET,
         payload: "",
     });
+
+    if (getState().bodyReducer.editorView) {
+        dispatch({
+            type: actionTypes.SWITCH_VIEW,
+            payload: {
+                editorView: !getState().bodyReducer.editorView,
+                editorDisappearText: getState().editorReducer.editorText,
+            },
+        });
+    }
 };
 
 export const memoryOnReset = () => (dispatch) => {

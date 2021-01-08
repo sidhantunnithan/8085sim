@@ -12,6 +12,11 @@ export default function stack(state = initialState, action) {
                 ...state,
                 stateStack: action.payload,
             };
+        case actionTypes.STATE_STACK_RESET:
+            return {
+                ...state,
+                stateStack: [],
+            };
         default:
             return state;
     }

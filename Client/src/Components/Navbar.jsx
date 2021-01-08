@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import "./Styles/NavBarStyles.scss";
-import store from "../Redux/store";
 import Logo from "../res/logo.png";
 import { navbarOnChange } from "../Redux/Actions/navbarOnChange";
 import { memoryOnInit } from "../Redux/Actions/memoryOnChangeAction";
@@ -16,24 +15,25 @@ export class Navbar extends Component {
 
     // Call API and set state with response
     handleAssemblyClick = (e) => {
-        var payload = getAssembledInstructions(
-            store
-                .getState()
-                .editorReducer.editorText.replace(/[\r\n\t]+/gm, " ")
+        var propsCopy = JSON.parse(JSON.stringify(this.props));
+
+        var payloadLocal = getAssembledInstructions(
+            propsCopy.editorText
+                .replace(/[\r\n\t]+/gm, " ")
                 .toUpperCase()
                 .split(" ")
         );
 
         this.props.memoryOnInit({
-            byteCodes: payload.byteCodes,
-            instructions: payload.instructions,
+            byteCodes: payloadLocal.byteCodes,
+            instructions: payloadLocal.instructions,
         });
     };
 
     // Generate a new <a> tag and
     // click it
     handleSaveClick = (e) => {
-        const blob = store.getState().editorReducer.editorText;
+        const blob = this.props.editorText;
         const url = window.URL.createObjectURL(new Blob([blob]));
         const link = document.createElement("a");
         link.href = url;
@@ -134,6 +134,7 @@ export class Navbar extends Component {
 const mapStateToProps = (state) => {
     return {
         filename: state.navbarReducer.filename,
+        editorText: state.editorReducer.editorText,
     };
 };
 

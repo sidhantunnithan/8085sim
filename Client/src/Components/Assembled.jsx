@@ -10,10 +10,7 @@ import { execute } from "../Components/Processing/execute";
 export class Assembled extends Component {
     // Change editor view
     onViewChange = (e) => {
-        this.props.bodyOnChange(
-            !this.props.editorView,
-            this.props.editorDisappearText
-        );
+        this.props.bodyOnChange();
     };
 
     // Handle run forward
