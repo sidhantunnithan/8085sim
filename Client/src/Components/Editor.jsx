@@ -35,7 +35,7 @@ export const Editor = (props) => {
 
     // Change editor view
     function onViewChange(e) {
-        props.bodyOnChange(!props.editorView, editorRef.getValue());
+        props.bodyOnChange(!props.editorView);
     }
 
     // Handle Formatter of Editor

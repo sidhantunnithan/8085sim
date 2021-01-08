@@ -12,6 +12,11 @@ export default function assembled(state = initialState, action) {
                 ...state,
                 labelIndex: action.payload,
             };
+        case actionTypes.STEP_LABEL_RESET:
+            return {
+                ...state,
+                labelIndex: -1,
+            };
         default:
             return state;
     }

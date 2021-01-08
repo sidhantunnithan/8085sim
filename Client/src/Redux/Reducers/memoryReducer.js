@@ -9,6 +9,7 @@ const initialState = {
         return new Array(16).fill(0);
     }),
     instructions: [],
+    opCodes: [],
     visible: 0,
 };
 
@@ -19,6 +20,11 @@ export default function memory(state = initialState, action) {
                 ...state,
                 memory: action.payload.memory,
                 instructions: action.payload.instructions,
+            };
+        case actionTypes.MEMORY_BYTES:
+            return {
+                ...state,
+                opCodes: action.payload,
             };
         case actionTypes.MEMORY_RESET:
             return {

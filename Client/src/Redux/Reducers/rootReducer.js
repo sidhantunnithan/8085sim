@@ -5,6 +5,7 @@ import memoryReducer from "./memoryReducer";
 import editorReducer from "./editorReducer";
 import bodyReducer from "./bodyReducer";
 import assembledReducer from "./assembledReducer";
+import stackReducer from "./stackReducer";
 
 export default combineReducers({
     navbarReducer,
@@ -13,4 +14,5 @@ export default combineReducers({
     editorReducer,
     bodyReducer,
     assembledReducer,
+    stackReducer,
 });

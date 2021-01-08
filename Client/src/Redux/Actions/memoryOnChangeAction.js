@@ -38,6 +38,21 @@ export const memoryOnInit = (payload) => (dispatch) => {
             instructions: payload.instructions,
         },
     });
+
+    dispatch({
+        type: actionTypes.MEMORY_BYTES,
+        payload: payload.byteCodes,
+    });
+
+    dispatch({
+        type: actionTypes.STEP_LABEL_RESET,
+        payload: "",
+    });
+
+    dispatch({
+        type: actionTypes.REGISTER_PC_RESET,
+        payload: "",
+    });
 };
 
 export const memoryOnReset = () => (dispatch) => {

@@ -24,13 +24,13 @@
 //     [ '76' ]
 //   ]
 
-String.prototype.count=function(s1) { 
-    return (this.length - this.replace(new RegExp(s1,"g"), '').length) / s1.length;
-}
+String.prototype.count = function (s1) {
+    return (
+        (this.length - this.replace(new RegExp(s1, "g"), "").length) / s1.length
+    );
+};
 
-
-function execute(jsonInput)
-{
+function execute(jsonInput) {
     // Input
     // {
     //     instructions: [ (array opcodes returned from server) ]
@@ -38,57 +38,55 @@ function execute(jsonInput)
     //     steps: (number of instructions to process)
     //     primary-registers: {
     //         A: "00"
-    //         B: "00"		
+    //         B: "00"
     //         C: "00"
-    //         ...		
+    //         ...
     //     }
-    
+
     //     flag-registers: {
     //         S: "00"
     //         CY: "00"
     //         Z: "00"
     //         ...
     //     }
-    
+
     //     memory: [
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         .... (4095 times)    
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         .... (4095 times)
     //     ]
     // }
-
 
     // output
     // {
     //     primary-registers: {
     //         A: "00"
-    //         B: "00"		
+    //         B: "00"
     //         C: "00"
-    //         ...		
+    //         ...
     //     }
-    
+
     //     flag-registers: {
     //         S: "00"
     //         CY: "00"
     //         Z: "00"
     //         ...
     //     }
-    
+
     //     memory: [
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         [0, 0, 0, 0, ... (16 times)], 
-    //         .... (4095 times)    
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         [0, 0, 0, 0, ... (16 times)],
+    //         .... (4095 times)
     //     ]
     // }
-
 
     let instructions = jsonInput["instructions"];
     let start_index = jsonInput["start-instruction"];
@@ -98,9 +96,14 @@ function execute(jsonInput)
     let memory = jsonInput["memory"];
 
     let ret;
-    for(let x=0; x<steps; x++){
-        console.log(instructions[start_index + x]);
-        ret = instruction_def(instructions[start_index + x], genReg, flagReg, memory);    
+    for (let x = 0; x < steps; x++) {
+        // console.log(instructions[start_index + x]);
+        ret = instruction_def(
+            instructions[start_index + x],
+            genReg,
+            flagReg,
+            memory
+        );
         genReg = ret[0];
         flagReg = ret[1];
         memory = ret[2];
@@ -113,58 +116,51 @@ function execute(jsonInput)
     // console.log(memory[idx[0]][idx[1]]);
 
     return {
-        "primary-registers" : genReg,
-        "flag-registers" : flagReg,
-        "memory" : memory
+        primaryRegisters: genReg,
+        flagRegisters: flagReg,
+        memory: memory,
     };
 }
 
+function getMemoryIndex(address) {
+    let i = parseInt(address / 16);
+    let j = parseInt(address % 16);
 
-function getMemoryIndex(address){
-    let i = parseInt(address/16);
-    let j = parseInt(address%16);
-
-    return [i,j];
+    return [i, j];
 }
 
-
-function setFlagReg(acc, flagReg){
+function setFlagReg(acc, flagReg) {
     let bin = acc;
-    bin = (bin >>> 0).toString(2).padStart(8,'0').slice(-8);
+    bin = (bin >>> 0).toString(2).padStart(8, "0").slice(-8);
 
-    if(bin[0] === '1'){
-        flagReg['S'] = "1";
-    }
-    else{
-        flagReg['S'] = "0";
-    }
-
-    if(bin.count('1') === 0){
-        flagReg['Z'] = "1";
-    }
-    else{
-        flagReg['Z'] = "0";
+    if (bin[0] === "1") {
+        flagReg["S"] = "1";
+    } else {
+        flagReg["S"] = "0";
     }
 
-    if(bin.count('1')%2 === 0){
-        flagReg['P'] = "1";
-    }
-    else{
-        flagReg['P'] = "0";
+    if (bin.count("1") === 0) {
+        flagReg["Z"] = "1";
+    } else {
+        flagReg["Z"] = "0";
     }
 
-    if((acc >>> 0).toString(2).padStart(9,'0').slice(-9)[0] === '1'){
-        flagReg['CY'] = '1';
+    if (bin.count("1") % 2 === 0) {
+        flagReg["P"] = "1";
+    } else {
+        flagReg["P"] = "0";
     }
-    else{
-        flagReg['CY'] = '0';
+
+    if ((acc >>> 0).toString(2).padStart(9, "0").slice(-9)[0] === "1") {
+        flagReg["CY"] = "1";
+    } else {
+        flagReg["CY"] = "0";
     }
 
     return flagReg;
 }
 
-
-function adc(reg, genReg, flagReg){
+function adc(reg, genReg, flagReg) {
     let operand1 = genReg["A"];
     let operand2 = genReg[reg];
     let operand3 = flagReg["CY"];
@@ -173,37 +169,35 @@ function adc(reg, genReg, flagReg){
     operand2 = parseInt(operand2, 16);
     operand3 = parseInt(operand3, 16);
 
-    operand1 += (operand2 + operand3);
+    operand1 += operand2 + operand3;
     flagReg = setFlagReg(operand1, flagReg);
 
-    operand1 = operand1.toString(16).toUpperCase().padStart(2, '0').slice(-2);
+    operand1 = operand1.toString(16).toUpperCase().padStart(2, "0").slice(-2);
     genReg["A"] = operand1;
 
     return [genReg, flagReg];
 }
 
-
-function add(reg, genReg, flagReg){
-    let operand1 = genReg['A'];
-    operand1 = parseInt(operand1, 16)
+function add(reg, genReg, flagReg) {
+    let operand1 = genReg["A"];
+    operand1 = parseInt(operand1, 16);
     let operand2;
 
     operand2 = genReg[reg];
     operand2 = parseInt(operand2, 16);
-    
+
     operand1 += operand2;
 
     flagReg = setFlagReg(operand1, flagReg);
 
-    operand1 = operand1.toString(16).toUpperCase().padStart(2, '0').slice(-2);
-    genReg['A'] = operand1;
+    operand1 = operand1.toString(16).toUpperCase().padStart(2, "0").slice(-2);
+    genReg["A"] = operand1;
 
     return [genReg, flagReg];
 }
 
-
-function ana(reg, genReg, flagReg){
-    let operand1 = genReg['A'];
+function ana(reg, genReg, flagReg) {
+    let operand1 = genReg["A"];
     let operand2 = genReg[reg];
 
     operand1 = parseInt(operand1, 16);
@@ -212,104 +206,104 @@ function ana(reg, genReg, flagReg){
     operand1 = operand1 & operand2;
     flagReg = setFlagReg(operand1, flagReg);
 
-    operand1 = operand1.toString(16).toUpperCase().padStart(2, '0').slice(-2);
-    genReg['A'] = operand1;
+    operand1 = operand1.toString(16).toUpperCase().padStart(2, "0").slice(-2);
+    genReg["A"] = operand1;
 
     return [genReg, flagReg];
 }
 
+function dcr(reg, genReg, flagReg) {
+    let operand = genReg[reg];
 
-function dcr(reg, genReg, flagReg){
-    let operand = genReg[reg]
-    
     operand = parseInt(operand, 16);
     operand -= 1;
     flagReg = setFlagReg(operand, flagReg);
     operand = operand.toString(16);
-    operand = operand.toUpperCase().padStart(2, '0').slice(-2);
+    operand = operand.toUpperCase().padStart(2, "0").slice(-2);
     genReg[reg] = operand;
 
     return [genReg, flagReg];
 }
 
+function inr(reg, genReg, flagReg) {
+    let operand = genReg[reg];
 
-function inr(reg, genReg, flagReg){
-    let operand = genReg[reg]
-    
     operand = parseInt(operand, 16);
 
     operand += 1;
     operand.toString(16);
     flagReg = setFlagReg(operand, flagReg);
-    operand = operand.toUpperCase().padStart(2, '0').slice(-2);
+    operand = operand.toUpperCase().padStart(2, "0").slice(-2);
     genReg[reg] = operand;
 
     return [genReg, flagReg];
 }
 
-
-function inx(reg, genReg){
+function inx(reg, genReg) {
     let operand;
 
-    switch(reg){
-        case 'B' :
-            operand = genReg['B'] + genReg['C'];
+    switch (reg) {
+        case "B":
+            operand = genReg["B"] + genReg["C"];
             operand = parseInt(operand, 16);
             operand++;
-            operand = operand.toString(16).toUpperCase().padStart(4, '0');
-            genReg['B'] = operand.slice(0, 2);
-            genReg['C'] = operand.slice(-2);
+            operand = operand.toString(16).toUpperCase().padStart(4, "0");
+            genReg["B"] = operand.slice(0, 2);
+            genReg["C"] = operand.slice(-2);
             break;
 
-        case 'D' :
-            operand = genReg['D'] + genReg['E'];
+        case "D":
+            operand = genReg["D"] + genReg["E"];
             operand = parseInt(operand, 16);
             operand++;
-            operand = operand.toString(16).toUpperCase().padStart(4, '0');
-            genReg['D'] = operand.slice(0, 2);
-            genReg['E'] = operand.slice(-2);
+            operand = operand.toString(16).toUpperCase().padStart(4, "0");
+            genReg["D"] = operand.slice(0, 2);
+            genReg["E"] = operand.slice(-2);
             break;
 
-        case 'H' :
-            operand = genReg['H'] + genReg['L'];
+        case "H":
+            operand = genReg["H"] + genReg["L"];
             operand = parseInt(operand, 16);
             operand++;
-            operand = operand.toString(16).toUpperCase().padStart(4, '0');
-            genReg['H'] = operand.slice(0, 2);
-            genReg['L'] = operand.slice(-2);
+            operand = operand.toString(16).toUpperCase().padStart(4, "0");
+            genReg["H"] = operand.slice(0, 2);
+            genReg["L"] = operand.slice(-2);
             break;
 
-        case 'SP' :
-            operand = genReg['SP'];
+        case "SP":
+            operand = genReg["SP"];
             operand = parseInt(operand, 16);
             operand++;
-            operand = operand.toString(16).toUpperCase().padStart(4, '0').slice(-4);
-            genReg['SP'] = operand;
+            operand = operand
+                .toString(16)
+                .toUpperCase()
+                .padStart(4, "0")
+                .slice(-4);
+            genReg["SP"] = operand;
             break;
 
         default:
-            console.log('lol');
+            console.log("lol");
     }
 
     return genReg;
 }
 
-
-function lxi(reg, byte3, byte2, genReg){
-    switch(reg){
-        case 'B':
-            genReg['B'] = byte2;
-            genReg['C'] = byte3;
+function lxi(reg, byte3, byte2, genReg) {
+    switch (reg) {
+        case "B":
+            genReg["B"] = byte2;
+            genReg["C"] = byte3;
             break;
 
-        case 'D':
-            genReg['D'] = byte2;
-            genReg['E'] = byte3;
+        case "D":
+            genReg["D"] = byte2;
+            genReg["E"] = byte3;
             break;
 
-        case 'H':
-            genReg['H'] = byte2;
-            genReg['L'] = byte3;
+        case "H":
+            genReg["H"] = byte2;
+            genReg["L"] = byte3;
             break;
 
         case "SP":
@@ -322,8 +316,7 @@ function lxi(reg, byte3, byte2, genReg){
     return genReg;
 }
 
-
-function instruction_def(instruction, genReg, flagReg, memory){
+function instruction_def(instruction, genReg, flagReg, memory) {
     let tempAdd;
     let memoryIndex;
     let i;
@@ -334,30 +327,34 @@ function instruction_def(instruction, genReg, flagReg, memory){
     let numBytes;
 
     let opcode = instruction[0];
-    
-    switch(opcode){
-        
+
+    switch (opcode) {
         ///////////////////////////////////////////////////////////////////////////////////
 
         // ACI statement
-        case "CE" :
+        case "CE":
             // ACI 8bit_data
             byte2 = instruction[1];
             byte2 = parseInt(byte2, 16);
-            genReg["A"] = parseInt(genReg["A"]) + byte2 + parseInt(flagReg["CY"]);
+            genReg["A"] =
+                parseInt(genReg["A"]) + byte2 + parseInt(flagReg["CY"]);
             flagReg = setFlagReg(genReg["A"], flagReg);
-            genReg["A"] = genReg["A"].toString(16).toUpperCase().padStart(2, '0').slice(-2);
+            genReg["A"] = genReg["A"]
+                .toString(16)
+                .toUpperCase()
+                .padStart(2, "0")
+                .slice(-2);
 
             numBytes = 1;
 
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
-        
+
         // ADC statements
-        case "8F" :
+        case "8F":
             // ADC A
-            reg = adc('A', genReg, flagReg);
+            reg = adc("A", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
@@ -365,92 +362,92 @@ function instruction_def(instruction, genReg, flagReg, memory){
 
             break;
 
-        case "88" :
+        case "88":
             // ADC B
-            reg = adc('B', genReg, flagReg);
+            reg = adc("B", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
             numBytes = 1;
-            
+
             break;
 
-        case "89" :
+        case "89":
             // ADC C
-            reg = adc('C', genReg, flagReg);
+            reg = adc("C", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
-        numBytes = 1;
-        
-        break;
+            numBytes = 1;
 
-        case "8A" :
+            break;
+
+        case "8A":
             // ADC D
-            reg = adc('D', genReg, flagReg);
+            reg = adc("D", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
             numBytes = 1;
-            
+
             break;
 
-        case "8B" :
+        case "8B":
             // ADC E
-            reg = adc('E', genReg, flagReg);
+            reg = adc("E", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
             numBytes = 1;
-            
+
             break;
 
-        case "8C" :
+        case "8C":
             // ADC F
-            reg = adc('F', genReg, flagReg);
+            reg = adc("F", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
             numBytes = 1;
-            
+
             break;
 
-        case "8D" :
+        case "8D":
             // ADC L
-            reg = adc('L', genReg, flagReg);
+            reg = adc("L", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
             numBytes = 1;
-            
+
             break;
 
-        case "8E" :
+        case "8E":
             // ADC M
-            reg = adc('M', genReg, flagReg);
+            reg = adc("M", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
             numBytes = 1;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // ADD statements
-        case "87" :
+        case "87":
             // ADD A
-            reg = add('A', genReg, flagReg);
+            reg = add("A", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
 
             break;
 
-        case "80" :
+        case "80":
             // ADD B
-            reg = add('B', genReg, flagReg);
+            reg = add("B", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
 
@@ -458,142 +455,146 @@ function instruction_def(instruction, genReg, flagReg, memory){
 
             break;
 
-        case "81" :
+        case "81":
             // ADD C
-            reg = add('C', genReg, flagReg);
+            reg = add("C", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "82" :
+        case "82":
             // ADD D
-            reg = add('D', genReg, flagReg);
+            reg = add("D", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
 
             break;
 
-        case "83" :
+        case "83":
             // ADD E
-            reg = add('E', genReg, flagReg);
+            reg = add("E", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "84" :
+        case "84":
             // ADD H
-            reg = add('H', genReg, flagReg);
+            reg = add("H", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
 
             break;
 
-        case "85" :
+        case "85":
             // ADD L
-            reg = add('L', genReg, flagReg);
+            reg = add("L", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "86" :
+        case "86":
             // ADD M
-            reg = add('M', genReg, flagReg);
+            reg = add("M", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
-        
+
         // ADI statement
-        case "C6" :
+        case "C6":
             byte2 = instruction[1];
             byte2 = parseInt(byte2, 16);
             genReg["A"] = parseInt(genReg["A"], 16);
             genReg["A"] += byte2;
             flagReg = setFlagReg(genReg["A"], flagReg);
-            genReg["A"] = genReg["A"].toString(16).toUpperCase().padStart(2, '0').slice(-2);
-            
+            genReg["A"] = genReg["A"]
+                .toString(16)
+                .toUpperCase()
+                .padStart(2, "0")
+                .slice(-2);
+
             numBytes = 2;
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // ANA statements
-        case "A7" :
+        case "A7":
             // ANA A
-            reg = ana('A', genReg, flagReg);
+            reg = ana("A", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             numBytes = 1;
             break;
 
-        case "A0" :
+        case "A0":
             // ANA B
-            reg = ana('B', genReg, flagReg);
+            reg = ana("B", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             numBytes = 1;
             break;
 
-        case "A1" :
+        case "A1":
             // ANA C
-            reg = ana('C', genReg, flagReg);
+            reg = ana("C", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             numBytes = 1;
             break;
 
-        case "A2" :
+        case "A2":
             // ANA D
-            reg = ana('D', genReg, flagReg);
+            reg = ana("D", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             numBytes = 1;
             break;
 
-        case "A3" :
+        case "A3":
             // ANA E
-            reg = ana('E', genReg, flagReg);
+            reg = ana("E", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             numBytes = 1;
             break;
 
-        case "A4" :
+        case "A4":
             // ANA H
-            reg = ana('H', genReg, flagReg);
+            reg = ana("H", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             numBytes = 1;
             break;
 
-        case "A5" :
+        case "A5":
             // ANA L
-            reg = ana('L', genReg, flagReg);
+            reg = ana("L", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             numBytes = 1;
             break;
 
-        case "A6" :
+        case "A6":
             // ANA M
-            reg = ana('M', genReg, flagReg);
+            reg = ana("M", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
             numBytes = 1;
@@ -602,14 +603,18 @@ function instruction_def(instruction, genReg, flagReg, memory){
         ///////////////////////////////////////////////////////////////////////////////////
 
         // ANI statement
-        case "E6" :
+        case "E6":
             // ANI 8bit_data
             byte2 = instruction[1];
             byte2 = parseInt(byte2, 16);
-            genReg['A'] = parseInt(genReg['A'], 16);
-            genReg['A'] = genReg['A'] & byte2;
-            flagReg = setFlagReg(genReg['A'], flagReg);
-            genReg['A'] = genReg['A'].toString(16).toUpperCase().padStart(2, '0').slice(-2);
+            genReg["A"] = parseInt(genReg["A"], 16);
+            genReg["A"] = genReg["A"] & byte2;
+            flagReg = setFlagReg(genReg["A"], flagReg);
+            genReg["A"] = genReg["A"]
+                .toString(16)
+                .toUpperCase()
+                .padStart(2, "0")
+                .slice(-2);
 
             numBytes = 2;
             break;
@@ -617,7 +622,7 @@ function instruction_def(instruction, genReg, flagReg, memory){
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CALL statement
-        case "CD" :
+        case "CD":
             // CALL 16bit_data
 
             break;
@@ -625,7 +630,7 @@ function instruction_def(instruction, genReg, flagReg, memory){
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CC statement
-        case 'DC' :
+        case "DC":
             // CC 16bit_data
 
             break;
@@ -633,7 +638,7 @@ function instruction_def(instruction, genReg, flagReg, memory){
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CM statement
-        case "FC" :
+        case "FC":
             // CM 16bit_data
 
             break;
@@ -641,12 +646,16 @@ function instruction_def(instruction, genReg, flagReg, memory){
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CMA statement
-        case "2F" :
+        case "2F":
             // CMA
-            genReg['A'] = parseInt(genReg['A'] - 1, 16);
-            genReg['A'] = (genReg['A'] >>> 0).toString(2).slice(-8);
-            genReg['A'] = parseInt(genReg['A'], 2);
-            genReg['A'] = genReg['A'].toString(16).toUpperCase().padStart(2, '0').slice(-2);
+            genReg["A"] = parseInt(genReg["A"] - 1, 16);
+            genReg["A"] = (genReg["A"] >>> 0).toString(2).slice(-8);
+            genReg["A"] = parseInt(genReg["A"], 2);
+            genReg["A"] = genReg["A"]
+                .toString(16)
+                .toUpperCase()
+                .padStart(2, "0")
+                .slice(-2);
 
             numBytes = 1;
             break;
@@ -654,901 +663,897 @@ function instruction_def(instruction, genReg, flagReg, memory){
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CMC statement
-        case "3F" :
+        case "3F":
             // CMC
-            if(flagReg["CY"] === '0'){
-                flagReg["CY"] = '1';
-            }
-            else if(flagReg["CY"] === '1'){
-                flagReg["CY"] = '0';
+            if (flagReg["CY"] === "0") {
+                flagReg["CY"] = "1";
+            } else if (flagReg["CY"] === "1") {
+                flagReg["CY"] = "0";
             }
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CMP statements
-        
 
-        // 
+        //
 
         // DCR statements
-        case "3D" :
+        case "3D":
             // DCR A
-            reg = dcr('A', genReg, flagReg);
+            reg = dcr("A", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "05" :
+        case "05":
             // DCR B
-            reg = dcr('B', genReg, flagReg);
+            reg = dcr("B", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "0D" :
+        case "0D":
             // DCR C
-            reg = dcr('C', genReg, flagReg);
+            reg = dcr("C", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
-        
-        case "15" :
+
+        case "15":
             // DCR D
-            reg = dcr('D', genReg, flagReg);
+            reg = dcr("D", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "1D" :
+        case "1D":
             // DCR E
-            reg = dcr('E', genReg, flagReg);
+            reg = dcr("E", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "25" :
+        case "25":
             // DCR H
-            reg = dcr('H', genReg, flagReg);
+            reg = dcr("H", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "2D" :
+        case "2D":
             // DCR L
-            reg = dcr('L', genReg, flagReg);
+            reg = dcr("L", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "35" :
+        case "35":
             // DCR M
-            reg = dcr('M', genReg, flagReg);
+            reg = dcr("M", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // HLT statement
-        case "76" :
+        case "76":
             // HLT
-            
+
             numBytes = 1;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // INR statements
-        case "3C" :
+        case "3C":
             // INR A
-            reg = inr('A', genReg, flagReg);
+            reg = inr("A", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case  "04" :
+        case "04":
             // INR B
-            reg = inr('B', genReg, flagReg);
+            reg = inr("B", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case  "0C" :
+        case "0C":
             // INR C
-            reg = inr('C', genReg, flagReg);
+            reg = inr("C", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case  "14" :
+        case "14":
             // INR D
-            reg = inr('D', genReg, flagReg);
+            reg = inr("D", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case  "1C" :
+        case "1C":
             // INR E
-            reg = inr('E', genReg, flagReg);
+            reg = inr("E", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case  "24" :
+        case "24":
             // INR H
-            reg = inr('H', genReg, flagReg);
+            reg = inr("H", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case  "2C" :
+        case "2C":
             // INR L
-            reg = inr('L', genReg, flagReg);
+            reg = inr("L", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case  "34" :
+        case "34":
             // INR M
-            reg = inr('M', genReg, flagReg);
+            reg = inr("M", genReg, flagReg);
             genReg = reg[0];
             flagReg = reg[1];
-            
+
             numBytes = 1;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // INX statements
-        case "03" :
-            // INX B 
-            genReg = inx('B', genReg);
-            
+        case "03":
+            // INX B
+            genReg = inx("B", genReg);
+
             numBytes = 1;
-            
+
             break;
 
-        case "13" :
-            // INX D 
-            genReg = inx('D', genReg);
-            
+        case "13":
+            // INX D
+            genReg = inx("D", genReg);
+
             numBytes = 1;
-            
+
             break;
 
-        case "23" :
-            // INX H 
-            genReg = inx('H', genReg);
-            
+        case "23":
+            // INX H
+            genReg = inx("H", genReg);
+
             numBytes = 1;
-            
+
             break;
 
-        case "33" :
-            // INX SP 
-            genReg = inx('SP', genReg);
-            
+        case "33":
+            // INX SP
+            genReg = inx("SP", genReg);
+
             numBytes = 1;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // JNZ statement
-        case "C2" :
+        case "C2":
             // JNZ 16bit_data
             byte3 = instruction[1];
             byte2 = instruction[2];
-            
-            if(flagReg['Z'] !== '0'){
+
+            if (flagReg["Z"] !== "0") {
                 genReg["PC"] = byte2 + byte3;
-            }
-            else{
+            } else {
                 let pc = genReg["PC"];
                 pc = parseInt(pc, 16) + 3;
-                pc = pc.toString(16).toUpperCase().padStart(4, '0');
+                pc = pc.toString(16).toUpperCase().padStart(4, "0");
                 genReg["PC"] = pc;
             }
 
             numBytes = 3;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // LXI statements
-        case "01" :
+        case "01":
             // LXI B 16bit_data
-            reg = 'B';
+            reg = "B";
             byte3 = instruction[1];
             byte2 = instruction[2];
 
             genReg = lxi(reg, byte3, byte2, genReg);
-            
+
             numBytes = 3;
-            
+
             break;
 
-        case "11" :
+        case "11":
             // LXI D 16bit_data
-            reg = 'D';
+            reg = "D";
             byte3 = instruction[1];
             byte2 = instruction[2];
 
             genReg = lxi(reg, byte3, byte2, genReg);
-            
+
             numBytes = 3;
-            
+
             break;
-            
-        case "21" :
+
+        case "21":
             // LXI H 16bit_data
-            reg = 'H';
+            reg = "H";
             byte3 = instruction[1];
             byte2 = instruction[2];
 
             genReg = lxi(reg, byte3, byte2, genReg);
-            
+
             numBytes = 3;
-            
+
             break;
 
-        case "31" :
+        case "31":
             // LXI SP 16bit_data
-            reg = 'SP';
+            reg = "SP";
             byte3 = instruction[1];
             byte2 = instruction[2];
 
             genReg = lxi(reg, byte3, byte2, genReg);
-            
+
             numBytes = 3;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // MOV statements
-        case "7F" :
+        case "7F":
             // MOV A A
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "78" :
+        case "78":
             // MOV A B
             genReg["A"] = genReg["B"];
-            
+
             numBytes = 1;
-            
+
             break;
-        
-        case "79" :
+
+        case "79":
             // MOV A C
             genReg["A"] = genReg["C"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "7A" :
+        case "7A":
             // MOV A D
             genReg["A"] = genReg["D"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "7B" :
+        case "7B":
             // MOV A E
             genReg["A"] = genReg["E"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "7C" :
+        case "7C":
             // MOV A H
             genReg["A"] = genReg["H"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "7D" :
+        case "7D":
             // MOV A L
             genReg["A"] = genReg["L"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "7E" :
+        case "7E":
             // MOV A M
-            genReg["A"] = genReg['M'];
-            
-            numBytes = 1;
-            
-            break;
-    
+            genReg["A"] = genReg["M"];
 
-        case "47" :
+            numBytes = 1;
+
+            break;
+
+        case "47":
             // MOV B A
             genReg["B"] = genReg["A"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "40" :
+        case "40":
             // MOV B B
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "41" :
+        case "41":
             // MOV B C
             genReg["B"] = genReg["C"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "42" :
+        case "42":
             // MOV B D
             genReg["B"] = genReg["D"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "43" :
+        case "43":
             // MOV B E
             genReg["B"] = genReg["E"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "44" :
+        case "44":
             // MOV B H
             genReg["B"] = genReg["H"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "45" :
+        case "45":
             // MOV B L
             genReg["B"] = genReg["L"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "46" :
+        case "46":
             // MOV B M
-            genReg["B"] = genReg['M'];
-            
+            genReg["B"] = genReg["M"];
+
             numBytes = 1;
-            
+
             break;
-    
-        case "4F" :
+
+        case "4F":
             // MOV C A
             genReg["C"] = genReg["A"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "48" :
+        case "48":
             // MOV C B
             genReg["C"] = genReg["B"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "49" :
+        case "49":
             // MOV C C
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "4A" :
+        case "4A":
             // MOV C D
             genReg["C"] = genReg["D"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "4B" :
+        case "4B":
             // MOV C E
             genReg["C"] = genReg["E"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "4C" :
+        case "4C":
             // MOV C H
             genReg["C"] = genReg["H"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "4D" :
+        case "4D":
             // MOV C L
             genReg["C"] = genReg["L"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "4E" :
+        case "4E":
             // MOV C M
-            genReg["C"] = genReg['M'];
-            
+            genReg["C"] = genReg["M"];
+
             numBytes = 1;
-            
+
             break;
 
-        case "57" :
+        case "57":
             // MOV D A
             genReg["D"] = genReg["A"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "50" :
+        case "50":
             // MOV D B
             genReg["D"] = genReg["B"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "51" :
+        case "51":
             // MOV D C
             genReg["D"] = genReg["C"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "52" :
+        case "52":
             // MOV D D
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "53" :
+        case "53":
             // MOV D E
             genReg["D"] = genReg["E"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "54" :
+        case "54":
             // MOV D H
             genReg["D"] = genReg["H"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "55" :
+        case "55":
             // MOV D L
             genReg["D"] = genReg["L"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "56" :
+        case "56":
             // MOV D M
-            genReg["D"] = genReg['M'];
-            
+            genReg["D"] = genReg["M"];
+
             numBytes = 1;
-            
+
             break;
 
-        case "5F" :
+        case "5F":
             // MOV E A
             genReg["E"] = genReg["A"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "58" :
+        case "58":
             // MOV E B
             genReg["E"] = genReg["B"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "59" :
+        case "59":
             // MOV E C
             genReg["E"] = genReg["C"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "5A" :
+        case "5A":
             // MOV E D
             genReg["E"] = genReg["D"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "5B" :
+        case "5B":
             // MOV E E
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "5C" :
+        case "5C":
             // MOV E H
             genReg["E"] = genReg["H"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "5D" :
+        case "5D":
             // MOV E L
             genReg["E"] = genReg["L"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "5E" :
+        case "5E":
             // MOV E M
-            genReg["E"] = genReg['M'];
-            
+            genReg["E"] = genReg["M"];
+
             numBytes = 1;
-            
+
             break;
 
-        case "67" :
+        case "67":
             // MOV H A
             genReg["H"] = genReg["A"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "60" :
+        case "60":
             // MOV H B
             genReg["H"] = genReg["B"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "61" :
+        case "61":
             // MOV H C
             genReg["H"] = genReg["C"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "62" :
+        case "62":
             // MOV H D
             genReg["H"] = genReg["D"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "63" :
+        case "63":
             // MOV H E
             genReg["H"] = genReg["E"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "64" :
+        case "64":
             // MOV H H
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "65" :
+        case "65":
             // MOV H L
             genReg["H"] = genReg["L"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "66" :
+        case "66":
             // MOV H M
-            genReg["H"] = genReg['M'];
-            
+            genReg["H"] = genReg["M"];
+
             numBytes = 1;
-            
+
             break;
 
-        case "6F" :
+        case "6F":
             // MOV L A
             genReg["L"] = genReg["A"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "68" :
+        case "68":
             // MOV L B
             genReg["L"] = genReg["B"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "69" :
+        case "69":
             // MOV L C
             genReg["L"] = genReg["C"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "6A" :
+        case "6A":
             // MOV L D
             genReg["L"] = genReg["D"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "6B" :
+        case "6B":
             // MOV L E
             genReg["L"] = genReg["E"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "6C" :
+        case "6C":
             // MOV L H
             genReg["L"] = genReg["H"];
-            
+
             numBytes = 1;
-            
+
             break;
 
-        case "6D" :
+        case "6D":
             // MOV L L
 
             numBytes = 1;
-            
+
             break;
 
-        case "6E" :
+        case "6E":
             // MOV L M
-            genReg["L"] = genReg['M'];
-            
+            genReg["L"] = genReg["M"];
+
             numBytes = 1;
-            
+
             break;
 
-        case "77" :
+        case "77":
             // MOV M A
             tempAdd = genReg["H"] + genReg["L"];
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["A"];
-            
-            genReg["M"] = genReg["A"]
+
+            genReg["M"] = genReg["A"];
             numBytes = 1;
-            
+
             break;
 
-        case "70" :
+        case "70":
             // MOV M B
             tempAdd = genReg["H"] + genReg["L"];
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["B"];
-            
-            genReg["M"] = genReg["B"]
+
+            genReg["M"] = genReg["B"];
             numBytes = 1;
-            
+
             break;
 
-        case "71" :
+        case "71":
             // MOV M C
             tempAdd = genReg["H"] + genReg["L"];
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["C"];
-            
-            genReg["M"] = genReg["C"]
+
+            genReg["M"] = genReg["C"];
             numBytes = 1;
-            
+
             break;
 
-        case "72" :
+        case "72":
             // MOV M D
             tempAdd = genReg["H"] + genReg["L"];
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["D"];
-            
-            genReg["M"] = genReg["D"]
+
+            genReg["M"] = genReg["D"];
             numBytes = 1;
-            
+
             break;
 
-        case "73" :
+        case "73":
             // MOV M E
             tempAdd = genReg["H"] + genReg["L"];
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["E"];
-            
-            genReg["M"] = genReg["E"]
+
+            genReg["M"] = genReg["E"];
             numBytes = 1;
-            
+
             break;
 
-        case "74" :
+        case "74":
             // MOV M H
             tempAdd = genReg["H"] + genReg["L"];
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["H"];
-            
-            genReg["M"] = genReg["H"]
+
+            genReg["M"] = genReg["H"];
             numBytes = 1;
-            
+
             break;
 
-        case "75" :
+        case "75":
             // MOV M L
             tempAdd = genReg["H"] + genReg["L"];
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
             memory[memoryIndex[0]][memoryIndex[1]] = genReg["L"];
-            
-            genReg["M"] = genReg["L"]
+
+            genReg["M"] = genReg["L"];
             numBytes = 1;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // MVI statements
-        case "3E" :
+        case "3E":
             // MVI A 8bit_data
             byte2 = instruction[1];
             genReg["A"] = byte2;
 
             numBytes = 2;
-            
+
             break;
 
-        case "06" :
+        case "06":
             // MVI B 8bit_data
             byte2 = instruction[1];
             genReg["B"] = byte2;
-            
+
             numBytes = 2;
-            
+
             break;
 
-        case "0E" :
+        case "0E":
             // MVI C 8bit_data
             byte2 = instruction[1];
             genReg["C"] = byte2;
-            
+
             numBytes = 2;
-            
+
             break;
 
-        case "16" :
+        case "16":
             // MVI D 8bit_data
             byte2 = instruction[1];
             genReg["D"] = byte2;
-            
+
             numBytes = 2;
-            
+
             break;
 
-        case "1E" :
+        case "1E":
             // MVI E 8bit_data
             byte2 = instruction[1];
             genReg["E"] = byte2;
-            
+
             numBytes = 2;
-            
+
             break;
 
-        case "26" :
+        case "26":
             // MVI H 8bit_data
             byte2 = instruction[1];
             genReg["H"] = byte2;
-            
+
             numBytes = 2;
-            
+
             break;
 
-        case "2E" :
+        case "2E":
             // MVI L 8bit_data
             byte2 = instruction[1];
             genReg["L"] = byte2;
-            
+
             numBytes = 2;
-            
+
             break;
 
-        case "36" :
+        case "36":
             // MVI M 8bit_data
             byte2 = instruction[1];
             tempAdd = genReg["H"] + genReg["L"];
@@ -1558,13 +1563,13 @@ function instruction_def(instruction, genReg, flagReg, memory){
             genReg["M"] = byte2;
 
             numBytes = 2;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // STA statement
-        case "32" :
+        case "32":
             byte3 = instruction[1];
             byte2 = instruction[2];
 
@@ -1572,31 +1577,39 @@ function instruction_def(instruction, genReg, flagReg, memory){
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
 
-            memory[[memoryIndex[0]][memoryIndex[1]]] = genReg['A'];
+            memory[[memoryIndex[0]][memoryIndex[1]]] = genReg["A"];
 
             numBytes = 3;
-            
+
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
-        default: console.log(opcode);
+        default:
+            console.log(opcode);
     }
 
-    if(instruction[0] !== "DA" && instruction[0] !== "FA" && instruction[0] !== "C3" && instruction[0] !== "D2" && instruction[0] !== "C2" && instruction[0] !== "F2" && instruction[0] !== "EA" && instruction[0] !== "E2" && instruction[0] !== "CA"){
+    if (
+        instruction[0] !== "DA" &&
+        instruction[0] !== "FA" &&
+        instruction[0] !== "C3" &&
+        instruction[0] !== "D2" &&
+        instruction[0] !== "C2" &&
+        instruction[0] !== "F2" &&
+        instruction[0] !== "EA" &&
+        instruction[0] !== "E2" &&
+        instruction[0] !== "CA"
+    ) {
         let pc = genReg["PC"];
         pc = parseInt(pc, 16) + numBytes;
-        pc = pc.toString(16).toUpperCase().padStart(4, '0');
+        pc = pc.toString(16).toUpperCase().padStart(4, "0");
         genReg["PC"] = pc;
     }
 
     return [genReg, flagReg, memory];
-    
 }
 
-
-export {execute};
-
+export { execute };
 
 // let input =  {
 //     instructions: [
@@ -1615,7 +1628,7 @@ export {execute};
 //     steps: 9,
 //     "primary-registers": {
 //         A: "00",
-//         B: "00",    
+//         B: "00",
 //         C: "00",
 //         D: "00",
 //         E: "00",
@@ -1637,5 +1650,3 @@ export {execute};
 // };
 
 // console.log(execute(input));
-
-
