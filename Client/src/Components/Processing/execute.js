@@ -675,7 +675,121 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CMP statements
+        case "BF" :
+            // CMP A
+            flagReg = cmp('A', genReg, flagReg);
 
+            numBytes = 1;
+            break;
+
+        case "B8" :
+            // CMP B
+            flagReg = cmp('B', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B9" :
+            // CMP C
+            flagReg = cmp('C', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BA" :
+            // CMP D
+            flagReg = cmp('D', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BB" :
+            // CMP E
+            flagReg = cmp('E', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BC" :
+            // CMP H
+            flagReg = cmp('H', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BD" :
+            // CMP L
+            flagReg = cmp('L', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BE" :
+            // CMP M
+            flagReg = cmp('M', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CNC statement
+        case "D4" :
+            
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CNZ statement
+        case "C4" :
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CP statement
+        case "CP" :
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CPE statement
+        case "EC" :
+            
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CPI statement
+        case "FE" :
+            // CPI 8bit_data
+            byte2 = instruction[1];
+            reg = genReg['A'] - byte2;
+            flagReg = setFlagReg(reg, flagReg);
+
+            numBytes = 2;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CPO statement
+        case "E4" :
+            
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CZ statement
+        case "CC" :
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // DAA statement
+        case "27" :
+            // DAA
         //
 
         // DCR statements
