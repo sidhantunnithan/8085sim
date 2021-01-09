@@ -4,6 +4,7 @@ import * as actionTypes from "../Actions/types";
 const initialState = {
     editorView: true,
     editorDisappearText: "",
+    popupView: false,
 };
 
 export default function body(state = initialState, action) {
@@ -14,6 +15,12 @@ export default function body(state = initialState, action) {
                 editorView: action.payload.editorView,
                 editorDisappearText: action.payload.editorDisappearText,
             };
+        case actionTypes.FILEOPEN_POPUP:
+            return {
+                ...state,
+                popupView: action.payload.popupView,
+            };
+
         default:
             return state;
     }

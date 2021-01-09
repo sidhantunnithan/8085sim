@@ -1,32 +1,8 @@
-/* Utility Classes */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    /* background-color: #fff; */
-}
-
 $small-mobile-size: 406px;
 $large-monitor-size: 2560px;
 
-*:focus {
-    outline: none;
-}
-
-ul {
-    list-style: none;
-}
-
-input:focus {
-    outline: none;
-}
-
-/* Utility Ends */
-
 .navbar {
     flex: 0 1 auto;
-    font-family: "Varela Round", sans-serif;
     color: #fff;
     padding: 10px;
     background-color: #1f2227;
@@ -49,6 +25,10 @@ input:focus {
             font-size: inherit;
             color: #fff;
             padding: none;
+        }
+
+        i {
+            z-index: -1;
         }
 
         img {

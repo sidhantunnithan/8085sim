@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Utility Classes */
+
+*:focus {
+    outline: none;
+}
+
+ul {
+    list-style: none;
+}
+
+input:focus {
+    outline: none;
+}
+
+/* Utility Ends */
+
+.global-container {
+    font-family: "Varela Round", sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+}
+
+.popupView {
+    cursor: alias;
+    font-family: "Varela Round", sans-serif;
+    z-index: 1;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .fileUploadWindow {
+        width: 50%;
+        height: 50%;
+        background-color: #1f2227;
+        color: #fff;
+        border-radius: 5px;
+
+        animation: createBox 0.3s;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @keyframes createBox {
+        0% {
+            transform: scale(0);
+        }
+        90% {
+            transform: scale(1.01);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .inner-window {
+        height: 90%;
+        width: 95%;
+        border: dashed gray 4px;
+        font-size: 1.5rem;
+        color: #888;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .desc {
+            margin-bottom: 20px;
+        }
+
+        i {
+            font-size: 4rem;
+        }
+
+        .browse-button {
+            margin-top: 10px;
+            cursor: pointer;
+            color: #fff;
+            border: solid #fff 2px;
+            padding: 10px;
+            background-color: rgba(0, 0, 255, 0.7);
+            border-radius: 10px;
+        }
+    }
+
+    .inner-window.bright {
+        border: dashed #fff 4px;
+        color: #fff;
+    }
+}
