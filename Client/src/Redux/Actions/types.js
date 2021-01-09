@@ -1,3 +1,5 @@
+export const FILEOPEN_POPUP = "FILEOPEN_POPUP"; // When file name changes
+
 export const FILENAME_CHANGE = "FILENAME_CHANGE"; // When file name changes
 
 export const REGISTER_RESET = "REGISTER_TEST"; // When register are reset

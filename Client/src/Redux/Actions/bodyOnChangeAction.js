@@ -9,3 +9,13 @@ export const bodyOnChange = () => (dispatch, getState) => {
         },
     });
 };
+
+export const fileUploadPopup = () => (dispatch, getState) => {
+    dispatch({
+        type: actionTypes.FILEOPEN_POPUP,
+        payload: {
+            popupView: !getState().bodyReducer.popupView,
+            editorDisappearText: getState().bodyReducer.editorDisappearText,
+        },
+    });
+};

@@ -5,6 +5,7 @@ import "./Styles/NavBarStyles.scss";
 import Logo from "../res/logo.png";
 import { navbarOnChange } from "../Redux/Actions/navbarOnChange";
 import { memoryOnInit } from "../Redux/Actions/memoryOnChangeAction";
+import { fileUploadPopup } from "../Redux/Actions/bodyOnChangeAction";
 import { getAssembledInstructions } from "./Processing/assembler";
 
 export class Navbar extends Component {
@@ -40,6 +41,10 @@ export class Navbar extends Component {
         link.setAttribute("download", `${this.props.filename}.asm`);
         link.click();
         window.URL.revokeObjectURL(link.href);
+    };
+
+    handleOpenClick = (e) => {
+        this.props.fileUploadPopup();
     };
 
     // Move text field out of focus on enter
@@ -124,6 +129,13 @@ export class Navbar extends Component {
                             <i className="fas fa-save"></i>
                             Save
                         </li>
+                        <li
+                            className="navbar-item"
+                            onClick={this.handleOpenClick}
+                        >
+                            <i className="fas fa-file-upload"></i>
+                            Open
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -138,6 +150,8 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, { memoryOnInit, navbarOnChange })(
-    Navbar
-);
+export default connect(mapStateToProps, {
+    memoryOnInit,
+    navbarOnChange,
+    fileUploadPopup,
+})(Navbar);
