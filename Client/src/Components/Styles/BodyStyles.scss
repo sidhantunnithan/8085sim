@@ -408,6 +408,12 @@ h1 {
         order: 1;
         flex-basis: 100%;
         margin-bottom: 10px;
+
+        .header {
+            i {
+                margin-right: 0px;
+            }
+        }
     }
 
     .assembled-container {
