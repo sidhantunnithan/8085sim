@@ -28,6 +28,11 @@ export const stepLabelForward = (payloadLocal) => (dispatch, getState) => {
                 flagRegisters: payloadLocal.flagRegisters,
             },
         });
+
+        dispatch({
+            type: actionTypes.MEMORY_UPDATE,
+            payload: payloadLocal.memory,
+        });
     }
 };
 
@@ -46,6 +51,11 @@ export const stepLabelBackward = () => (dispatch, getState) => {
             primaryRegisters: pastStack.primaryRegisters,
             flagRegisters: pastStack.flagRegisters,
         },
+    });
+
+    dispatch({
+        type: actionTypes.MEMORY_UPDATE,
+        payload: pastStack.memory,
     });
 
     dispatch({
