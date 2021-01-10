@@ -95,6 +95,8 @@ function execute(jsonInput) {
     let flagReg = jsonInput["flag-registers"];
     let memory = jsonInput["memory"];
 
+    // let idx = getMemoryIndex(parseInt("5100", 16));
+
     let ret;
     for (let x = 0; x < steps; x++) {
         // console.log(instructions[start_index + x]);
@@ -104,16 +106,16 @@ function execute(jsonInput) {
             flagReg,
             memory
         );
-        genReg = ret[0];
-        flagReg = ret[1];
-        memory = ret[2];
+        genReg = ret["primaryRegisters"];
+        flagReg = ret["flagRegisters"]
+        memory = ret["memory"];
 
+        
+        // console.log(memory[idx[0]][idx[1]]);
+        
         // console.log(genReg);
         // console.log(flagReg);
     }
-
-    let idx = getMemoryIndex(5000);
-    // console.log(memory[idx[0]][idx[1]]);
 
     return {
         primaryRegisters: genReg,
@@ -212,6 +214,78 @@ function ana(reg, genReg, flagReg) {
     return [genReg, flagReg];
 }
 
+
+function cmp(reg, genReg, flagReg){
+    let operand1 = genReg['A'];
+    let operand2 = genReg[reg];
+    operand1 = parseInt(operand1, 16);
+    operand2 = parseInt(operand2, 16);
+    operand1 = operand1 - operand2;
+    flagReg = setFlagReg(operand1, flagReg);
+
+    return flagReg;
+}
+
+
+function dad(reg, genReg, flagReg){
+    let lowByte, highByte;
+    let operand1, operand2;
+
+    lowByte = genReg["L"];
+    highByte = genReg["H"];
+
+    if(reg == 'B'){
+        operand1 = genReg["B"];
+        operand2 = genReg["C"];
+    }
+    else if(reg == 'D'){
+        operand1 = genReg["D"];
+        operand2 = genReg["E"];
+    }
+    else if(reg == 'H'){
+        operand1 = genReg["H"];
+        operand2 = genReg["L"];
+    }
+    else if(reg == 'SP'){
+        operand1 = genReg["SP"].slice(0,2);
+        operand2 = genReg["SP"].slice(2);
+    }
+
+    lowByte = parseInt(lowByte, 16);
+    operand2 = parseInt(operand2, 16);
+    highByte = parseInt(highByte, 16);
+    operand1 = parseInt(operand1, 16);
+
+    lowByte = lowByte + operand2;
+    highByte = highByte + operand1;
+
+    if(parseInt(lowByte / 256) === 1){
+        highByte += 1;
+    }
+    if(parseInt(highByte / 256) === 1){
+        flagReg["CY"] = "01";
+    }
+    else{
+        flagReg["CY"] = "00";
+    }
+
+    lowByte = lowByte.toString(16)
+                .toUpperCase()
+                .padStart(2, '0')
+                .slice(-2);
+    
+    highByte = highByte.toString(16)
+                .toUpperCase()
+                .padStart(2, '0')
+                .slice(-2);
+
+    genReg["H"] = highByte;
+    genReg["L"] = lowByte;
+
+    return [genReg, flagReg];
+}
+
+
 function dcr(reg, genReg, flagReg) {
     let operand = genReg[reg];
 
@@ -225,13 +299,53 @@ function dcr(reg, genReg, flagReg) {
     return [genReg, flagReg];
 }
 
+
+function dcx(reg, genReg){
+    let operand;
+    if(reg === 'B'){
+        operand = genReg['B'] + genReg['C'];
+    }
+    else if(reg === 'D'){
+        operand = genReg['D'] + genReg['E'];
+    }
+    else if(reg === 'H'){
+        operand = genReg['H'] + genReg['L'];
+    }
+    else if(reg === 'SP'){
+        operand = genReg['SP'];
+    }
+
+    operand = parseInt(operand, 16);
+    operand -= 1;
+    operand = operand.toString(16).toUpperCase().padStart(4, '0').slice(-4);
+    
+    if(reg === 'B'){
+        genReg['B'] = operand.slice(0,2);
+        genReg['C'] = operand.slice(2);
+    }
+    else if(reg === 'D'){
+        genReg['D'] = operand.slice(0,2);
+        genReg['E'] = operand.slice(2);
+    }
+    else if(reg === 'H'){
+        genReg['H'] = operand.slice(0,2);
+        genReg['L'] = operand.slice(2);
+    }
+    else if(reg === 'SP'){
+        genReg['SP'] = operand;
+    }
+
+    return genReg;
+}
+
+
 function inr(reg, genReg, flagReg) {
     let operand = genReg[reg];
 
     operand = parseInt(operand, 16);
 
     operand += 1;
-    operand.toString(16);
+    operand = operand.toString(16);
     flagReg = setFlagReg(operand, flagReg);
     operand = operand.toUpperCase().padStart(2, "0").slice(-2);
     genReg[reg] = operand;
@@ -316,11 +430,63 @@ function lxi(reg, byte3, byte2, genReg) {
     return genReg;
 }
 
+
+function ldax(reg, genReg, memory){
+    let tempAdd;
+
+    if(reg === "B"){
+        tempAdd = genReg["B"] + genReg["C"];
+    }
+    if(reg === "D"){
+        tempAdd = genReg["D"] + genReg["E"];
+    }
+
+    tempAdd = parseInt(tempAdd, 16);
+    let memoryIndex = getMemoryIndex(tempAdd);
+
+    genReg["A"] = memory[memoryIndex[0]][memoryIndex[1]];
+
+    return genReg;
+}
+
+
+function ora(reg, genReg){
+    let operand1 = genReg['A'];
+    let operand2 = genReg[reg];
+
+    operand1 = parseInt(operand1, 16);
+    operand2 = parseInt(operand2, 16);
+
+    operand1 = operand1 | operand2;
+    operand1 = operand1. toString(16)
+                .toUpperCase()
+                .padStart(2, '0')
+                .slice(-2);
+
+    genReg['A'] = operand1;
+    return genReg;
+}
+
+
+function stax(reg, genReg, memory){
+    let tempAdd;
+    if(reg === 'B')
+        tempAdd = genReg["B"] + genReg["C"];
+    else if(reg === 'D')
+        tempAdd = genReg["D"] + genReg["E"];
+
+    tempAdd = parseInt(tempAdd, 16);
+    let memoryIndex = getMemoryIndex(tempAdd);
+
+    memory[memoryIndex[0]][memoryIndex[1]] = genReg["A"];
+
+    return memory;
+}
+
+
 function instruction_def(instruction, genReg, flagReg, memory) {
     let tempAdd;
     let memoryIndex;
-    let i;
-    let j;
     let reg;
     let byte3;
     let byte2;
@@ -345,7 +511,7 @@ function instruction_def(instruction, genReg, flagReg, memory) {
                 .padStart(2, "0")
                 .slice(-2);
 
-            numBytes = 1;
+            numBytes = 2;
 
             break;
 
@@ -675,8 +841,162 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CMP statements
+        case "BF" :
+            // CMP A
+            flagReg = cmp('A', genReg, flagReg);
 
-        //
+            numBytes = 1;
+            break;
+
+        case "B8" :
+            // CMP B
+            flagReg = cmp('B', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B9" :
+            // CMP C
+            flagReg = cmp('C', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BA" :
+            // CMP D
+            flagReg = cmp('D', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BB" :
+            // CMP E
+            flagReg = cmp('E', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BC" :
+            // CMP H
+            flagReg = cmp('H', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BD" :
+            // CMP L
+            flagReg = cmp('L', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "BE" :
+            // CMP M
+            flagReg = cmp('M', genReg, flagReg);
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CNC statement
+        case "D4" :
+            
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CNZ statement
+        case "C4" :
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CP statement
+        case "CP" :
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CPE statement
+        case "EC" :
+            
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CPI statement
+        case "FE" :
+            // CPI 8bit_data
+            byte2 = instruction[1];
+            reg = genReg['A'] - byte2;
+            flagReg = setFlagReg(reg, flagReg);
+
+            numBytes = 2;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CPO statement
+        case "E4" :
+            
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // CZ statement
+        case "CC" :
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // DAA statement
+        case "27" :
+            // DAA
+
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // DAD statements
+        case "09" :
+            // DAD B
+            reg = dad('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "19" :
+            // DAD D
+            reg = dad('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "29" :
+            // DAD H
+            reg = dad('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "39" :
+            // DAD SP
+            reg = dad('SP', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // DCR statements
         case "3D":
@@ -761,12 +1081,66 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // DCX statements
+        case "0B" :
+            // DCX B
+            genReg = dcx('B', genReg);
+            numBytes = 1;
+            break;
+
+        case "1B" :
+            // DCX D
+            genReg = dcx('D', genReg);
+            numBytes = 1;
+            break;
+
+        case "2B" :
+            // DCX H
+            genReg = dcx('H', genReg);
+            numBytes = 1;
+            break;
+
+        case "3B" :
+            // DCX SP
+            genReg = dcx('SP', genReg);
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // DI statement
+        case "F3" :
+            // DI
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // EI statement
+        case "FB" :
+            // EI
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // HLT statement
         case "76":
             // HLT
 
             numBytes = 1;
 
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // IN statement
+        case "DB" :
+            // IN 8bit_address
+            
+            numBytes = 2;
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
@@ -909,6 +1283,55 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
+
+        // LDA statement
+        case "3A" :
+            // LDA 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            tempAdd = byte2 + byte3;
+            tempAdd = parseInt(tempAdd, 16);
+            memoryIndex = getMemoryIndex(tempAdd);
+            genReg["A"] = memory[memoryIndex[0]][memoryIndex[1]]
+                .toString(16)
+                .padStart(2, '0');
+            numBytes = 3;
+            break;
+        
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // LDAX statements
+        case "0A" :
+            // LDAX B
+            genReg = ldax('B', genReg, memory);
+            numBytes = 1;
+            break;
+
+        case "1A" :
+            // LDAX D
+            genReg = ldax('D', genReg, memory);
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // LHLD
+        case "2A" :
+            // LHLD 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            tempAdd = byte2 + byte3;
+
+            tempAdd = parseInt(tempAdd, 16);
+            memoryIndex = getMemoryIndex(tempAdd);
+            genReg["L"] = memory[memoryIndex[0]][memoryIndex[1]];
+
+            tempAdd += 1;
+            memoryIndex = getMemoryIndex(tempAdd);
+            genReg["H"] = memory[memoryIndex[0]][memoryIndex[1]];
+
+            numBytes = 3;
+            break;
 
         // LXI statements
         case "01":
@@ -1568,6 +1991,206 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // NOP statement
+        case "00" :
+            // NOP
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // ORA statements
+        case "B7" :
+            // ORA A
+            genReg = ora('A', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B0" :
+            // ORA B
+            genReg = ora('B', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B1" :
+            // ORA C
+            genReg = ora('C', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B2" :
+            // ORA D
+            genReg = ora('D', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B3" :
+            // ORA E
+            genReg = ora('E', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B4" :
+            // ORA H
+            genReg = ora('H', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B5" :
+            // ORA L
+            genReg = ora('L', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B6" :
+            // ORA M
+            genReg = ora('M', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // ORI statement
+        case "F6" :
+            // ORI 8bit_data
+            byte2 = instruction[1];
+            byte2 = parseInt(byte2, 16);
+            reg = genReg['A'];
+            reg = parseInt(reg, 16);
+            reg = reg | byte2;
+            reg = reg.toString(16)
+                    .toUpperCase()
+                    .padStart(2, '0')
+                    .slice(-2);
+            genReg['A'] = reg;
+
+            numBytes = 2;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // OUT statement
+        case "D3" :
+            // OUT 8bit_address
+
+            numBytes = 2;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // PCHL statement
+        case "E9" :
+            // PCHL
+            genReg["PC"] = genReg['H'] + genReg['L'];
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // POP statements
+        case "C1" :
+            // POP B
+
+            numBytes = 1;
+            break;
+
+        case "D1" :
+            // POP D
+
+            numBytes = 1;
+            break;
+
+        case "E1" :
+            // POP H
+
+            numBytes = 1;
+            break;
+
+        case "F1" :
+            // POP PSW
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // PUSH statements
+        case "C5" :
+            // PUSH B
+
+            numBytes = 1;
+            break;
+
+        case "D5" :
+            // PUSH D
+
+            numBytes = 1;
+            break;
+
+        case "E5" :
+            // PUSH E
+
+            numBytes = 1;
+            break;
+
+        case "F5" :
+            // PUSH PSW
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RAL statement
+        
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // SHLD statement
+        case "22" :
+            // SHLD 16bit_data
+            byte3 = instruction[1];
+            byte2 = instruction[2];
+            tempAdd = byte2 + byte3;
+
+            tempAdd = parseInt(tempAdd, 16);
+            memoryIndex = getMemoryIndex(tempAdd);
+            memory[memoryIndex[0]][memoryIndex[1]] = genReg["L"];
+            
+            tempAdd += 1;
+            memoryIndex = getMemoryIndex(tempAdd);
+            memory[memoryIndex[0]][memoryIndex[1]] = genReg["H"];
+
+            numBytes = 3;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // SPHL statement
+        case "F9" :
+            // SPHL
+            genReg["SP"] = genReg["H"] + genReg["L"];
+
+            numBytes = 1;
+            break;
+
         // STA statement
         case "32":
             byte3 = instruction[1];
@@ -1577,10 +2200,41 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
 
-            memory[[memoryIndex[0]][memoryIndex[1]]] = genReg["A"];
+            reg = genReg["A"];
+
+            memory[memoryIndex[0]][memoryIndex[1]] = reg;
+
+            // console.log(reg);
+            // console.log(memory[[memoryIndex[0]][memoryIndex[1]]]);
+            // console.log(memory[[memoryIndex[0]][memoryIndex[1]+1]]);
+            // console.log(memory[[memoryIndex[0]][memoryIndex[1]+2]]);
 
             numBytes = 3;
 
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // STAX statements
+        case "02" :
+            // STAX B
+            memory = stax('B', genReg, memory);
+            numBytes = 1;
+            break;
+
+        case "12" :
+            // STAX D
+            memory = stax('D', genReg, memory);
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // STC statement
+        case "37" :
+            // STC
+            flagReg["CY"] = "01";
+            numBytes = 1;
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
@@ -1606,34 +2260,29 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         genReg["PC"] = pc;
     }
 
-    return [genReg, flagReg, memory];
+    return {
+        primaryRegisters: genReg,
+        flagRegisters: flagReg,
+        memory: memory
+    };
 }
 
 export { execute };
 
 // let input =  {
 //     instructions: [
-//             [ '3E', '09' ],
-//             [ '47' ],
-//             [ '0E', '09' ],
-//             [ '80' ],
-//             [ '0D' ],
-//             [ 'C2', '07', '00' ],
-//             [ '23' ],
-//             [ '86' ],
-//             [ '32', '00', '51' ],
-//             [ '76' ]
+//             [ "02" ]
 //         ],
 //     "start-instruction": 0,
-//     steps: 9,
+//     steps: 1,
 //     "primary-registers": {
 //         A: "00",
 //         B: "00",
 //         C: "00",
 //         D: "00",
 //         E: "00",
-//         H: "00",
-//         L: "00",
+//         H: "AB",
+//         L: "CD",
 //         M: "00",
 //         PC: "0000"
 //     },
@@ -1646,7 +2295,7 @@ export { execute };
 //         AC: "00",
 //     },
 
-//     memory: new Array(4096).fill(0).map(() => new Array(16).fill(0))
+//     memory: new Array(4096).fill(0).map(() => new Array(16).fill("00"))
 // };
 
-// console.log(execute(input));
+// execute(input);
