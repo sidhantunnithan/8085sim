@@ -9,6 +9,14 @@ import { fileUploadPopup } from "../Redux/Actions/bodyOnChangeAction";
 import { getAssembledInstructions } from "./Processing/assembler";
 
 export class Navbar extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showHamburger: false,
+        };
+    }
+
     // Set state when project name is changed
     handleProjectName = (e) => {
         this.props.navbarOnChange(e.target.value);
@@ -67,6 +75,12 @@ export class Navbar extends Component {
         document.getElementById("project-name-input").select();
     };
 
+    handleHamburgerClick = (e) => {
+        this.setState({
+            showHamburger: !this.state.showHamburger,
+        });
+    };
+
     render() {
         return (
             <div className="navbar">
@@ -114,7 +128,13 @@ export class Navbar extends Component {
                             </ul>
                         </li>
                     </ul>
-                    <ul className="navbar-tail">
+                    <ul
+                        className={
+                            this.state.showHamburger
+                                ? "navbar-tail show"
+                                : "navbar-tail"
+                        }
+                    >
                         <li
                             className="navbar-item"
                             onClick={this.handleAssemblyClick}
@@ -137,6 +157,12 @@ export class Navbar extends Component {
                             Open
                         </li>
                     </ul>
+                    <div className="hamburger-container">
+                        <i
+                            className="fas fa-bars"
+                            onClick={this.handleHamburgerClick}
+                        ></i>
+                    </div>
                 </div>
             </div>
         );
