@@ -1682,6 +1682,26 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // SHLD statement
+        case "22" :
+            // SHLD 16bit_data
+            byte3 = instruction[1];
+            byte2 = instruction[2];
+            tempAdd = byte2 + byte3;
+
+            tempAdd = parseInt(tempAdd, 16);
+            memoryIndex = getMemoryIndex(tempAdd);
+            memory[memoryIndex[0]][memoryIndex[1]] = genReg["L"];
+            
+            tempAdd += 1;
+            memoryIndex = getMemoryIndex(tempAdd);
+            memory[memoryIndex[0]][memoryIndex[1]] = genReg["H"];
+
+            numBytes = 3;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // STA statement
         case "32":
             byte3 = instruction[1];
@@ -1738,27 +1758,18 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
 // let input =  {
 //     instructions: [
-//             [ '3E', '09' ],
-//             [ '47' ],
-//             [ '0E', '09' ],
-//             [ '80' ],
-//             [ '0D' ],
-//             [ 'C2', '07', '00' ],
-//             [ '23' ],
-//             [ '86' ],
-//             [ '32', '00', '51' ],
-//             [ '76' ]
+//             [ '22', '00', '51' ]
 //         ],
 //     "start-instruction": 0,
-//     steps: 10,
+//     steps: 1,
 //     "primary-registers": {
 //         A: "00",
 //         B: "00",
 //         C: "00",
 //         D: "00",
 //         E: "00",
-//         H: "00",
-//         L: "00",
+//         H: "AB",
+//         L: "CD",
 //         M: "00",
 //         PC: "0000"
 //     },
