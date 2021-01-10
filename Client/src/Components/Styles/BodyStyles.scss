@@ -12,7 +12,7 @@ input {
     flex: 1 1 auto;
     height: 90%;
     font-family: "Varela Round", sans-serif;
-    padding: 50px 30px 0px 30px;
+    padding: 30px 30px 0px 30px;
     color: #fff;
     display: flex;
     align-items: flex-start;
@@ -23,6 +23,7 @@ input {
 
 h1 {
     cursor: alias;
+    font-size: 1.5rem;
 }
 
 /* Registers Start*/
@@ -30,6 +31,7 @@ h1 {
 .registers-container {
     flex: 1;
     width: 100%;
+    font-size: 0.9rem;
 
     .header {
         display: flex;
@@ -131,7 +133,7 @@ h1 {
     }
 
     .editor-child {
-        height: 520px;
+        height: 420px;
         margin-top: 20px;
     }
 
@@ -172,7 +174,7 @@ h1 {
     .assembled-child {
         margin-top: 20px;
         width: 100%;
-        height: 520px;
+        height: 420px;
         padding-right: 15px;
         box-sizing: content-box;
         overflow-y: scroll;
@@ -306,7 +308,7 @@ h1 {
         justify-content: space-evenly;
 
         .grid {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             margin-top: 20px;
             height: 80%;
             width: 100%;
@@ -414,11 +416,16 @@ h1 {
         order: 1;
         flex-basis: 100%;
         margin-bottom: 10px;
+        height: 600px;
 
         .header {
             i {
                 margin-right: 0px;
             }
+        }
+
+        .editor-child {
+            height: 510px;
         }
     }
 
@@ -428,6 +435,7 @@ h1 {
         order: 1;
         flex-basis: 100%;
         margin-bottom: 10px;
+        height: 600px;
     }
 
     .memory-container {
@@ -470,6 +478,13 @@ h1 {
         }
     }
 
+    .assembled-container {
+        .header {
+            i {
+                margin-right: 0px;
+            }
+        }
+    }
     .memory-container {
         flex: 1;
         margin-bottom: 50px;
