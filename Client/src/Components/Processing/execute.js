@@ -450,6 +450,24 @@ function ldax(reg, genReg, memory){
 }
 
 
+function ora(reg, genReg){
+    let operand1 = genReg['A'];
+    let operand2 = genReg[reg];
+
+    operand1 = parseInt(operand1, 16);
+    operand2 = parseInt(operand2, 16);
+
+    operand1 = operand1 | operand2;
+    operand1 = operand1. toString(16)
+                .toUpperCase()
+                .padStart(2, '0')
+                .slice(-2);
+
+    genReg['A'] = operand1;
+    return genReg;
+}
+
+
 function stax(reg, genReg, memory){
     let tempAdd;
     if(reg === 'B')
@@ -1090,12 +1108,39 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // DI statement
+        case "F3" :
+            // DI
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // EI statement
+        case "FB" :
+            // EI
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // HLT statement
         case "76":
             // HLT
 
             numBytes = 1;
 
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // IN statement
+        case "DB" :
+            // IN 8bit_address
+            
+            numBytes = 2;
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
@@ -1942,6 +1987,81 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
             numBytes = 2;
 
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // NOP statement
+        case "00" :
+            // NOP
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // ORA statements
+        case "B7" :
+            // ORA A
+            genReg = ora('A', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B0" :
+            // ORA B
+            genReg = ora('B', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B1" :
+            // ORA C
+            genReg = ora('C', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B2" :
+            // ORA D
+            genReg = ora('D', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B3" :
+            // ORA E
+            genReg = ora('E', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B4" :
+            // ORA H
+            genReg = ora('H', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B5" :
+            // ORA L
+            genReg = ora('L', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
+            break;
+
+        case "B6" :
+            // ORA M
+            genReg = ora('M', genReg);
+            flagReg = setFlagReg(genReg['A'], flagReg);
+
+            numBytes = 1;
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
