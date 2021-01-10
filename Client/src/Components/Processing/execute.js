@@ -332,6 +332,25 @@ function lxi(reg, byte3, byte2, genReg) {
 }
 
 
+function ldax(reg, genReg, memory){
+    let tempAdd;
+
+    if(reg === "B"){
+        tempAdd = genReg["B"] + genReg["C"];
+    }
+    if(reg === "D"){
+        tempAdd = genReg["D"] + genReg["E"];
+    }
+
+    tempAdd = parseInt(tempAdd, 16);
+    let memoryIndex = getMemoryIndex(tempAdd);
+
+    genReg["A"] = memory[memoryIndex[0]][memoryIndex[1]];
+
+    return genReg;
+}
+
+
 function stax(reg, genReg, memory){
     let tempAdd;
     if(reg === 'B')
@@ -1067,6 +1086,21 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             numBytes = 3;
             break;
         
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // LDAX statements
+        case "0A" :
+            // LDAX B
+            genReg = ldax('B', genReg, memory);
+            numBytes = 1;
+            break;
+
+        case "1A" :
+            // LDAX D
+            genReg = ldax('D', genReg, memory);
+            numBytes = 1;
+            break;
+
         ///////////////////////////////////////////////////////////////////////////////////
 
         // LXI statements
