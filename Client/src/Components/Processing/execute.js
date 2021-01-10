@@ -227,6 +227,61 @@ function cmp(reg, genReg, flagReg){
 }
 
 
+function dad(reg, genReg, flagReg){
+    let lowByte, highByte;
+    let operand1, operand2;
+
+    lowByte = genReg["L"];
+    highByte = genReg["H"];
+
+    if(reg == 'B'){
+        operand1 = genReg["B"];
+        operand2 = genReg["C"];
+    }
+    else if(reg == 'D'){
+        operand1 = genReg["D"];
+        operand2 = genReg["E"];
+    }
+    else if(reg == 'H'){
+        operand1 = genReg["H"];
+        operand2 = genReg["L"];
+    }
+
+    lowByte = parseInt(lowByte, 16);
+    operand2 = parseInt(operand2, 16);
+    highByte = parseInt(highByte, 16);
+    operand1 = parseInt(operand1, 16);
+
+    lowByte = lowByte + operand2;
+    highByte = highByte + operand1;
+
+    if(parseInt(lowByte / 256) === 1){
+        highByte += 1;
+    }
+    if(parseInt(highByte / 256) === 1){
+        flagReg["CY"] = "01";
+    }
+    else{
+        flagReg["CY"] = "00";
+    }
+
+    lowByte = lowByte.toString(16)
+                .toUpperCase()
+                .padStart(2, '0')
+                .slice(-2);
+    
+    highByte = highByte.toString(16)
+                .toUpperCase()
+                .padStart(2, '0')
+                .slice(-2);
+
+    genReg["H"] = highByte;
+    genReg["L"] = lowByte;
+
+    return [genReg, flagReg];
+}
+
+
 function dcr(reg, genReg, flagReg) {
     let operand = genReg[reg];
 
@@ -839,7 +894,39 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         // DAA statement
         case "27" :
             // DAA
-        //
+
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // DAD statements
+        case "09" :
+            // DAD B
+            reg = dad('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "19" :
+            // DAD D
+            reg = dad('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        case "29" :
+            // DAD H
+            reg = dad('B', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
 
         // DCR statements
         case "3D":
@@ -1118,7 +1205,7 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             tempAdd += 1;
             memoryIndex = getMemoryIndex(tempAdd);
             genReg["H"] = memory[memoryIndex[0]][memoryIndex[1]];
-            
+
             numBytes = 3;
             break;
 
