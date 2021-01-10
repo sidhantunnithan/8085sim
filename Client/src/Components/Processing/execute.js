@@ -2066,6 +2066,34 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // ORI statement
+        case "F6" :
+            // ORI 8bit_data
+            byte2 = instruction[1];
+            byte2 = parseInt(byte2, 16);
+            reg = genReg['A'];
+            reg = parseInt(reg, 16);
+            reg = reg | byte2;
+            reg = reg.toString(16)
+                    .toUpperCase()
+                    .padStart(2, '0')
+                    .slice(-2);
+            genReg['A'] = reg;
+
+            numBytes = 2;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // OUT statement
+        case "D3" :
+            // OUT 8bit_address
+
+            numBytes = 2;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // SHLD statement
         case "22" :
             // SHLD 16bit_data
