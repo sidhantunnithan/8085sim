@@ -70,7 +70,7 @@ export const memoryOnReset = () => (dispatch) => {
     });
 
     dispatch({
-        type: actionTypes.MEMORY_RESET,
+        type: actionTypes.MEMORY_UPDATE,
         payload: memory,
     });
 };
