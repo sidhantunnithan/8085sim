@@ -12,6 +12,7 @@ const initialState = {
         L: "00",
         M: "00",
         PC: "0000",
+        SP: "0000",
     },
 
     flagRegisters: {
@@ -44,6 +45,7 @@ export default function registers(state = initialState, action) {
                     L: "00",
                     M: "00",
                     PC: "0000",
+                    SP: "0000",
                 },
                 flagRegisters: {
                     S: "0",
