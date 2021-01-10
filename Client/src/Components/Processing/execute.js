@@ -1075,6 +1075,7 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         // LDA statement
         case "3A" :
+            // LDA 16bit_address
             byte2 = instruction[2];
             byte3 = instruction[1];
             tempAdd = byte2 + byte3;
@@ -1102,6 +1103,24 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
+
+        // LHLD
+        case "2A" :
+            // LHLD 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            tempAdd = byte2 + byte3;
+
+            tempAdd = parseInt(tempAdd, 16);
+            memoryIndex = getMemoryIndex(tempAdd);
+            genReg["L"] = memory[memoryIndex[0]][memoryIndex[1]];
+
+            tempAdd += 1;
+            memoryIndex = getMemoryIndex(tempAdd);
+            genReg["H"] = memory[memoryIndex[0]][memoryIndex[1]];
+            
+            numBytes = 3;
+            break;
 
         // LXI statements
         case "01":
