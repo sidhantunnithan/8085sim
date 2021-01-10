@@ -30,11 +30,26 @@ export const memoryOnInit = (payload) => (dispatch, getState) => {
         memory[j][k] = linearMem[i];
     }
 
+    var loadedMemoryLocal = new Map();
+    memory.forEach((rValue, rIndex) => {
+        rValue.forEach((cValue, cIndex) => {
+            if (parseInt(cValue, 16) > 0) {
+                var key = (
+                    "0000" +
+                    rIndex.toString(16).toUpperCase() +
+                    cIndex.toString(16).toUpperCase()
+                ).slice(-4);
+                loadedMemoryLocal.set(key, cValue);
+            }
+        });
+    });
+
     dispatch({
         type: actionTypes.MEMORY_INIT,
         payload: {
             memory: memory,
             instructions: payload.instructions,
+            loadedMemory: loadedMemoryLocal,
         },
     });
 
@@ -71,7 +86,10 @@ export const memoryOnReset = () => (dispatch) => {
 
     dispatch({
         type: actionTypes.MEMORY_UPDATE,
-        payload: memory,
+        payload: {
+            memory: memory,
+            loadedMemory: new Map(),
+        },
     });
 };
 
