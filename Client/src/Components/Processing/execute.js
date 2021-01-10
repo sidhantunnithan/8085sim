@@ -299,6 +299,46 @@ function dcr(reg, genReg, flagReg) {
     return [genReg, flagReg];
 }
 
+
+function dcx(reg, genReg){
+    let operand;
+    if(reg === 'B'){
+        operand = genReg['B'] + genReg['C'];
+    }
+    else if(reg === 'D'){
+        operand = genReg['D'] + genReg['E'];
+    }
+    else if(reg === 'H'){
+        operand = genReg['H'] + genReg['L'];
+    }
+    else if(reg === 'SP'){
+        operand = genReg['SP'];
+    }
+
+    operand = parseInt(operand, 16);
+    operand -= 1;
+    operand = operand.toString(16).toUpperCase().padStart(4, '0').slice(-4);
+    
+    if(reg === 'B'){
+        genReg['B'] = operand.slice(0,2);
+        genReg['C'] = operand.slice(2);
+    }
+    else if(reg === 'D'){
+        genReg['D'] = operand.slice(0,2);
+        genReg['E'] = operand.slice(2);
+    }
+    else if(reg === 'H'){
+        genReg['H'] = operand.slice(0,2);
+        genReg['L'] = operand.slice(2);
+    }
+    else if(reg === 'SP'){
+        genReg['SP'] = operand;
+    }
+
+    return genReg;
+}
+
+
 function inr(reg, genReg, flagReg) {
     let operand = genReg[reg];
 
@@ -938,7 +978,6 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             numBytes = 1;
             break;
 
-
         ///////////////////////////////////////////////////////////////////////////////////
 
         // DCR statements
@@ -1020,6 +1059,33 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
             numBytes = 1;
 
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // DCX statements
+        case "0B" :
+            // DCX B
+            genReg = dcx('B', genReg);
+            numBytes = 1;
+            break;
+
+        case "1B" :
+            // DCX D
+            genReg = dcx('D', genReg);
+            numBytes = 1;
+            break;
+
+        case "2B" :
+            // DCX H
+            genReg = dcx('H', genReg);
+            numBytes = 1;
+            break;
+
+        case "3B" :
+            // DCX SP
+            genReg = dcx('SP', genReg);
+            numBytes = 1;
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
