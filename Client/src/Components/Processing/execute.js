@@ -95,6 +95,8 @@ function execute(jsonInput) {
     let flagReg = jsonInput["flag-registers"];
     let memory = jsonInput["memory"];
 
+    // let idx = getMemoryIndex(parseInt("5100", 16));
+
     let ret;
     for (let x = 0; x < steps; x++) {
         // console.log(instructions[start_index + x]);
@@ -104,16 +106,16 @@ function execute(jsonInput) {
             flagReg,
             memory
         );
-        genReg = ret[0];
-        flagReg = ret[1];
-        memory = ret[2];
+        genReg = ret["primaryRegisters"];
+        flagReg = ret["flagRegisters"]
+        memory = ret["memory"];
 
+        
+        // console.log(memory[idx[0]][idx[1]]);
+        
         // console.log(genReg);
         // console.log(flagReg);
     }
-
-    let idx = getMemoryIndex(5000);
-    // console.log(memory[idx[0]][idx[1]]);
 
     return {
         primaryRegisters: genReg,
@@ -319,8 +321,6 @@ function lxi(reg, byte3, byte2, genReg) {
 function instruction_def(instruction, genReg, flagReg, memory) {
     let tempAdd;
     let memoryIndex;
-    let i;
-    let j;
     let reg;
     let byte3;
     let byte2;
@@ -1691,7 +1691,14 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             tempAdd = parseInt(tempAdd, 16);
             memoryIndex = getMemoryIndex(tempAdd);
 
-            memory[[memoryIndex[0]][memoryIndex[1]]] = genReg["A"];
+            reg = genReg["A"];
+
+            memory[memoryIndex[0]][memoryIndex[1]] = reg;
+
+            // console.log(reg);
+            // console.log(memory[[memoryIndex[0]][memoryIndex[1]]]);
+            // console.log(memory[[memoryIndex[0]][memoryIndex[1]+1]]);
+            // console.log(memory[[memoryIndex[0]][memoryIndex[1]+2]]);
 
             numBytes = 3;
 
@@ -1720,10 +1727,14 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         genReg["PC"] = pc;
     }
 
-    return [genReg, flagReg, memory];
+    return {
+        primaryRegisters: genReg,
+        flagRegisters: flagReg,
+        memory: memory
+    };
 }
 
-export { execute };
+// export { execute };
 
 // let input =  {
 //     instructions: [
@@ -1739,7 +1750,7 @@ export { execute };
 //             [ '76' ]
 //         ],
 //     "start-instruction": 0,
-//     steps: 9,
+//     steps: 10,
 //     "primary-registers": {
 //         A: "00",
 //         B: "00",
@@ -1760,7 +1771,7 @@ export { execute };
 //         AC: "00",
 //     },
 
-//     memory: new Array(4096).fill(0).map(() => new Array(16).fill(0))
+//     memory: new Array(4096).fill(0).map(() => new Array(16).fill("00"))
 // };
 
-// console.log(execute(input));
+// execute(input);
