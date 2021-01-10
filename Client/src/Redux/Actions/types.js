@@ -10,7 +10,7 @@ export const EDITOR_CHANGE = "EDITOR_CHANGE"; // When value of editor changes
 
 export const MEMORY_INIT = "MEMORY_INIT"; // When memory is initialised
 export const MEMORY_BYTES = "MEMORY_BYTES"; // When memory bytes are changed
-export const MEMORY_RESET = "MEMORY_RESET"; // When memory is reset
+export const MEMORY_UPDATE = "MEMORY_UPDATE"; // When memory is reset
 export const MEMORY_STEP = "MEMORY_STEP"; // When memory is reset
 
 export const SWITCH_VIEW = "SWITCH_VIEW"; // When view switched from editor and back
