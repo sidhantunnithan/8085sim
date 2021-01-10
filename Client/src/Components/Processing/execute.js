@@ -2104,6 +2104,65 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // POP statements
+        case "C1" :
+            // POP B
+
+            numBytes = 1;
+            break;
+
+        case "D1" :
+            // POP D
+
+            numBytes = 1;
+            break;
+
+        case "E1" :
+            // POP H
+
+            numBytes = 1;
+            break;
+
+        case "F1" :
+            // POP PSW
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // PUSH statements
+        case "C5" :
+            // PUSH B
+
+            numBytes = 1;
+            break;
+
+        case "D5" :
+            // PUSH D
+
+            numBytes = 1;
+            break;
+
+        case "E5" :
+            // PUSH E
+
+            numBytes = 1;
+            break;
+
+        case "F5" :
+            // PUSH PSW
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RAL statement
+        
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // SHLD statement
         case "22" :
             // SHLD 16bit_data
