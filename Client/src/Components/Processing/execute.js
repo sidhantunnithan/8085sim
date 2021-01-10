@@ -214,6 +214,19 @@ function ana(reg, genReg, flagReg) {
     return [genReg, flagReg];
 }
 
+
+function cmp(reg, genReg, flagReg){
+    let operand1 = genReg['A'];
+    let operand2 = genReg[reg];
+    operand1 = parseInt(operand1, 16);
+    operand2 = parseInt(operand2, 16);
+    operand1 = operand1 - operand2;
+    flagReg = setFlagReg(operand1, flagReg);
+
+    return flagReg;
+}
+
+
 function dcr(reg, genReg, flagReg) {
     let operand = genReg[reg];
 
@@ -1701,6 +1714,14 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
+
+        // SPHL statement
+        case "F9" :
+            // SPHL
+            genReg["SP"] = genReg["H"] + genReg["L"];
+
+            numBytes = 1;
+            break;
 
         // STA statement
         case "32":
