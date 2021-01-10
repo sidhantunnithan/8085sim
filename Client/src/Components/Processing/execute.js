@@ -246,6 +246,10 @@ function dad(reg, genReg, flagReg){
         operand1 = genReg["H"];
         operand2 = genReg["L"];
     }
+    else if(reg == 'SP'){
+        operand1 = genReg["SP"].slice(0,2);
+        operand2 = genReg["SP"].slice(2);
+    }
 
     lowByte = parseInt(lowByte, 16);
     operand2 = parseInt(operand2, 16);
@@ -925,6 +929,15 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             flagReg = reg[1];
             numBytes = 1;
             break;
+
+        case "39" :
+            // DAD SP
+            reg = dad('SP', genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+            numBytes = 1;
+            break;
+
 
         ///////////////////////////////////////////////////////////////////////////////////
 
