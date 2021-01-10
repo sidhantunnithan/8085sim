@@ -163,10 +163,21 @@ export class Registers extends Component {
                                 {this.props.primaryRegisters.M}
                             </td>
                         </tr>
+                    </tbody>
+                </table>
+
+                <table className="special-registers">
+                    <tbody>
                         <tr>
                             <td>Program Counter</td>
                             <td className="register-value">
                                 {this.props.primaryRegisters.PC}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Stack Pointer</td>
+                            <td className="register-value">
+                                {this.props.primaryRegisters.SP}
                             </td>
                         </tr>
                     </tbody>
