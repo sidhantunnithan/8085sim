@@ -4,6 +4,7 @@ import { bodyOnChange } from "../Redux/Actions/bodyOnChangeAction";
 import {
     stepLabelForward,
     stepLabelBackward,
+    onRun,
 } from "../Redux/Actions/assembledOnChangeAction";
 import { execute } from "../Components/Processing/execute";
 
@@ -38,6 +39,26 @@ export class Assembled extends Component {
                 final: false,
             });
         }
+    };
+
+    onRun = (e) => {
+        var propsCopy = JSON.parse(JSON.stringify(this.props));
+        var inputParams = execute({
+            instructions: propsCopy.opCodes,
+            "start-instruction": propsCopy.labelIndex + 1,
+            steps: this.props.instructions.length - this.props.labelIndex - 1,
+            "primary-registers": propsCopy.primaryRegisters,
+            "flag-registers": propsCopy.flagRegisters,
+            memory: propsCopy.memory,
+        });
+
+        inputParams.primaryRegisters.PC = "0000";
+
+        this.props.onRun({
+            primaryRegisters: inputParams.primaryRegisters,
+            flagRegisters: inputParams.flagRegisters,
+            memory: inputParams.memory,
+        });
     };
 
     // Handle run backward
@@ -113,9 +134,15 @@ export class Assembled extends Component {
                         </div>
                     )}
 
-                    <div className="navigation-button">
-                        <i className="fas fa-play"></i>
-                    </div>
+                    {this.props.labelIndex >= this.props.instructions.length ? (
+                        <div className="navigation-button disabled">
+                            <i className="fas fa-play"></i>
+                        </div>
+                    ) : (
+                        <div className="navigation-button" onClick={this.onRun}>
+                            <i className="fas fa-play"></i>
+                        </div>
+                    )}
 
                     {this.props.labelIndex >= this.props.instructions.length ? (
                         <div className="navigation-button disabled">
@@ -151,4 +178,5 @@ export default connect(mapStateToProps, {
     bodyOnChange,
     stepLabelForward,
     stepLabelBackward,
+    onRun,
 })(Assembled);

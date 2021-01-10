@@ -36,6 +36,26 @@ export const stepLabelForward = (payloadLocal) => (dispatch, getState) => {
     }
 };
 
+export const onRun = (payloadLocal) => (dispatch, getState) => {
+    dispatch({
+        type: actionTypes.STEP_LABEL,
+        payload: -1,
+    });
+
+    dispatch({
+        type: actionTypes.REGISTER_CHANGE,
+        payload: {
+            primaryRegisters: payloadLocal.primaryRegisters,
+            flagRegisters: payloadLocal.flagRegisters,
+        },
+    });
+
+    dispatch({
+        type: actionTypes.MEMORY_UPDATE,
+        payload: payloadLocal.memory,
+    });
+};
+
 export const stepLabelBackward = () => (dispatch, getState) => {
     dispatch({
         type: actionTypes.STEP_LABEL,
