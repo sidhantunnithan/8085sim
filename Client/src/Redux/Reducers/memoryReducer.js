@@ -26,7 +26,7 @@ export default function memory(state = initialState, action) {
                 ...state,
                 opCodes: action.payload,
             };
-        case actionTypes.MEMORY_RESET:
+        case actionTypes.MEMORY_UPDATE:
             return {
                 ...state,
                 memory: action.payload,
