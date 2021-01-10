@@ -64,6 +64,12 @@ h1 {
         cursor: alias;
     }
 
+    .special-registers {
+        margin-top: 20px;
+        width: 100%;
+        cursor: alias;
+    }
+
     .flag-registers {
         margin-top: 40px;
         width: 80%;
@@ -444,6 +450,12 @@ h1 {
         }
 
         .primary-registers {
+            .register-value {
+                text-align: right;
+            }
+        }
+
+        .special-registers {
             .register-value {
                 text-align: right;
             }
