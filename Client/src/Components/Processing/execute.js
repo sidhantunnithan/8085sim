@@ -331,6 +331,23 @@ function lxi(reg, byte3, byte2, genReg) {
     return genReg;
 }
 
+
+function stax(reg, genReg, memory){
+    let tempAdd;
+    if(reg === 'B')
+        tempAdd = genReg["B"] + genReg["C"];
+    else if(reg === 'D')
+        tempAdd = genReg["D"] + genReg["E"];
+
+    tempAdd = parseInt(tempAdd, 16);
+    let memoryIndex = getMemoryIndex(tempAdd);
+
+    memory[memoryIndex[0]][memoryIndex[1]] = genReg["A"];
+
+    return memory;
+}
+
+
 function instruction_def(instruction, genReg, flagReg, memory) {
     let tempAdd;
     let memoryIndex;
@@ -358,7 +375,7 @@ function instruction_def(instruction, genReg, flagReg, memory) {
                 .padStart(2, "0")
                 .slice(-2);
 
-            numBytes = 1;
+            numBytes = 2;
 
             break;
 
@@ -1747,6 +1764,21 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // STAX statements
+        case "02" :
+            // STAX B
+            memory = stax('B', genReg, memory);
+            numBytes = 1;
+            break;
+
+        case "12" :
+            // STAX D
+            memory = stax('D', genReg, memory);
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         default:
             console.log(opcode);
     }
@@ -1775,11 +1807,11 @@ function instruction_def(instruction, genReg, flagReg, memory) {
     };
 }
 
-// export { execute };
+export { execute };
 
 // let input =  {
 //     instructions: [
-//             [ '22', '00', '51' ]
+//             [ "02" ]
 //         ],
 //     "start-instruction": 0,
 //     steps: 1,
