@@ -246,7 +246,7 @@ function inr(reg, genReg, flagReg) {
     operand = parseInt(operand, 16);
 
     operand += 1;
-    operand.toString(16);
+    operand = operand.toString(16);
     flagReg = setFlagReg(operand, flagReg);
     operand = operand.toUpperCase().padStart(2, "0").slice(-2);
     genReg[reg] = operand;
@@ -1054,6 +1054,21 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // LDA statement
+        case "3A" :
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            tempAdd = byte2 + byte3;
+            tempAdd = parseInt(tempAdd, 16);
+            memoryIndex = getMemoryIndex(tempAdd);
+            genReg["A"] = memory[memoryIndex[0]][memoryIndex[1]]
+                .toString(16)
+                .padStart(2, '0');
+            numBytes = 3;
+            break;
+        
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // LXI statements
         case "01":
             // LXI B 16bit_data
@@ -1774,6 +1789,15 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         case "12" :
             // STAX D
             memory = stax('D', genReg, memory);
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // STC statement
+        case "37" :
+            // STC
+            flagReg["CY"] = "01";
             numBytes = 1;
             break;
 
