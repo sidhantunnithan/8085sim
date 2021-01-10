@@ -141,3 +141,19 @@ $large-monitor-size: 2560px;
         }
     }
 }
+
+@media (min-width: $large-monitor-size) {
+    .projectName {
+        font-size: 1.5rem;
+    }
+
+    .projectAuthor {
+        font-size: 1.1rem;
+    }
+
+    .navbar {
+        .navbar-tail {
+            font-size: 1.5rem;
+        }
+    }
+}
