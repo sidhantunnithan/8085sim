@@ -2094,6 +2094,16 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // PCHL statement
+        case "E9" :
+            // PCHL
+            genReg["PC"] = genReg['H'] + genReg['L'];
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // SHLD statement
         case "22" :
             // SHLD 16bit_data
