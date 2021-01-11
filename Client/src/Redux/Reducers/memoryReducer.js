@@ -11,6 +11,7 @@ const initialState = {
     instructions: [],
     opCodes: [],
     visible: 0,
+    loadedMemory: new Map(),
 };
 
 export default function memory(state = initialState, action) {
@@ -20,6 +21,7 @@ export default function memory(state = initialState, action) {
                 ...state,
                 memory: action.payload.memory,
                 instructions: action.payload.instructions,
+                loadedMemory: action.payload.loadedMemory,
             };
         case actionTypes.MEMORY_BYTES:
             return {
@@ -29,7 +31,8 @@ export default function memory(state = initialState, action) {
         case actionTypes.MEMORY_UPDATE:
             return {
                 ...state,
-                memory: action.payload,
+                memory: action.payload.memory,
+                loadedMemory: action.payload.loadedMemory,
             };
         case actionTypes.MEMORY_STEP:
             return {

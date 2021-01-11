@@ -352,7 +352,39 @@ h1 {
 
     .loaded-memory-view {
         width: 100%;
-        height: 90%;
+        height: 520px;
+        margin-top: 20px;
+        overflow: hidden;
+
+        .loaded-child {
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            padding-right: 17px;
+            box-sizing: content-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .loaded-row {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
+            border-left: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .loaded-column {
+            width: 50%;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        }
     }
 
     .memory-views {
@@ -487,6 +519,7 @@ h1 {
     }
     .memory-container {
         flex: 1;
+        flex-basis: 100%;
         margin-bottom: 50px;
     }
 }
