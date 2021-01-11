@@ -30,6 +30,28 @@ String.prototype.count = function (s1) {
     );
 };
 
+
+function setInstructionAddress(instructions){
+    let offset = 0;
+    let startAddress = "0000";
+    startAddress = parseInt(startAddress, 16);
+    let curAddress;
+    let instructionAddress = {};
+
+    for(let i=0; i<instructions.length; i++){
+        curAddress = startAddress + offset;
+        curAddress = curAddress.toString(16)
+                        .toUpperCase()
+                        .padStart(4, "0");
+        instructionAddress[curAddress] = instructions[i];
+
+        offset += instructions[i].length;
+    }
+
+    return instructionAddress;
+}
+
+
 function execute(jsonInput) {
     // Input
     // {
@@ -89,11 +111,15 @@ function execute(jsonInput) {
     // }
 
     let instructions = jsonInput["instructions"];
+    instructions = setInstructionAddress(instructions);
     let start_index = jsonInput["start-instruction"];
     let steps = jsonInput["steps"];
     let genReg = jsonInput["primary-registers"];
     let flagReg = jsonInput["flag-registers"];
     let memory = jsonInput["memory"];
+    
+
+    // console.log(instructionAddress);
 
     // let idx = getMemoryIndex(parseInt("5100", 16));
 
@@ -101,7 +127,7 @@ function execute(jsonInput) {
     for (let x = 0; x < steps; x++) {
         // console.log(instructions[start_index + x]);
         ret = instruction_def(
-            instructions[start_index + x],
+            instructions[genReg["PC"]],
             genReg,
             flagReg,
             memory
@@ -234,19 +260,19 @@ function dad(reg, genReg, flagReg){
     lowByte = genReg["L"];
     highByte = genReg["H"];
 
-    if(reg == 'B'){
+    if(reg === 'B'){
         operand1 = genReg["B"];
         operand2 = genReg["C"];
     }
-    else if(reg == 'D'){
+    else if(reg === 'D'){
         operand1 = genReg["D"];
         operand2 = genReg["E"];
     }
-    else if(reg == 'H'){
+    else if(reg === 'H'){
         operand1 = genReg["H"];
         operand2 = genReg["L"];
     }
-    else if(reg == 'SP'){
+    else if(reg === 'SP'){
         operand1 = genReg["SP"].slice(0,2);
         operand2 = genReg["SP"].slice(2);
     }
@@ -458,7 +484,7 @@ function ora(reg, genReg){
     operand2 = parseInt(operand2, 16);
 
     operand1 = operand1 | operand2;
-    operand1 = operand1. toString(16)
+    operand1 = operand1.toString(16)
                 .toUpperCase()
                 .padStart(2, '0')
                 .slice(-2);
