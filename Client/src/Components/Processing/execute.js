@@ -1289,6 +1289,58 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // JC statement
+        case "DA" :
+            // JC 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            tempAdd = byte2 + byte3;
+            if(flagReg["CY"] === '1'){
+                genReg["PC"] = tempAdd;
+            } else {
+                let pc = genReg["PC"];
+                pc = parseInt(pc, 16) + 3;
+                pc = pc.toString(16).toUpperCase().padStart(4, "0");
+                genReg["PC"] = pc;
+            }
+            numBytes = 3;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // JM statement
+        case "FA" :
+            // JM 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            tempAdd = byte2 + byte3;
+            if(flagReg["S"] === '1'){
+                genReg["PC"] = tempAdd;
+            } else {
+                let pc = genReg["PC"];
+                pc = parseInt(pc, 16) + 3;
+                pc = pc.toString(16).toUpperCase().padStart(4, "0");
+                genReg["PC"] = pc;
+            }
+
+            numBytes = 3;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // JMP statement
+        case "C3" :
+            // JMP 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            tempAdd = byte2 + byte3;
+            genReg["PC"] = tempAdd;
+        
+            numBytes = 3;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // JNZ statement
         case "C2":
             // JNZ 16bit_data
