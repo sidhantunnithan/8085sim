@@ -1341,6 +1341,27 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // JNC statement
+        case "D2":
+            // JNC 16bit_data
+            byte3 = instruction[1];
+            byte2 = instruction[2];
+
+            if (flagReg["CY"] === "0") {
+                genReg["PC"] = byte2 + byte3;
+            } else {
+                let pc = genReg["PC"];
+                pc = parseInt(pc, 16) + 3;
+                pc = pc.toString(16).toUpperCase().padStart(4, "0");
+                genReg["PC"] = pc;
+            }
+
+            numBytes = 3;
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
         // JNZ statement
         case "C2":
             // JNZ 16bit_data
