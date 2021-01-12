@@ -1368,7 +1368,91 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             byte3 = instruction[1];
             byte2 = instruction[2];
 
-            if (flagReg["Z"] !== "0") {
+            if (flagReg["Z"] === "0") {
+                genReg["PC"] = byte2 + byte3;
+            } else {
+                let pc = genReg["PC"];
+                pc = parseInt(pc, 16) + 3;
+                pc = pc.toString(16).toUpperCase().padStart(4, "0");
+                genReg["PC"] = pc;
+            }
+
+            numBytes = 3;
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // JP statement
+        case "F2":
+            // JP 16bit_data
+            byte3 = instruction[1];
+            byte2 = instruction[2];
+
+            if (flagReg["S"] === "0") {
+                genReg["PC"] = byte2 + byte3;
+            } else {
+                let pc = genReg["PC"];
+                pc = parseInt(pc, 16) + 3;
+                pc = pc.toString(16).toUpperCase().padStart(4, "0");
+                genReg["PC"] = pc;
+            }
+
+            numBytes = 3;
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // JPE statement
+        case "EA":
+            // JPE 16bit_data
+            byte3 = instruction[1];
+            byte2 = instruction[2];
+
+            if (flagReg["P"] === "1") {
+                genReg["PC"] = byte2 + byte3;
+            } else {
+                let pc = genReg["PC"];
+                pc = parseInt(pc, 16) + 3;
+                pc = pc.toString(16).toUpperCase().padStart(4, "0");
+                genReg["PC"] = pc;
+            }
+
+            numBytes = 3;
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // JPO statement
+        case "E2":
+            // JPO 16bit_data
+            byte3 = instruction[1];
+            byte2 = instruction[2];
+
+            if (flagReg["P"] === "0") {
+                genReg["PC"] = byte2 + byte3;
+            } else {
+                let pc = genReg["PC"];
+                pc = parseInt(pc, 16) + 3;
+                pc = pc.toString(16).toUpperCase().padStart(4, "0");
+                genReg["PC"] = pc;
+            }
+
+            numBytes = 3;
+
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // JZ statement
+        case "CA":
+            // JZ 16bit_data
+            byte3 = instruction[1];
+            byte2 = instruction[2];
+
+            if (flagReg["Z"] === "1") {
                 genReg["PC"] = byte2 + byte3;
             } else {
                 let pc = genReg["PC"];
