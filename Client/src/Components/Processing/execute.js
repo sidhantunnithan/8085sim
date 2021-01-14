@@ -241,6 +241,39 @@ function ana(reg, genReg, flagReg) {
 }
 
 
+function call(byte2, byte3, genReg, memory, isCall){
+    let pc = genReg["PC"];
+    pc = parseInt(pc, 16);
+    pc += 3;
+    pc = pc.toString(16)
+            .toUpperCase()
+            .padStart(4, '0')
+            .slice(-4);
+    
+    if(isCall){
+        let tempAdd = genReg["SP"];
+        tempAdd = parseInt(tempAdd, 16);
+        tempAdd--;
+        let memoryIndex = getMemoryIndex(tempAdd);
+        memory[memoryIndex[0]][memoryIndex[1]] = pc.slice(-2);
+        tempAdd--;
+        memoryIndex = getMemoryIndex(tempAdd);
+        memory[memoryIndex[0]][memoryIndex[1]] = pc.slice(0,2);
+
+        tempAdd = tempAdd.toString(16)
+                    .toUpperCase()
+                    .padStart(4, '0')
+                    .slice(-4);
+        genReg["SP"] = tempAdd;
+
+        pc = byte2 + byte3;
+        genReg["PC"] = pc;
+    }
+    
+    return [genReg, memory];
+}
+
+
 function cmp(reg, genReg, flagReg){
     let operand1 = genReg['A'];
     let operand2 = genReg[reg];
@@ -821,31 +854,9 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             byte3 = instruction[1];
             numBytes = 3;
            
-            pc = genReg["PC"];
-            pc = parseInt(pc, 16);
-            pc += numBytes;
-            pc = pc.toString(16)
-                    .toUpperCase()
-                    .padStart(4, '0')
-                    .slice(-4);
-            
-            tempAdd = genReg["SP"];
-            tempAdd = parseInt(tempAdd, 16);
-            tempAdd--;
-            memoryIndex = getMemoryIndex(tempAdd);
-            memory[memoryIndex[0]][memoryIndex[1]] = pc.slice(-2);
-            tempAdd--;
-            memoryIndex = getMemoryIndex(tempAdd);
-            memory[memoryIndex[0]][memoryIndex[1]] = pc.slice(0,2);
-
-            tempAdd = tempAdd.toString(16)
-                        .toUpperCase()
-                        .padStart(4, '0')
-                        .slice(-4);
-            genReg["SP"] = tempAdd;
-
-            pc = byte2 + byte3;
-            genReg["PC"] = pc;
+            reg = call(byte2, byte3, genReg, memory, true);
+            genReg = reg[0];
+            memory = reg[1];
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
