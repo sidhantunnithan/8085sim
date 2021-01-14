@@ -2489,6 +2489,88 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         ///////////////////////////////////////////////////////////////////////////////////
 
+        // RAR statement
+
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RC statement
+
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RET statement
+        case "C9" :
+            tempAdd = genReg["SP"];
+            tempAdd = parseInt(tempAdd, 16);
+
+            memoryIndex = getMemoryIndex(tempAdd);
+            byte2 = memory[memoryIndex[0]][memoryIndex[1]];
+            tempAdd--;
+            memoryIndex = getMemoryIndex(tempAdd);
+            byte3 = memory[memoryIndex[0]][memoryIndex[1]];
+            tempAdd--;
+
+            tempAdd = tempAdd.toString(16)
+                            .toUpperCase()
+                            .padStart(4, '0')
+                            .slice(-4);
+            genReg["SP"] = tempAdd;
+
+            tempAdd = byte2 + byte3;
+            genReg["PC"] = tempAdd;
+
+            numBytes = 1;
+            break;
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RIM statement
+
+
+        /////////////////////////////////////////////////////////////////////////////////////
+
+        // RLC statement
+
+
+        ///////////////////////////////////////////////////////////////////////////////////
+     
+        // RM statement
+
+
+        /////////////////////////////////////////////////////////////////////////////////////
+
+        // RNC statement
+
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RNZ statement
+        
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        
+        // RP statement
+        
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RPE statement
+            
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RPO statement
+        
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        // RRC statement
+        
+
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        
         // SHLD statement
         case "22" :
             // SHLD 16bit_data
@@ -2587,7 +2669,8 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         instruction[0] !== "F4" &&
         instruction[0] !== "EC" &&
         instruction[0] !== "E4" &&
-        instruction[0] !== "CC"
+        instruction[0] !== "CC" &&
+        instruction[0] !== "C9"
     ) {
         let pc = genReg["PC"];
         pc = parseInt(pc, 16) + numBytes;
