@@ -864,6 +864,18 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         // CC statement
         case "DC":
             // CC 16bit_data
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
+
+            if(flagReg["CY"] === '1'){
+                reg = call(byte2, byte3, genReg, memory, true);
+            }
+            else{
+                reg = call(byte2, byte3, genReg, memory, false);
+            }
+            genReg = reg[0];
+            memory = reg[1];
 
             break;
 
@@ -872,7 +884,19 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         // CM statement
         case "FC":
             // CM 16bit_data
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
 
+            if(flagReg["S"] === '1'){
+                reg = call(byte2, byte3, genReg, memory, true);
+            }
+            else{
+                reg = call(byte2, byte3, genReg, memory, false);
+            }
+            genReg = reg[0];
+            memory = reg[1];
+            
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
