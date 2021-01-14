@@ -517,6 +517,7 @@ function instruction_def(instruction, genReg, flagReg, memory) {
     let byte3;
     let byte2;
     let numBytes;
+    let pc;
 
     let opcode = instruction[0];
 
@@ -816,7 +817,35 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         // CALL statement
         case "CD":
             // CALL 16bit_data
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
+           
+            pc = genReg["PC"];
+            pc = parseInt(pc, 16);
+            pc += numBytes;
+            pc = pc.toString(16)
+                    .toUpperCase()
+                    .padStart(4, '0')
+                    .slice(-4);
+            
+            tempAdd = genReg["SP"];
+            tempAdd = parseInt(tempAdd, 16);
+            tempAdd--;
+            memoryIndex = getMemoryIndex(tempAdd);
+            memory[memoryIndex[0]][memoryIndex[1]] = pc.slice(-2);
+            tempAdd--;
+            memoryIndex = getMemoryIndex(tempAdd);
+            memory[memoryIndex[0]][memoryIndex[1]] = pc.slice(0,2);
 
+            tempAdd = tempAdd.toString(16)
+                        .toUpperCase()
+                        .padStart(4, '0')
+                        .slice(-4);
+            genReg["SP"] = tempAdd;
+
+            pc = byte2 + byte3;
+            genReg["PC"] = pc;
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
