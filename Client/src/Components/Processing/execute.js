@@ -991,6 +991,19 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         // CNC statement
         case "D4" :
+            // CNC 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
+
+            if(flagReg["CY"] === '0'){
+                reg = call(byte2, byte3, genReg, memory, true);
+            }
+            else{
+                reg = call(byte2, byte3, genReg, memory, false);
+            }
+            genReg = reg[0];
+            memory = reg[1];
             
             break;
 
@@ -998,20 +1011,60 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         // CNZ statement
         case "C4" :
+            // CNZ 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
+
+            if(flagReg["Z"] === '0'){
+                reg = call(byte2, byte3, genReg, memory, true);
+            }
+            else{
+                reg = call(byte2, byte3, genReg, memory, false);
+            }
+            genReg = reg[0];
+            memory = reg[1];
+            
 
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CP statement
-        case "CP" :
+        case "F4" :
+            // CP 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
 
+            if(flagReg["S"] === '0'){
+                reg = call(byte2, byte3, genReg, memory, true);
+            }
+            else{
+                reg = call(byte2, byte3, genReg, memory, false);
+            }
+            genReg = reg[0];
+            memory = reg[1];
+            
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
 
         // CPE statement
         case "EC" :
+            // CPE 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
+
+            if(flagReg["P"] === '1'){
+                reg = call(byte2, byte3, genReg, memory, true);
+            }
+            else{
+                reg = call(byte2, byte3, genReg, memory, false);
+            }
+            genReg = reg[0];
+            memory = reg[1];
             
             break;
 
@@ -1031,6 +1084,19 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         // CPO statement
         case "E4" :
+            // CPO 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
+
+            if(flagReg["P"] === '0'){
+                reg = call(byte2, byte3, genReg, memory, true);
+            }
+            else{
+                reg = call(byte2, byte3, genReg, memory, false);
+            }
+            genReg = reg[0];
+            memory = reg[1];
             
             break;
 
@@ -1038,7 +1104,20 @@ function instruction_def(instruction, genReg, flagReg, memory) {
 
         // CZ statement
         case "CC" :
+            // CZ 16bit_address
+            byte2 = instruction[2];
+            byte3 = instruction[1];
+            numBytes = 3;
 
+            if(flagReg["Z"] === '1'){
+                reg = call(byte2, byte3, genReg, memory, true);
+            }
+            else{
+                reg = call(byte2, byte3, genReg, memory, false);
+            }
+            genReg = reg[0];
+            memory = reg[1];
+            
             break;
 
         ///////////////////////////////////////////////////////////////////////////////////
@@ -2499,7 +2578,16 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         instruction[0] !== "F2" &&
         instruction[0] !== "EA" &&
         instruction[0] !== "E2" &&
-        instruction[0] !== "CA"
+        instruction[0] !== "CA" &&
+        instruction[0] !== "CD" &&
+        instruction[0] !== "DC" &&
+        instruction[0] !== "FC" &&
+        instruction[0] !== "D4" &&
+        instruction[0] !== "C4" &&
+        instruction[0] !== "F4" &&
+        instruction[0] !== "EC" &&
+        instruction[0] !== "E4" &&
+        instruction[0] !== "CC"
     ) {
         let pc = genReg["PC"];
         pc = parseInt(pc, 16) + numBytes;
