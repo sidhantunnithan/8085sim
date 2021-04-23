@@ -543,6 +543,27 @@ function stax(reg, genReg, memory){
 }
 
 
+function sub(reg, genReg, flagReg){
+    let operand1 = genReg["A"];
+    operand1 = parseInt(operand1, 16);
+    let operand2;
+
+    operand2 = genReg[reg];
+
+    operand2 = parseInt(operand2, 16);
+    operand2 = (operand2 >>> 0).toString(2).slice(-8);
+    operand2 = parseInt(operand2, 2);
+    operand2 += 1;
+
+    operand1 += operand2;
+    operand1 = operand1.toString(16).toUpperCase().padStart(2, "0").slice(-2);
+    genReg["A"] = operand1;
+    
+    flagReg = setFlagReg(operand1, flagReg);
+    return [genReg, flagReg];
+}
+
+
 function instruction_def(instruction, genReg, flagReg, memory) {
     let tempAdd;
     let memoryIndex;
@@ -2650,7 +2671,83 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         // SUB statements
         case "97" : 
             // SUB A
+            reg = sub("A", genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
 
+            numBytes = 1;
+
+            break;
+
+        case "90" : 
+            // SUB B
+            reg = sub("B", genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+
+            break;
+
+        case "91" : 
+            // SUB C
+            reg = sub("C", genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+
+            break;
+
+        case "92" : 
+            // SUB D
+            reg = sub("D", genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+
+            break;
+
+        case "93" : 
+            // SUB E
+            reg = sub("E", genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+
+            break;
+
+        case "94" : 
+            // SUB H
+            reg = sub("H", genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+
+            break;
+
+        case "95" : 
+            // SUB L
+            reg = sub("L", genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+
+            break;
+
+        case "96" : 
+            // SUB M
+            reg = sub("M", genReg, flagReg);
+            genReg = reg[0];
+            flagReg = reg[1];
+
+            numBytes = 1;
+
+            break;
         
         ///////////////////////////////////////////////////////////////////////////////////
 
