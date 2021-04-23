@@ -904,7 +904,7 @@ function instruction_def(instruction, genReg, flagReg, memory) {
         // CMA statement
         case "2F":
             // CMA
-            genReg["A"] = parseInt(genReg["A"] - 1, 16);
+            genReg["A"] = parseInt(genReg["A"], 16);
             genReg["A"] = (genReg["A"] >>> 0).toString(2).slice(-8);
             genReg["A"] = parseInt(genReg["A"], 2);
             genReg["A"] = genReg["A"]
@@ -2645,6 +2645,13 @@ function instruction_def(instruction, genReg, flagReg, memory) {
             numBytes = 1;
             break;
 
+        ///////////////////////////////////////////////////////////////////////////////////
+        
+        // SUB statements
+        case "97" : 
+            // SUB A
+
+        
         ///////////////////////////////////////////////////////////////////////////////////
 
         default:
