@@ -29,11 +29,11 @@ var label = {};
 function getLabels(instructionList) {
     /*
         Adds the labels into the labelList from the given input instructionList.
-        All labels are of the format "[A-Z]*:". For example, "START:", "LOOP:".
+        All labels are of the format "[A-Z]+:". For example, "START:", "LOOP:".
         So words found in this format are added to labelList.
     */
 
-    let re = /[A-Z]*:/;
+    let re = /[A-Z]+:/;
 
     for (var i = 0; i < instructionList.length; i++) {
         let cur = instructionList[i];
@@ -56,7 +56,7 @@ function getInstructions(instructionList) {
 
     let instructions = [];
 
-    for (var i = 0; i < instructionList.length; i++) {
+    for (var i = 0; i < instructionList.length; ) {
         let curInstruction = "";
         let one = instructionList[i];
         let two, three;
@@ -66,6 +66,7 @@ function getInstructions(instructionList) {
         if (labelList.includes(one)) {
             curInstruction = one;
             instructions.push(curInstruction);
+            i++;
             continue;
         }
 
@@ -79,16 +80,13 @@ function getInstructions(instructionList) {
                 curInstruction += " " + two;
                 instructions.push(curInstruction);
 
-                i = i + 1;
+                i = i + 2;
             } else {
                 instructions.push(curInstruction);
+                i++;
             }
-        }
-
-        if (one + " " + two in opcode) {
+        } else if (one + " " + two in opcode) {
             curInstruction = one + " " + two;
-
-            i = i + 1;
 
             if (
                 numBytes[curInstruction] === "2" ||
@@ -96,16 +94,17 @@ function getInstructions(instructionList) {
             ) {
                 curInstruction = curInstruction + " " + three;
                 instructions.push(curInstruction);
-                i = i + 1;
+                i = i + 3;
             } else {
                 instructions.push(curInstruction);
+                i = i + 2;
             }
-        }
-
-        if (one + " " + two + " " + three in opcode) {
+        } else if (one + " " + two + " " + three in opcode) {
             curInstruction = one + " " + two + " " + three;
             instructions.push(curInstruction);
-            i = i + 2;
+            i = i + 3;
+        } else {
+            i++;
         }
 
         if (curInstruction.length === 0) {
@@ -146,7 +145,7 @@ function getLabelMemoryLocation(instructions) {
 }
 
 function getOpcodes(instructions) {
-    /* 
+    /*
         The input will be an array of instructions.
         Returns the opcode of the instructions.
     */
@@ -160,7 +159,6 @@ function getOpcodes(instructions) {
             }
 
             let code = parse(instructions[i], label);
-            // console.log(code);
             opcodeList.push(code);
         }
 
@@ -171,6 +169,9 @@ function getOpcodes(instructions) {
 }
 
 function getAssembledInstructions(pgm) {
+    errorList = [];
+    labelList = [];
+    label = {};
     getLabels(pgm);
     var instructions = getInstructions(pgm);
     getLabelMemoryLocation(instructions);

@@ -1,6 +1,15 @@
+Client/build/
 Client/node_modules
 Client/.eslintcache
 .vscode
 8085Instructions.pdf
 getInstructions.py  
 Server/node_modules
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

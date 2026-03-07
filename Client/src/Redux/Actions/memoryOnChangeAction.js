@@ -80,8 +80,8 @@ export const memoryOnInit = (payload) => (dispatch, getState) => {
 };
 
 export const memoryOnReset = () => (dispatch) => {
-    var memory = new Array(4096).fill(0).map((i) => {
-        return new Array(16).fill(0);
+    var memory = new Array(4096).fill(0).map(() => {
+        return new Array(16).fill("00");
     });
 
     dispatch({

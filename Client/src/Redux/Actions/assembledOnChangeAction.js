@@ -15,10 +15,58 @@ export const stepLabelForward = (payloadLocal) => (dispatch, getState) => {
         payload: stateStackCopy,
     });
 
-    dispatch({
-        type: actionTypes.STEP_LABEL,
-        payload: getState().assembledReducer.labelIndex + 1,
-    });
+    // Highlight the instruction we just executed
+    const opCodes = getState().memoryReducer.opCodes;
+    const instructions = getState().memoryReducer.instructions;
+    let opCodeIndexToShow = 0;
+
+    if (payloadLocal.executedOpCodeIndex !== undefined) {
+        // We know which instruction we just executed
+        opCodeIndexToShow = payloadLocal.executedOpCodeIndex;
+    } else {
+        // Fallback: find the opCode that was just executed (ends just before current PC)
+        let pc = parseInt(payloadLocal.primaryRegisters.PC, 16);
+        let currentAddress = 0;
+        for (let i = 0; i < opCodes.length; i++) {
+            let nextAddress = currentAddress + opCodes[i].length;
+            // Check if current instruction ends at or just before PC
+            if (nextAddress <= pc) {
+                opCodeIndexToShow = i;
+            } else {
+                break;
+            }
+            currentAddress = nextAddress;
+        }
+    }
+
+    // Map opCode index to UI index in full instructions array (which includes labels)
+    let instructionIndex = -1;
+    let opCodeCount = 0;
+
+    for (let i = 0; i < instructions.length; i++) {
+        if (!instructions[i].endsWith(":")) {
+            // This is a real instruction, not a label
+            if (opCodeCount === opCodeIndexToShow) {
+                // Check if there's a label immediately before this instruction
+                if (i > 0 && instructions[i - 1].endsWith(":")) {
+                    // Highlight the label row instead (labels and their instructions share a row)
+                    instructionIndex = i - 1;
+                } else {
+                    instructionIndex = i;
+                }
+                break;
+            }
+            opCodeCount++;
+        }
+    }
+
+    // Only dispatch if we found a valid instruction index
+    if (instructionIndex >= -1) {
+        dispatch({
+            type: actionTypes.STEP_LABEL,
+            payload: instructionIndex,
+        });
+    }
 
     if (payloadLocal.final === false) {
         dispatch({
@@ -91,9 +139,18 @@ export const onRun = (payloadLocal) => (dispatch, getState) => {
 };
 
 export const stepLabelBackward = () => (dispatch, getState) => {
+    const instructions = getState().memoryReducer.instructions;
+    let currentIndex = getState().assembledReducer.labelIndex;
+    let newIndex = currentIndex - 1;
+
+    // Skip backward over labels
+    while (newIndex >= 0 && instructions[newIndex].endsWith(":")) {
+        newIndex--;
+    }
+
     dispatch({
         type: actionTypes.STEP_LABEL,
-        payload: getState().assembledReducer.labelIndex - 1,
+        payload: newIndex,
     });
 
     var stateStackCopy = getState().stackReducer.stateStack;

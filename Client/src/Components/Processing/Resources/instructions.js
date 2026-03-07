@@ -196,7 +196,7 @@ export const instructionSet = {
         },
 
         "CMP M": {
-            opcode: "BD",
+            opcode: "BE",
             numBytes: "1",
         },
 

@@ -1,9 +1,19 @@
 import * as actionTypes from "../Actions/types";
 
+const DEFAULT_CODE =
+`MVI C 0A
+MVI A 00
+LOOP:
+ADD C
+DCR C
+JNZ LOOP
+STA 2050
+HLT`;
+
 // Editor View is set to true
 const initialState = {
     editorView: true,
-    editorDisappearText: "",
+    editorDisappearText: DEFAULT_CODE,
     popupView: false,
 };
 

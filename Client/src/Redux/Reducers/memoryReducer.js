@@ -5,8 +5,8 @@
 import * as actionTypes from "../Actions/types";
 
 const initialState = {
-    memory: new Array(4096).fill(0).map((i) => {
-        return new Array(16).fill(0);
+    memory: new Array(4096).fill(0).map(() => {
+        return new Array(16).fill("00");
     }),
     instructions: [],
     opCodes: [],

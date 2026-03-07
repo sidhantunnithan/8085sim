@@ -1,0 +1,23 @@
+{
+  "name": "8085sim",
+  "version": "1.0.0",
+  "description": "8085sim is an open source online simulator and development environment for the [Intel 8085](https://en.wikipedia.org/wiki/Intel_8085) Microprocessor.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sidhantunnithan/8085sim.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sidhantunnithan/8085sim/issues"
+  },
+  "homepage": "https://github.com/sidhantunnithan/8085sim#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.3.5"
+  }
+}

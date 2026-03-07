@@ -164,11 +164,14 @@ function parse(instruction, label) {
                     ];
                 }
             } else {
-                // for 2 byte instructions like MVI A and 3 byte instructions like LXI H
+                // for 1, 2, and 3 byte instructions like ADD C, MVI A, and LXI H
                 mnemonic = mnemonic + " " + instruction.split(" ")[1];
                 instructionSize = numBytes[mnemonic];
 
-                if (instructionSize === "2") {
+                if (instructionSize === "1") {
+                    // for 1 byte instructions like ADD C
+                    code = [opcode[mnemonic]];
+                } else if (instructionSize === "2") {
                     // for 2 byte instructions like MVI A
                     code = [opcode[mnemonic], instruction.split(" ")[2]];
                 } else {

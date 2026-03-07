@@ -23,9 +23,44 @@ export class Assembled extends Component {
                 final: true,
             });
         } else {
+            // Find next non-label instruction index
+            let nextUIIndex = this.props.labelIndex + 1;
+
+            // If current row is a label, skip the instruction displayed with it too
+            if (this.props.labelIndex >= 0 &&
+                this.props.labelIndex < this.props.instructions.length &&
+                this.props.instructions[this.props.labelIndex].endsWith(":")) {
+                nextUIIndex++;
+            }
+
+            // Skip over any additional labels
+            while (nextUIIndex < this.props.instructions.length &&
+                   this.props.instructions[nextUIIndex].endsWith(":")) {
+                nextUIIndex++;
+            }
+
+            // Convert UI index to opCode index by counting non-label instructions before it
+            let opCodeIndex = 0;
+            for (let i = 0; i < nextUIIndex; i++) {
+                if (!this.props.instructions[i].endsWith(":")) {
+                    opCodeIndex++;
+                }
+            }
+
+            // Compute which opCode index will be executed based on current PC
+            let currentPC = parseInt(propsCopy.primaryRegisters.PC, 16);
+            let executedOpCodeIndex = 0;
+            let addr = 0;
+            for (let i = 0; i < propsCopy.opCodes.length; i++) {
+                if (addr === currentPC) {
+                    executedOpCodeIndex = i;
+                    break;
+                }
+                addr += propsCopy.opCodes[i].length;
+            }
+
             var inputParams = execute({
                 instructions: propsCopy.opCodes,
-                "start-instruction": propsCopy.labelIndex + 1,
                 steps: 1,
                 "primary-registers": propsCopy.primaryRegisters,
                 "flag-registers": propsCopy.flagRegisters,
@@ -37,16 +72,42 @@ export class Assembled extends Component {
                 flagRegisters: inputParams.flagRegisters,
                 memory: inputParams.memory,
                 final: false,
+                executedOpCodeIndex: executedOpCodeIndex,
             });
         }
     };
 
     onRun = (e) => {
         var propsCopy = JSON.parse(JSON.stringify(this.props));
+
+        // Find next non-label instruction index
+        let nextUIIndex = this.props.labelIndex + 1;
+
+        // If current row is a label, skip the instruction displayed with it too
+        if (this.props.labelIndex >= 0 &&
+            this.props.labelIndex < this.props.instructions.length &&
+            this.props.instructions[this.props.labelIndex].endsWith(":")) {
+            nextUIIndex++;
+        }
+
+        // Skip over any additional labels
+        while (nextUIIndex < this.props.instructions.length &&
+               this.props.instructions[nextUIIndex].endsWith(":")) {
+            nextUIIndex++;
+        }
+
+        // Convert UI index to opCode index by counting non-label instructions before it
+        let opCodeIndex = 0;
+        for (let i = 0; i < nextUIIndex; i++) {
+            if (!this.props.instructions[i].endsWith(":")) {
+                opCodeIndex++;
+            }
+        }
+
         var inputParams = execute({
             instructions: propsCopy.opCodes,
-            "start-instruction": propsCopy.labelIndex + 1,
-            steps: this.props.instructions.length - this.props.labelIndex - 1,
+            "start-instruction": opCodeIndex,
+            steps: 1000000,
             "primary-registers": propsCopy.primaryRegisters,
             "flag-registers": propsCopy.flagRegisters,
             memory: propsCopy.memory,
