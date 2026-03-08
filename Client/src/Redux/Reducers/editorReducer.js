@@ -1,8 +1,18 @@
 import * as actionTypes from "../Actions/types";
 
+export const DEFAULT_CODE =
+`MVI C 0A
+MVI A 00
+LOOP:
+ADD C
+DCR C
+JNZ LOOP
+STA 2050
+HLT`;
+
 // Initial value of the text of the editor
 const initialState = {
-    editorText: "",
+    editorText: DEFAULT_CODE,
 };
 
 export default function editor(state = initialState, action) {
